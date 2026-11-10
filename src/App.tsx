@@ -112,22 +112,6 @@ function BespokeCompassRose({ className = "w-5 h-5 text-[#9E7730]" }: { classNam
   );
 }
 
-function BespokePlay({ className = "w-4 h-4 text-current" }: { className?: string }) {
-  return (
-    <svg viewBox="0 0 24 24" fill="currentColor" className={className}>
-      <path d="M8 5V19L19 12L8 5Z" />
-    </svg>
-  );
-}
-
-function BespokePause({ className = "w-4 h-4 text-current" }: { className?: string }) {
-  return (
-    <svg viewBox="0 0 24 24" fill="currentColor" className={className}>
-      <path d="M6 19H10V5H6V19ZM14 5V19H18V5H14Z" />
-    </svg>
-  );
-}
-
 function BespokeBlueprintGlyph({ className = "w-5 h-5 text-[#9E7730]" }: { className?: string }) {
   return (
     <svg viewBox="0 0 24 24" fill="none" className={className} stroke="currentColor" strokeWidth="1.3">
@@ -140,165 +124,14 @@ function BespokeBlueprintGlyph({ className = "w-5 h-5 text-[#9E7730]" }: { class
   );
 }
 
-function BespokeSplitGlyph({ className = "w-5 h-5 text-[#9E7730]" }: { className?: string }) {
+function BespokeZoom({ className = "w-4 h-4 text-current" }: { className?: string }) {
   return (
-    <svg viewBox="0 0 24 24" fill="none" className={className} stroke="currentColor" strokeWidth="1.3">
-      <rect x="3" y="4" width="18" height="16" rx="1" />
-      <path d="M12 4V20" strokeLinecap="round" strokeWidth="1.5" />
-      <path d="M9 12L7 10M7 14L9 12" strokeLinecap="round" />
-      <path d="M15 12L17 10M17 14L15 12" strokeLinecap="round" />
+    <svg viewBox="0 0 24 24" fill="none" className={className} stroke="currentColor" strokeWidth="1.4">
+      <path d="M15 3H21V9M9 21H3V15M21 3L14 10M3 21L10 14" strokeLinecap="round" strokeLinejoin="round" />
     </svg>
   );
 }
 
-// ==========================================
-// INTERACTIVE BEFORE & AFTER SLIDER COMPONENT
-// ==========================================
-
-interface BeforeAfterSliderProps {
-  beforeImage: string;
-  afterImage: string;
-  beforeLabel?: string;
-  afterLabel?: string;
-  aspectRatio?: string;
-  className?: string;
-}
-
-function BeforeAfterSlider({
-  beforeImage,
-  afterImage,
-  beforeLabel = "Excavation",
-  afterLabel = "Completed",
-  aspectRatio = "aspect-[16/10]",
-  className = ""
-}: BeforeAfterSliderProps) {
-  const [sliderPos, setSliderPos] = useState<number>(50);
-  const [isDragging, setIsDragging] = useState<boolean>(false);
-  const containerRef = useRef<HTMLDivElement>(null);
-
-  const handleMove = useCallback((clientX: number) => {
-    if (!containerRef.current) return;
-    const rect = containerRef.current.getBoundingClientRect();
-    const x = clientX - rect.left;
-    const clampedX = Math.max(0, Math.min(x, rect.width));
-    const percentage = Math.round((clampedX / rect.width) * 100);
-    setSliderPos(percentage);
-  }, []);
-
-  const handleTouchMove = useCallback((e: React.TouchEvent) => {
-    if (!isDragging) return;
-    handleMove(e.touches[0].clientX);
-  }, [isDragging, handleMove]);
-
-  const handleMouseMove = useCallback((e: React.MouseEvent) => {
-    if (!isDragging) return;
-    handleMove(e.clientX);
-  }, [isDragging, handleMove]);
-
-  return (
-    <div className={`space-y-2.5 ${className}`}>
-      {/* Slider Container */}
-      <div 
-        ref={containerRef}
-        onMouseDown={() => setIsDragging(true)}
-        onMouseUp={() => setIsDragging(false)}
-        onMouseLeave={() => setIsDragging(false)}
-        onMouseMove={handleMouseMove}
-        onTouchStart={() => setIsDragging(true)}
-        onTouchEnd={() => setIsDragging(false)}
-        onTouchMove={handleTouchMove}
-        className={`relative ${aspectRatio} overflow-hidden select-none cursor-ew-resize border border-[#E8E2D5] bg-[#FAF8F5] group`}
-      >
-        {/* AFTER (Completed) Image - Base Layer (Full Width) */}
-        <img 
-          src={afterImage} 
-          alt={afterLabel}
-          className="absolute inset-0 w-full h-full object-cover pointer-events-none"
-          referrerPolicy="no-referrer"
-        />
-
-        {/* BEFORE (Construction) Image - Clipped Layer on Left */}
-        <div 
-          className="absolute inset-0 overflow-hidden pointer-events-none"
-          style={{ clipPath: `inset(0 ${100 - sliderPos}% 0 0)` }}
-        >
-          <img 
-            src={beforeImage} 
-            alt={beforeLabel}
-            className="absolute inset-0 w-full h-full object-cover"
-            referrerPolicy="no-referrer"
-          />
-        </div>
-
-        {/* Divider Line & Handle */}
-        <div 
-          className="absolute top-0 bottom-0 w-0.5 bg-white shadow-[0_0_12px_rgba(0,0,0,0.5)] z-20 pointer-events-none"
-          style={{ left: `${sliderPos}%` }}
-        >
-          {/* Centered Circular Brass Medallion */}
-          <div className="absolute top-1/2 -translate-y-1/2 -translate-x-1/2 w-8 h-8 rounded-full bg-[#FAF8F5] border border-[#9E7730] shadow-md flex items-center justify-center text-[#9E7730]">
-            <span className="text-[9px] font-cinzel font-bold tracking-tight">◄ || ►</span>
-          </div>
-        </div>
-
-        {/* Floating Badges */}
-        <div className="absolute top-3 left-3 z-10 pointer-events-none">
-          <span className="bg-[#1C1917]/80 backdrop-blur-xs text-white px-2 py-0.5 text-[10px] font-cinzel uppercase tracking-wider border border-white/20">
-            {beforeLabel}
-          </span>
-        </div>
-
-        <div className="absolute top-3 right-3 z-10 pointer-events-none">
-          <span className="bg-[#FAF8F5]/90 backdrop-blur-xs text-[#705322] px-2 py-0.5 text-[10px] font-cinzel uppercase tracking-wider border border-[#E8E2D5]">
-            {afterLabel}
-          </span>
-        </div>
-      </div>
-
-      {/* Quick Minimal Preset Buttons */}
-      <div className="flex items-center justify-between text-xs font-cinzel">
-        <div className="flex items-center gap-1.5">
-          <button 
-            type="button"
-            onClick={() => setSliderPos(90)}
-            className={`px-2.5 py-1 text-[10px] uppercase tracking-wider border transition-colors ${
-              sliderPos > 70 
-                ? 'bg-[#9E7730] text-white border-[#9E7730]' 
-                : 'bg-white text-[#78716C] border-[#E8E2D5] hover:text-[#1C1917]'
-            }`}
-          >
-            Excavation
-          </button>
-          <button 
-            type="button"
-            onClick={() => setSliderPos(50)}
-            className={`px-2.5 py-1 text-[10px] uppercase tracking-wider border transition-colors ${
-              sliderPos >= 40 && sliderPos <= 60 
-                ? 'bg-[#9E7730] text-white border-[#9E7730]' 
-                : 'bg-white text-[#78716C] border-[#E8E2D5] hover:text-[#1C1917]'
-            }`}
-          >
-            50 / 50
-          </button>
-          <button 
-            type="button"
-            onClick={() => setSliderPos(10)}
-            className={`px-2.5 py-1 text-[10px] uppercase tracking-wider border transition-colors ${
-              sliderPos < 30 
-                ? 'bg-[#9E7730] text-white border-[#9E7730]' 
-                : 'bg-white text-[#78716C] border-[#E8E2D5] hover:text-[#1C1917]'
-            }`}
-          >
-            Completed
-          </button>
-        </div>
-        <span className="text-[10px] text-[#A8A29E] font-cinzel tracking-wider uppercase">
-          Drag to compare
-        </span>
-      </div>
-    </div>
-  );
-}
 
 // ==========================================
 // ARCHITECTURAL CAD BLUEPRINT & DIAGRAM COMPONENT
@@ -701,190 +534,6 @@ function ArchitecturalBlueprintViewer({
 }
 
 // ==========================================
-// SHORT SCENE REEL PLAYER (Short Video Clips)
-// ==========================================
-
-interface ShortScene {
-  id: string;
-  title: string;
-  phase: 'construction' | 'completed';
-  duration: string;
-  videoUrl: string;
-  description: string;
-  thumbnail: string;
-}
-
-interface ShortScenesPlayerProps {
-  projectTitle: string;
-  scenes: ShortScene[];
-  onClose: () => void;
-  onOpenMonograph: () => void;
-}
-
-function ShortScenesPlayer({
-  projectTitle,
-  scenes,
-  onClose,
-  onOpenMonograph
-}: ShortScenesPlayerProps) {
-  const [currentSceneIndex, setCurrentSceneIndex] = useState<number>(0);
-  const [isPlaying, setIsPlaying] = useState<boolean>(true);
-  const [isLooping, setIsLooping] = useState<boolean>(true);
-  const videoRef = useRef<HTMLVideoElement>(null);
-
-  const activeScene = scenes[currentSceneIndex] || scenes[0];
-
-  useEffect(() => {
-    if (videoRef.current) {
-      videoRef.current.currentTime = 0;
-      videoRef.current.play().catch(() => {});
-      setIsPlaying(true);
-    }
-  }, [currentSceneIndex]);
-
-  const togglePlay = () => {
-    if (!videoRef.current) return;
-    if (isPlaying) {
-      videoRef.current.pause();
-      setIsPlaying(false);
-    } else {
-      videoRef.current.play().catch(() => {});
-      setIsPlaying(true);
-    }
-  };
-
-  return (
-    <div className="fixed inset-0 z-50 bg-[#1C1917]/85 backdrop-blur-sm flex items-center justify-center p-4 sm:p-6 overflow-y-auto">
-      <div className="bg-white border border-[#D9C496] max-w-4xl w-full overflow-hidden shadow-2xl animate-in zoom-in-95 duration-200 my-8">
-        
-        {/* Header */}
-        <div className="bg-[#FAF7F2] border-b border-[#E8E2D5] px-6 py-4 flex items-center justify-between">
-          <div>
-            <div className="flex items-center gap-2">
-              <span className="text-[10px] font-cinzel uppercase tracking-[0.2em] text-[#9E7730]">
-                Short Scene Reel · Construction & Completion Clips
-              </span>
-              <span className={`text-[10px] font-cinzel px-2 py-0.5 uppercase border ${
-                activeScene.phase === 'construction'
-                  ? 'bg-amber-500/10 border-amber-600/30 text-amber-800'
-                  : 'bg-emerald-500/10 border-emerald-600/30 text-emerald-800'
-              }`}>
-                {activeScene.phase === 'construction' ? 'Phase: Construction & Cranes' : 'Phase: Completed Commission'}
-              </span>
-            </div>
-            <h3 className="font-serif-luxury text-2xl text-[#1C1917] mt-0.5">
-              {projectTitle}
-            </h3>
-          </div>
-          <button 
-            type="button"
-            onClick={onClose}
-            className="px-3 py-1.5 bg-white hover:bg-[#F4EFEA] border border-[#E8E2D5] text-[#1C1917] text-xs font-cinzel uppercase tracking-wider"
-          >
-            ✕ Close Reel
-          </button>
-        </div>
-
-        {/* Video Stage */}
-        <div className="relative aspect-video bg-black flex items-center justify-center overflow-hidden group">
-          <video 
-            ref={videoRef}
-            src={activeScene.videoUrl} 
-            poster={activeScene.thumbnail}
-            autoPlay
-            playsInline
-            loop={isLooping}
-            className="w-full h-full object-cover"
-            onPlay={() => setIsPlaying(true)}
-            onPause={() => setIsPlaying(false)}
-          />
-
-          {/* Central Play/Pause Watermark Overlay */}
-          <button
-            type="button"
-            onClick={togglePlay}
-            className="absolute inset-0 flex items-center justify-center bg-black/15 hover:bg-black/30 transition-colors"
-          >
-            <div className="w-14 h-14 rounded-full bg-white/95 border border-[#D9C496] flex items-center justify-center text-[#9E7730] shadow-xl group-hover:scale-105 transition-transform">
-              {isPlaying ? <BespokePause className="w-5 h-5" /> : <BespokePlay className="w-5 h-5 ml-0.5" />}
-            </div>
-          </button>
-
-          {/* Floating Scene Descriptor Banner */}
-          <div className="absolute top-4 left-4 bg-black/75 backdrop-blur-xs px-3 py-1.5 text-white text-[11px] font-cinzel tracking-wider uppercase border border-white/20 pointer-events-none">
-            Scene {currentSceneIndex + 1} of {scenes.length} · {activeScene.title} ({activeScene.duration})
-          </div>
-
-          <div className="absolute bottom-4 right-4 bg-black/75 backdrop-blur-xs px-2.5 py-1 text-white/90 text-[10px] font-mono border border-white/10 pointer-events-none">
-            HD 1080p 60fps · Cinematic Short Cut
-          </div>
-        </div>
-
-        {/* Scene Selector Strip */}
-        <div className="p-4 bg-[#F5EFE9] border-t border-[#E8E2D5] space-y-3">
-          <div className="flex items-center justify-between text-xs font-cinzel text-[#705322]">
-            <span className="uppercase tracking-[0.16em] font-semibold">
-              Select Scene Clip (10s – 25s Cuts):
-            </span>
-            <div className="flex items-center gap-3">
-              <button 
-                type="button"
-                onClick={() => setIsLooping(!isLooping)}
-                className={`text-[11px] uppercase tracking-wider px-2 py-0.5 border ${
-                  isLooping ? 'bg-[#9E7730] text-white border-[#9E7730]' : 'bg-white text-[#78716C] border-[#E8E2D5]'
-                }`}
-              >
-                Loop Scene: {isLooping ? 'ON' : 'OFF'}
-              </button>
-            </div>
-          </div>
-
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-            {scenes.map((scene, idx) => (
-              <button
-                key={scene.id}
-                type="button"
-                onClick={() => setCurrentSceneIndex(idx)}
-                className={`p-2.5 text-left border transition-all flex flex-col justify-between ${
-                  currentSceneIndex === idx
-                    ? 'bg-white border-[#9E7730] shadow-sm ring-1 ring-[#9E7730]'
-                    : 'bg-[#FAF8F5] border-[#E8E2D5] hover:border-[#9E7730]/60'
-                }`}
-              >
-                <div className="flex items-center justify-between text-[10px] font-cinzel mb-1">
-                  <span className={scene.phase === 'construction' ? 'text-amber-800 font-medium' : 'text-emerald-800 font-medium'}>
-                    {scene.phase === 'construction' ? 'Construction Cut' : 'Completed Cut'}
-                  </span>
-                  <span className="text-[#78716C] font-mono">{scene.duration}</span>
-                </div>
-                <div className="font-serif-luxury text-sm text-[#1C1917] font-medium line-clamp-1">
-                  {scene.title}
-                </div>
-              </button>
-            ))}
-          </div>
-        </div>
-
-        {/* Footer info & Monograph button */}
-        <div className="p-4 bg-[#FAF8F5] border-t border-[#E8E2D5] flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-          <p className="text-xs text-[#57534E] font-light max-w-xl">
-            {activeScene.description}
-          </p>
-          <button
-            type="button"
-            onClick={onOpenMonograph}
-            className="shrink-0 px-4 py-2 bg-[#9E7730] hover:bg-[#886524] text-white text-xs font-cinzel tracking-[0.16em] uppercase transition-colors"
-          >
-            Dossier & Plans →
-          </button>
-        </div>
-
-      </div>
-    </div>
-  );
-}
-
-// ==========================================
 // DATA MODEL INTERFACES
 // ==========================================
 
@@ -904,10 +553,7 @@ interface Project {
   category: 'clifftop' | 'mosque' | 'cranes' | 'museum' | 'antiquity';
   categoryLabel: string;
   location: string;
-  image: string; // main / completed image
-  beforeImage: string; // construction phase image with cranes/excavators
-  afterImage: string; // pristine completed image
-  shortScenes: ShortScene[];
+  image: string; // main high-resolution photographic plate
   blueprintType: 'clifftop' | 'mosque' | 'crane-site' | 'atrium' | 'archaeological';
   blueprintTitle: string;
   blueprintScale: string;
@@ -934,12 +580,13 @@ interface Project {
 // ==========================================
 
 export default function App() {
-  const [activeTab, setActiveTab] = useState<'portfolio' | 'estimator' | 'heritage' | 'client-portal'>('portfolio');
+  const [activeTab, setActiveTab] = useState<'portfolio' | 'gallery' | 'estimator' | 'heritage' | 'client-portal'>('portfolio');
   const [selectedDomain, setSelectedDomain] = useState<string>('all');
+  const [galleryCategory, setGalleryCategory] = useState<string>('all');
+  const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
   const [searchQuery, setSearchQuery] = useState<string>('');
   const [modalItem, setModalItem] = useState<Project | null>(null);
-  const [modalActiveSubTab, setModalActiveSubTab] = useState<'overview' | 'before-after' | 'blueprint' | 'plans'>('overview');
-  const [videoModalProject, setVideoModalProject] = useState<Project | null>(null);
+  const [modalActiveSubTab, setModalActiveSubTab] = useState<'overview' | 'blueprint' | 'plans'>('overview');
   const [toastMessage, setToastMessage] = useState<string | null>(null);
 
   // Estimator State
@@ -964,7 +611,7 @@ export default function App() {
   });
   const [accessKeyInput, setAccessKeyInput] = useState('');
   const [pinInput, setPinInput] = useState('');
-  const [portalSceneFeed, setPortalSceneFeed] = useState<'crane-ops' | 'masonry' | 'finished'>('crane-ops');
+  const [portalMilestonePlate, setPortalMilestonePlate] = useState<'rigging' | 'shoring' | 'promenade'>('rigging');
 
   const showToast = (msg: string) => {
     setToastMessage(msg);
@@ -984,37 +631,6 @@ export default function App() {
       categoryLabel: "Clifftop Estate",
       location: "Cap d'Ail · Monaco & French Riviera",
       image: "/src/assets/images/villa_cliffside_terrace_1794056500832.jpg",
-      beforeImage: "/src/assets/images/cranes_clifftop_construction_1794058074178.jpg",
-      afterImage: "/src/assets/images/villa_cliffside_terrace_1794056500832.jpg",
-      shortScenes: [
-        {
-          id: "s1-1",
-          title: "Heavy Cranes & Dolomite Excavation",
-          phase: "construction",
-          duration: "0:14",
-          videoUrl: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4",
-          description: "Liebherr 280 EC-H tower crane lowering concrete counter-ballast onto the 180m cliff face while hydraulic excavators carve bedrock retaining slots.",
-          thumbnail: "/src/assets/images/cranes_clifftop_construction_1794058074178.jpg"
-        },
-        {
-          id: "s1-2",
-          title: "Deep Geotechnical Micropiling & Shoring",
-          phase: "construction",
-          duration: "0:18",
-          videoUrl: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerJoyBlazes.mp4",
-          description: "Drilling 28.5m self-drilling Dywidag hollow-core tiebacks into marine limestone strata to neutralize seismic slip vectors.",
-          thumbnail: "/src/assets/images/geotechnical_machinery_site_1794058074902.jpg"
-        },
-        {
-          id: "s1-3",
-          title: "Finished Infinity Terraces & Mediterranean Panorama",
-          phase: "completed",
-          duration: "0:22",
-          videoUrl: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerEscapes.mp4",
-          description: "Aerial cinematic glide over hand-dressed Istrian limestone terraces, cascading infinity basins, and olive arboriculture at sunset.",
-          thumbnail: "/src/assets/images/villa_cliffside_terrace_1794056500832.jpg"
-        }
-      ],
       blueprintType: "clifftop",
       blueprintTitle: "Terrace Retaining Bastion & Micropile Section",
       blueprintScale: "1:50 Metric",
@@ -1040,37 +656,6 @@ export default function App() {
       categoryLabel: "Grand Mosque",
       location: "Muscat Governorate · Sultanate of Oman",
       image: "/src/assets/images/mosque_courtyard_marble_1794058073956.jpg",
-      beforeImage: "/src/assets/images/geotechnical_machinery_site_1794058074902.jpg",
-      afterImage: "/src/assets/images/mosque_courtyard_marble_1794058073956.jpg",
-      shortScenes: [
-        {
-          id: "s2-1",
-          title: "Substructure Groundworks & Rotary Piling",
-          phase: "construction",
-          duration: "0:16",
-          videoUrl: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerJoyBlazes.mp4",
-          description: "Heavy rotary drilling rigs sinking 38-meter deep foundation caissons beneath the central congregational prayer court.",
-          thumbnail: "/src/assets/images/geotechnical_machinery_site_1794058074902.jpg"
-        },
-        {
-          id: "s2-2",
-          title: "Potain Tower Cranes Lifting Minaret Monoliths",
-          phase: "construction",
-          duration: "0:20",
-          videoUrl: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4",
-          description: "Four heavy Potain tower cranes synchronously positioning marble ashlar blocks along the 90m minaret structural core.",
-          thumbnail: "/src/assets/images/cranes_clifftop_construction_1794058074178.jpg"
-        },
-        {
-          id: "s2-3",
-          title: "Finished Thassos White Marble Courtyard Flythrough",
-          phase: "completed",
-          duration: "0:25",
-          videoUrl: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerEscapes.mp4",
-          description: "Luminous cinematic pan across crystalline Thassos marble colonnades, reflective courtyards, and gold mosaic minarets.",
-          thumbnail: "/src/assets/images/mosque_courtyard_marble_1794058073956.jpg"
-        }
-      ],
       blueprintType: "mosque",
       blueprintTitle: "Congregational Courtyard & Minaret Caisson Engineering",
       blueprintScale: "1:100 Metric",
@@ -1095,37 +680,6 @@ export default function App() {
       categoryLabel: "Ongoing Cranes & Machinery",
       location: "Saint-Jean-Cap-Ferrat · French Riviera",
       image: "/src/assets/images/cranes_clifftop_construction_1794058074178.jpg",
-      beforeImage: "/src/assets/images/cranes_clifftop_construction_1794058074178.jpg",
-      afterImage: "/src/assets/images/villa_cliffside_terrace_1794056500832.jpg",
-      shortScenes: [
-        {
-          id: "s3-1",
-          title: "5 Tower Cranes Operating in High Mistral Winds",
-          phase: "construction",
-          duration: "0:15",
-          videoUrl: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4",
-          description: "Synchronized heavy lift operations with five Liebherr 280 EC-H luffing jib cranes placing pre-cast reinforced retaining modules.",
-          thumbnail: "/src/assets/images/cranes_clifftop_construction_1794058074178.jpg"
-        },
-        {
-          id: "s3-2",
-          title: "Bauer BG 36 Heavy Rotary Piling into Dolomite",
-          phase: "construction",
-          duration: "0:19",
-          videoUrl: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerJoyBlazes.mp4",
-          description: "Rotary head boring 1.2m diameter secant piles into the sea-facing promontory cliff face to arrest slope creep.",
-          thumbnail: "/src/assets/images/geotechnical_machinery_site_1794058074902.jpg"
-        },
-        {
-          id: "s3-3",
-          title: "Completed 12-Tier Classical Promenade Flythrough",
-          phase: "completed",
-          duration: "0:24",
-          videoUrl: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4",
-          description: "Photorealistic rendering of completed multi-tiered Chassagne limestone bastions and maritime gardens.",
-          thumbnail: "/src/assets/images/villa_cliffside_terrace_1794056500832.jpg"
-        }
-      ],
       blueprintType: "crane-site",
       blueprintTitle: "Promontory Crane Slew Radii & Soil Anchoring Plan",
       blueprintScale: "1:200 Metric",
@@ -1150,28 +704,6 @@ export default function App() {
       categoryLabel: "Classical Palace & Museum",
       location: "Vienna Royal Precinct · Austria",
       image: "/src/assets/images/grand_palace_hardscaping_1794058074270.jpg",
-      beforeImage: "/src/assets/images/geotechnical_machinery_site_1794058074902.jpg",
-      afterImage: "/src/assets/images/grand_palace_hardscaping_1794058074270.jpg",
-      shortScenes: [
-        {
-          id: "s4-1",
-          title: "Subterranean Conduit Excavation & Spider Cranes",
-          phase: "construction",
-          duration: "0:13",
-          videoUrl: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerFun.mp4",
-          description: "Mini spider cranes and zero-emission micro-trenchers excavating historic gravel parterres without disturbing royal tree roots.",
-          thumbnail: "/src/assets/images/geotechnical_machinery_site_1794058074902.jpg"
-        },
-        {
-          id: "s4-2",
-          title: "Finished Baroque Cascades & River Deity Sculptures",
-          phase: "completed",
-          duration: "0:21",
-          videoUrl: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerEscapes.mp4",
-          description: "The completed Belvedere water amphitheater flowing with 2,400 liters per minute across restored calcarenite stairways.",
-          thumbnail: "/src/assets/images/grand_palace_hardscaping_1794058074270.jpg"
-        }
-      ],
       blueprintType: "atrium",
       blueprintTitle: "Baroque Cascade Hydraulic Piping & Masonry Core",
       blueprintScale: "1:50 Metric",
@@ -1195,28 +727,6 @@ export default function App() {
       categoryLabel: "Ongoing Cranes & Machinery",
       location: "Adriatic Sea Ramparts · Republic of Croatia",
       image: "/src/assets/images/geotechnical_machinery_site_1794058074902.jpg",
-      beforeImage: "/src/assets/images/geotechnical_machinery_site_1794058074902.jpg",
-      afterImage: "/src/assets/images/acropolis_stone_wall_1794056512464.jpg",
-      shortScenes: [
-        {
-          id: "s5-1",
-          title: "Liebherr LB 28 Rotary Rig Anchoring Sea Ramparts",
-          phase: "construction",
-          duration: "0:17",
-          videoUrl: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerJoyBlazes.mp4",
-          description: "Heavy tracked geotechnical rig drilling non-percussive tiebacks through 15th-century stone ramparts into submarine bedrock.",
-          thumbnail: "/src/assets/images/geotechnical_machinery_site_1794058074902.jpg"
-        },
-        {
-          id: "s5-2",
-          title: "Consolidated Adriatic Bastions & Sea Walkway",
-          phase: "completed",
-          duration: "0:22",
-          videoUrl: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4",
-          description: "Restored coastal promenade with restored Brač limestone battlements resistant to 5-meter winter wave swells.",
-          thumbnail: "/src/assets/images/acropolis_stone_wall_1794056512464.jpg"
-        }
-      ],
       blueprintType: "crane-site",
       blueprintTitle: "Marine Citadel Submarine Tieback Cross-Section",
       blueprintScale: "1:75 Metric",
@@ -1240,28 +750,6 @@ export default function App() {
       categoryLabel: "Museum Modernization",
       location: "Ringstraße · Vienna, Austria",
       image: "/src/assets/images/museum_atrium_marble_1794056502385.jpg",
-      beforeImage: "/src/assets/images/geotechnical_machinery_site_1794058074902.jpg",
-      afterImage: "/src/assets/images/museum_atrium_marble_1794056502385.jpg",
-      shortScenes: [
-        {
-          id: "s6-1",
-          title: "Zero-Vibration Micro-Trenching & Base Isolators",
-          phase: "construction",
-          duration: "0:14",
-          videoUrl: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerMeltdowns.mp4",
-          description: "Diamond wire sawing and seismic base isolator installations beneath historic Hellenistic statuary galleries.",
-          thumbnail: "/src/assets/images/geotechnical_machinery_site_1794058074902.jpg"
-        },
-        {
-          id: "s6-2",
-          title: "Finished Honey Marble Atrium & Structural Glass Roof",
-          phase: "completed",
-          duration: "0:20",
-          videoUrl: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerFun.mp4",
-          description: "Illuminated imperial galleries with Austrian Adnet honey marble floors and microclimatic air curtains.",
-          thumbnail: "/src/assets/images/museum_atrium_marble_1794056502385.jpg"
-        }
-      ],
       blueprintType: "atrium",
       blueprintTitle: "Imperial Atrium Structural Glass Lantern & HVAC Trench",
       blueprintScale: "1:50 Metric",
@@ -1285,28 +773,6 @@ export default function App() {
       categoryLabel: "Archaeological Preservation",
       location: "Saronic Gulf · Aegina, Greece",
       image: "/src/assets/images/acropolis_stone_wall_1794056512464.jpg",
-      beforeImage: "/src/assets/images/acropolis_stone_wall_1794056512464.jpg",
-      afterImage: "/src/assets/images/acropolis_stone_wall_1794056512464.jpg",
-      shortScenes: [
-        {
-          id: "s7-1",
-          title: "Micro-Grout Vacuum Injection into Classical Joints",
-          phase: "construction",
-          duration: "0:15",
-          videoUrl: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/Sintel.mp4",
-          description: "Conservators injecting reversible hydraulic pozzolana into 4th-century BCE limestone joints to counter coastal salt decay.",
-          thumbnail: "/src/assets/images/acropolis_stone_wall_1794056512464.jpg"
-        },
-        {
-          id: "s7-2",
-          title: "Completed Fortification Peripatos Walkway",
-          phase: "completed",
-          duration: "0:21",
-          videoUrl: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4",
-          description: "Stabilized Acropolis ashlar wall illuminated against the Saronic Gulf at twilight.",
-          thumbnail: "/src/assets/images/acropolis_stone_wall_1794056512464.jpg"
-        }
-      ],
       blueprintType: "archaeological",
       blueprintTitle: "Ashlar Masonry Reversible Tendon Cross-Section",
       blueprintScale: "1:20 Metric",
@@ -1330,28 +796,6 @@ export default function App() {
       categoryLabel: "Heritage Sanctuary",
       location: "Kita Ward · Kyoto, Japan",
       image: "/src/assets/images/kyoto_zen_garden_1794056511443.jpg",
-      beforeImage: "/src/assets/images/geotechnical_machinery_site_1794058074902.jpg",
-      afterImage: "/src/assets/images/kyoto_zen_garden_1794056511443.jpg",
-      shortScenes: [
-        {
-          id: "s8-1",
-          title: "Sub-grade Drainage Shoring & Granitic Setting",
-          phase: "construction",
-          duration: "0:16",
-          videoUrl: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/TearsOfSteel.mp4",
-          description: "Hand-dressing Kurama volcanic boulders and setting dry-gravel subterranean water filtration channels.",
-          thumbnail: "/src/assets/images/geotechnical_machinery_site_1794058074902.jpg"
-        },
-        {
-          id: "s8-2",
-          title: "Meditative Gravel Waves & Veranda Walkway",
-          phase: "completed",
-          duration: "0:23",
-          videoUrl: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerEscapes.mp4",
-          description: "Raked Shirakawa granitic gravel gardens and century-old moss sanctuaries framed by cedar pavilions.",
-          thumbnail: "/src/assets/images/kyoto_zen_garden_1794056511443.jpg"
-        }
-      ],
       blueprintType: "archaeological",
       blueprintTitle: "Zen Sanctuary Hydraulic Drainage & Boulder Anchors",
       blueprintScale: "1:50 Metric",
@@ -1374,29 +818,7 @@ export default function App() {
       category: "mosque",
       categoryLabel: "Grand Mosque",
       location: "Abu Dhabi Emirate · United Arab Emirates",
-      image: "/src/assets/images/mosque_courtyard_marble_1794058073956.jpg",
-      beforeImage: "/src/assets/images/cranes_clifftop_construction_1794058074178.jpg",
-      afterImage: "/src/assets/images/mosque_courtyard_marble_1794058073956.jpg",
-      shortScenes: [
-        {
-          id: "s9-1",
-          title: "Heavy Cranes Positioning Sivas Onyx Columns",
-          phase: "construction",
-          duration: "0:15",
-          videoUrl: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4",
-          description: "Tower cranes swinging translucent Turkish onyx column sleeves onto reinforced steel pedestals.",
-          thumbnail: "/src/assets/images/cranes_clifftop_construction_1794058074178.jpg"
-        },
-        {
-          id: "s9-2",
-          title: "Reflective Basins & Luminous Night Colonnades",
-          phase: "completed",
-          duration: "0:24",
-          videoUrl: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerEscapes.mp4",
-          description: "Night flythrough over mirror water basins reflecting illuminated arches and marble minarets.",
-          thumbnail: "/src/assets/images/mosque_courtyard_marble_1794058073956.jpg"
-        }
-      ],
+      image: "/src/assets/images/sheikh_zayed_courtyard_1794312369396.jpg",
       blueprintType: "mosque",
       blueprintTitle: "Reflective Basin Radiant Sub-Cooling Matrix",
       blueprintScale: "1:100 Metric",
@@ -1419,29 +841,7 @@ export default function App() {
       category: "clifftop",
       categoryLabel: "Clifftop Estate",
       location: "Amalfi Coast · Campania, Italy",
-      image: "/src/assets/images/villa_cliffside_terrace_1794056500832.jpg",
-      beforeImage: "/src/assets/images/cranes_clifftop_construction_1794058074178.jpg",
-      afterImage: "/src/assets/images/villa_cliffside_terrace_1794056500832.jpg",
-      shortScenes: [
-        {
-          id: "s10-1",
-          title: "Helicopter Rigging & Clifftop Spider Cranes",
-          phase: "construction",
-          duration: "0:14",
-          videoUrl: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4",
-          description: "Precision helicopter deliveries of Roman travertine flagstones to inaccessible sheer sea cliffs.",
-          thumbnail: "/src/assets/images/cranes_clifftop_construction_1794058074178.jpg"
-        },
-        {
-          id: "s10-2",
-          title: "Finished 3-Tier Cantilevered Lemon Terraces",
-          phase: "completed",
-          duration: "0:20",
-          videoUrl: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerEscapes.mp4",
-          description: "Finished cantilevered infinity pool hanging 120m over the Tyrrhenian Sea with classical pergola columns.",
-          thumbnail: "/src/assets/images/villa_cliffside_terrace_1794056500832.jpg"
-        }
-      ],
+      image: "/src/assets/images/amalfi_cliff_terrace_1794312370486.jpg",
       blueprintType: "clifftop",
       blueprintTitle: "Amalfi Cliff Cantilever Post-Tension Slab",
       blueprintScale: "1:50 Metric",
@@ -1464,29 +864,7 @@ export default function App() {
       category: "cranes",
       categoryLabel: "Ongoing Cranes & Machinery",
       location: "Engadin Valley · Grisons, Switzerland",
-      image: "/src/assets/images/cranes_clifftop_construction_1794058074178.jpg",
-      beforeImage: "/src/assets/images/cranes_clifftop_construction_1794058074178.jpg",
-      afterImage: "/src/assets/images/villa_cliffside_terrace_1794056500832.jpg",
-      shortScenes: [
-        {
-          id: "s11-1",
-          title: "Sub-Zero Heavy Crawler Crane Operating on Snow",
-          phase: "construction",
-          duration: "0:17",
-          videoUrl: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4",
-          description: "Liebherr LR 1300 crawler crane setting 12-ton Valser quartzite monoliths in sub-zero alpine conditions.",
-          thumbnail: "/src/assets/images/cranes_clifftop_construction_1794058074178.jpg"
-        },
-        {
-          id: "s11-2",
-          title: "Completed Heated Stone Terraces & Alpine Vista",
-          phase: "completed",
-          duration: "0:22",
-          videoUrl: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerFun.mp4",
-          description: "Heated thermal quartzite flagstones melting snow automatically overlooking the frozen St. Moritz lake.",
-          thumbnail: "/src/assets/images/villa_cliffside_terrace_1794056500832.jpg"
-        }
-      ],
+      image: "/src/assets/images/alpine_stone_fortress_1794312371092.jpg",
       blueprintType: "crane-site",
       blueprintTitle: "Alpine Permafrost Anchor & Heated Sub-Base",
       blueprintScale: "1:100 Metric",
@@ -1509,29 +887,7 @@ export default function App() {
       category: "museum",
       categoryLabel: "Palaces & Museums",
       location: "Piazza degli Uffizi · Florence, Italy",
-      image: "/src/assets/images/grand_palace_hardscaping_1794058074270.jpg",
-      beforeImage: "/src/assets/images/geotechnical_machinery_site_1794058074902.jpg",
-      afterImage: "/src/assets/images/grand_palace_hardscaping_1794058074270.jpg",
-      shortScenes: [
-        {
-          id: "s12-1",
-          title: "Nighttime Micro-Air Abrasion & Stone Sourcing",
-          phase: "construction",
-          duration: "0:13",
-          videoUrl: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerMeltdowns.mp4",
-          description: "Night-shift conservators resetting Pietra Serena sandstone flagstones under low-pressure sodium lamps.",
-          thumbnail: "/src/assets/images/geotechnical_machinery_site_1794058074902.jpg"
-        },
-        {
-          id: "s12-2",
-          title: "Finished Vasari Loggia Renaissance Walkway",
-          phase: "completed",
-          duration: "0:21",
-          videoUrl: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerFun.mp4",
-          description: "Luminous classical view down the Vasari Loggia toward the Arno River and Ponte Vecchio.",
-          thumbnail: "/src/assets/images/grand_palace_hardscaping_1794058074270.jpg"
-        }
-      ],
+      image: "/src/assets/images/florence_uffizi_loggia_1794312385726.jpg",
       blueprintType: "atrium",
       blueprintTitle: "Vasari Corridor Foundation & Pietra Serena Paving Plan",
       blueprintScale: "1:100 Metric",
@@ -1554,29 +910,7 @@ export default function App() {
       category: "antiquity",
       categoryLabel: "Archaeological Preservation",
       location: "Ma'an Governorate · Hashemite Kingdom of Jordan",
-      image: "/src/assets/images/acropolis_stone_wall_1794056512464.jpg",
-      beforeImage: "/src/assets/images/geotechnical_machinery_site_1794058074902.jpg",
-      afterImage: "/src/assets/images/acropolis_stone_wall_1794056512464.jpg",
-      shortScenes: [
-        {
-          id: "s13-1",
-          title: "Nabataean Conduit Desilting & Hydraulic Pumping",
-          phase: "construction",
-          duration: "0:15",
-          videoUrl: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/Sintel.mp4",
-          description: "Desilting 2,000-year-old rock-cut Nabataean flood retention dams in the narrow Siq canyon.",
-          thumbnail: "/src/assets/images/geotechnical_machinery_site_1794058074902.jpg"
-        },
-        {
-          id: "s13-2",
-          title: "Restored Royal Facades & Flash Flood Spillway",
-          phase: "completed",
-          duration: "0:20",
-          videoUrl: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4",
-          description: "Stabilized rose-red sandstone terraces protected from torrential desert flash floods.",
-          thumbnail: "/src/assets/images/acropolis_stone_wall_1794056512464.jpg"
-        }
-      ],
+      image: "/src/assets/images/petra_sandstone_monument_1794312385963.jpg",
       blueprintType: "archaeological",
       blueprintTitle: "Nabataean Hydraulic Dam & Sandstone Siphon Plan",
       blueprintScale: "1:150 Metric",
@@ -1599,29 +933,7 @@ export default function App() {
       category: "mosque",
       categoryLabel: "Grand Mosque",
       location: "Central Anatolia · Konya, Turkey",
-      image: "/src/assets/images/mosque_courtyard_marble_1794058073956.jpg",
-      beforeImage: "/src/assets/images/geotechnical_machinery_site_1794058074902.jpg",
-      afterImage: "/src/assets/images/mosque_courtyard_marble_1794058073956.jpg",
-      shortScenes: [
-        {
-          id: "s14-1",
-          title: "Micro-Excavation of 13th-Century Cryptoporticus",
-          phase: "construction",
-          duration: "0:14",
-          videoUrl: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/TearsOfSteel.mp4",
-          description: "Archaeological excavators unearthing Seljuk brick vaults beneath the central fountain basin.",
-          thumbnail: "/src/assets/images/geotechnical_machinery_site_1794058074902.jpg"
-        },
-        {
-          id: "s14-2",
-          title: "Restored Turquoise Glazed Tiles & Marble Portico",
-          phase: "completed",
-          duration: "0:22",
-          videoUrl: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerEscapes.mp4",
-          description: "Luminous turquoise ceramic mosaic inlays and Afyon honey marble flagstones in the sacred courtyard.",
-          thumbnail: "/src/assets/images/mosque_courtyard_marble_1794058073956.jpg"
-        }
-      ],
+      image: "/src/assets/images/seljuk_mosque_courtyard_1794312386347.jpg",
       blueprintType: "mosque",
       blueprintTitle: "Seljuk Dome Thrust & Radiant Floor Matrix",
       blueprintScale: "1:75 Metric",
@@ -1644,29 +956,7 @@ export default function App() {
       category: "cranes",
       categoryLabel: "Ongoing Cranes & Machinery",
       location: "Laconia Coast · Peloponnese, Greece",
-      image: "/src/assets/images/geotechnical_machinery_site_1794058074902.jpg",
-      beforeImage: "/src/assets/images/geotechnical_machinery_site_1794058074902.jpg",
-      afterImage: "/src/assets/images/acropolis_stone_wall_1794056512464.jpg",
-      shortScenes: [
-        {
-          id: "s15-1",
-          title: "Barge Landing Craft Mobilizing Comacchio Drill Rig",
-          phase: "construction",
-          duration: "0:16",
-          videoUrl: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerJoyBlazes.mp4",
-          description: "Specialized sea barges delivering compact geotechnical drill rigs to the foot of the monolithic Gibraltar of Greece.",
-          thumbnail: "/src/assets/images/geotechnical_machinery_site_1794058074902.jpg"
-        },
-        {
-          id: "s15-2",
-          title: "Completed Fortress Gate Shoring & Sea Rampart",
-          phase: "completed",
-          duration: "0:21",
-          videoUrl: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4",
-          description: "Fortified lower town sea walls secured against rockfalls with invisible helical tiebacks.",
-          thumbnail: "/src/assets/images/acropolis_stone_wall_1794056512464.jpg"
-        }
-      ],
+      image: "/src/assets/images/monemvasia_citadel_cliff_1794312400083.jpg",
       blueprintType: "crane-site",
       blueprintTitle: "Monemvasia Bedrock Helical Tieback Grid",
       blueprintScale: "1:100 Metric",
@@ -1689,29 +979,7 @@ export default function App() {
       category: "clifftop",
       categoryLabel: "Clifftop Estate",
       location: "Lake Como · Lombardy, Italy",
-      image: "/src/assets/images/villa_cliffside_terrace_1794056500832.jpg",
-      beforeImage: "/src/assets/images/cranes_clifftop_construction_1794058074178.jpg",
-      afterImage: "/src/assets/images/villa_cliffside_terrace_1794056500832.jpg",
-      shortScenes: [
-        {
-          id: "s16-1",
-          title: "Underwater Grouting Divers & Barge Spider Crane",
-          phase: "construction",
-          duration: "0:14",
-          videoUrl: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerMeltdowns.mp4",
-          description: "Specialized dive crews injecting pozzolanic grout into submerged dock arches while barge cranes lift balustrades.",
-          thumbnail: "/src/assets/images/cranes_clifftop_construction_1794058074178.jpg"
-        },
-        {
-          id: "s16-2",
-          title: "Tiered Loggias & Century-Old Candelabra Trees",
-          phase: "completed",
-          duration: "0:23",
-          videoUrl: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerEscapes.mp4",
-          description: "Panoramic lake flight over immaculate green lawn terraces, Carrara marble statues, and mountain reflections.",
-          thumbnail: "/src/assets/images/villa_cliffside_terrace_1794056500832.jpg"
-        }
-      ],
+      image: "/src/assets/images/lake_como_villa_terrace_1794312399785.jpg",
       blueprintType: "clifftop",
       blueprintTitle: "Lake Scour Sub-surface Grout & Terrace Section",
       blueprintScale: "1:50 Metric",
@@ -1753,6 +1021,28 @@ export default function App() {
       antiquity: projects.filter(p => p.category === 'antiquity').length,
     };
   }, [projects]);
+
+  // Gallery Projects Filter
+  const galleryProjects = useMemo(() => {
+    if (galleryCategory === 'all') return projects;
+    return projects.filter(p => p.category === galleryCategory);
+  }, [projects, galleryCategory]);
+
+  // Lightbox keyboard navigation (Esc to close, Left/Right arrows to cycle)
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (lightboxIndex === null) return;
+      if (e.key === 'Escape') {
+        setLightboxIndex(null);
+      } else if (e.key === 'ArrowLeft') {
+        setLightboxIndex((prev) => (prev !== null && prev > 0 ? prev - 1 : projects.length - 1));
+      } else if (e.key === 'ArrowRight') {
+        setLightboxIndex((prev) => (prev !== null && prev < projects.length - 1 ? prev + 1 : 0));
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [lightboxIndex, projects.length]);
 
   // Estimator Calculations
   const getBaseRate = () => {
@@ -1847,6 +1137,14 @@ export default function App() {
             </button>
             <button 
               type="button"
+              onClick={() => setActiveTab('gallery')}
+              className={`py-2 transition-colors relative ${activeTab === 'gallery' ? 'text-[#9E7730] font-semibold' : 'text-[#57534E] hover:text-[#1C1917]'}`}
+            >
+              Media Gallery (16)
+              {activeTab === 'gallery' && <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-[#9E7730]" />}
+            </button>
+            <button 
+              type="button"
               onClick={() => setActiveTab('estimator')}
               className={`py-2 transition-colors relative ${activeTab === 'estimator' ? 'text-[#9E7730] font-semibold' : 'text-[#57534E] hover:text-[#1C1917]'}`}
             >
@@ -1883,6 +1181,45 @@ export default function App() {
             </button>
           </div>
         </div>
+
+        {/* Mobile Navigation Strip */}
+        <div className="md:hidden bg-[#FAF8F5] border-t border-[#E8E2D5] px-4 py-2 flex items-center gap-2 overflow-x-auto text-[11px] font-cinzel uppercase tracking-wider scrollbar-none">
+          <button
+            type="button"
+            onClick={() => setActiveTab('portfolio')}
+            className={`shrink-0 px-3 py-1.5 border transition-colors ${activeTab === 'portfolio' ? 'bg-[#9E7730] text-white border-[#9E7730]' : 'bg-white text-[#57534E] border-[#E8E2D5]'}`}
+          >
+            Commissions ({projects.length})
+          </button>
+          <button
+            type="button"
+            onClick={() => setActiveTab('gallery')}
+            className={`shrink-0 px-3 py-1.5 border transition-colors ${activeTab === 'gallery' ? 'bg-[#9E7730] text-white border-[#9E7730]' : 'bg-white text-[#57534E] border-[#E8E2D5]'}`}
+          >
+            Gallery (16)
+          </button>
+          <button
+            type="button"
+            onClick={() => setActiveTab('estimator')}
+            className={`shrink-0 px-3 py-1.5 border transition-colors ${activeTab === 'estimator' ? 'bg-[#9E7730] text-white border-[#9E7730]' : 'bg-white text-[#57534E] border-[#E8E2D5]'}`}
+          >
+            Calculator
+          </button>
+          <button
+            type="button"
+            onClick={() => setActiveTab('heritage')}
+            className={`shrink-0 px-3 py-1.5 border transition-colors ${activeTab === 'heritage' ? 'bg-[#9E7730] text-white border-[#9E7730]' : 'bg-white text-[#57534E] border-[#E8E2D5]'}`}
+          >
+            Charters
+          </button>
+          <button
+            type="button"
+            onClick={() => setActiveTab('client-portal')}
+            className={`shrink-0 px-3 py-1.5 border transition-colors ${activeTab === 'client-portal' ? 'bg-[#9E7730] text-white border-[#9E7730]' : 'bg-white text-[#57534E] border-[#E8E2D5]'}`}
+          >
+            Vault
+          </button>
+        </div>
       </header>
 
       {/* Main Container */}
@@ -1909,7 +1246,7 @@ export default function App() {
                   </h1>
 
                   <p className="text-xs text-[#78716C] font-light leading-relaxed max-w-md">
-                    Explore 16 sovereign master commissions with short cinematic scene reels, interactive before-and-after analysis, and structural CAD schematics.
+                    Explore 16 sovereign master commissions with high-resolution photographic plates, interactive engineering CAD elevations, and official consortium charters.
                   </p>
 
                   <div className="pt-2 flex flex-wrap items-center gap-3">
@@ -1917,40 +1254,61 @@ export default function App() {
                       type="button"
                       onClick={() => {
                         const villaProject = projects.find(p => p.id === 1);
-                        if (villaProject) setVideoModalProject(villaProject);
+                        if (villaProject) {
+                          setModalItem(villaProject);
+                          setModalActiveSubTab('overview');
+                        }
                       }}
                       className="px-4 py-2.5 bg-[#9E7730] hover:bg-[#886524] text-white text-xs font-cinzel tracking-[0.16em] uppercase flex items-center gap-2 shadow-sm transition-all"
                     >
-                      <BespokePlay className="w-3.5 h-3.5" />
-                      <span>Play Scene Reel</span>
+                      <BespokeZoom className="w-3.5 h-3.5" />
+                      <span>Inspect Monograph & Plans</span>
                     </button>
 
                     <button
                       type="button"
-                      onClick={() => {
-                        const villaProject = projects.find(p => p.id === 1);
-                        if (villaProject) {
-                          setModalItem(villaProject);
-                          setModalActiveSubTab('blueprint');
-                        }
-                      }}
+                      onClick={() => setActiveTab('gallery')}
                       className="px-4 py-2.5 bg-white hover:bg-[#FAF8F5] border border-[#E8E2D5] text-[#1C1917] text-xs font-cinzel tracking-[0.16em] uppercase flex items-center gap-2 transition-all"
                     >
-                      <BespokeBlueprintGlyph className="w-3.5 h-3.5 text-[#9E7730]" />
-                      <span>CAD Blueprint</span>
+                      <span>Media Gallery (16)</span>
                     </button>
                   </div>
                 </div>
 
-                {/* Right Interactive Before & After Slider */}
-                <div className="lg:col-span-7">
-                  <BeforeAfterSlider 
-                    beforeImage="/src/assets/images/cranes_clifftop_construction_1794058074178.jpg"
-                    afterImage="/src/assets/images/villa_cliffside_terrace_1794056500832.jpg"
-                    beforeLabel="Excavation & Cranes"
-                    afterLabel="Completed Atelier"
-                    aspectRatio="aspect-[16/11]"
+                {/* Right Featured Architectural Plate */}
+                <div 
+                  className="lg:col-span-7 relative aspect-[16/11] overflow-hidden bg-[#1C1917] border border-[#E8E2D5] shadow-md group cursor-pointer"
+                  onClick={() => {
+                    const villaProject = projects.find(p => p.id === 1);
+                    if (villaProject) {
+                      setModalItem(villaProject);
+                      setModalActiveSubTab('overview');
+                    }
+                  }}
+                >
+                  <img 
+                    src="/src/assets/images/villa_cliffside_terrace_1794056500832.jpg" 
+                    alt="Featured Commission: Villa Medicea Cliffside Terraces"
+                    className="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-105"
                   />
+                  <div className="absolute top-4 left-4 flex items-center gap-2">
+                    <span className="px-3 py-1 bg-white/95 text-[#1C1917] text-[10px] font-cinzel font-semibold tracking-wider uppercase border border-[#E8E2D5] shadow-xs">
+                      Featured Plate I · Cap d'Ail
+                    </span>
+                    <span className="px-2.5 py-1 bg-black/75 text-[#D9C496] text-[10px] font-cinzel tracking-wider uppercase border border-white/20">
+                      Completed Commission
+                    </span>
+                  </div>
+                  <div className="absolute inset-0 bg-[#1C1917]/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                    <span className="px-4 py-2 bg-white/95 text-[#1C1917] text-xs font-cinzel uppercase tracking-[0.16em] flex items-center gap-2 shadow-lg">
+                      <BespokeZoom className="w-3.5 h-3.5 text-[#9E7730]" />
+                      Open Full Architectural Monograph
+                    </span>
+                  </div>
+                  <div className="absolute bottom-3 left-3 right-3 bg-black/70 backdrop-blur-xs px-4 py-2 border border-white/10 text-white flex items-center justify-between text-xs">
+                    <span className="font-serif-luxury text-sm">Villa Medicea Cliffside Bastions</span>
+                    <span className="text-[11px] font-mono text-[#D9C496]">Monaco & French Riviera</span>
+                  </div>
                 </div>
               </div>
             </section>
@@ -2054,34 +1412,12 @@ export default function App() {
                         <span>{project.stage === 'Ongoing Development' ? 'Ongoing' : 'Completed'}</span>
                       </div>
 
-                      {/* Quick Media Action Overlay */}
-                      <div className="absolute bottom-2.5 left-2.5 right-2.5 flex items-center justify-between opacity-90 group-hover:opacity-100 transition-opacity">
-                        <button
-                          type="button"
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            setVideoModalProject(project);
-                          }}
-                          className="bg-white/95 hover:bg-white text-[#1C1917] px-2.5 py-1 border border-[#E8E2D5] text-[11px] font-cinzel tracking-wider uppercase flex items-center gap-1.5 shadow-sm transition-transform hover:scale-102"
-                          title="Watch short scene reel"
-                        >
-                          <BespokePlay className="w-3 h-3 text-[#9E7730]" />
-                          <span>Reel ({project.shortScenes[0]?.duration || '0:15'})</span>
-                        </button>
-
-                        <button
-                          type="button"
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            setModalItem(project);
-                            setModalActiveSubTab('before-after');
-                          }}
-                          className="bg-[#1C1917]/90 hover:bg-[#1C1917] text-white px-2.5 py-1 text-[11px] font-cinzel tracking-wider uppercase flex items-center gap-1 shadow-sm transition-transform hover:scale-102"
-                          title="Compare before and after"
-                        >
-                          <BespokeSplitGlyph className="w-3 h-3" />
-                          <span>Before / After</span>
-                        </button>
+                      {/* Clean Photographic Inspection Overlay */}
+                      <div className="absolute inset-0 bg-[#1C1917]/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center p-4">
+                        <span className="px-3.5 py-1.5 bg-white/95 text-[#1C1917] text-xs font-cinzel uppercase tracking-[0.16em] flex items-center gap-1.5 shadow-lg">
+                          <BespokeZoom className="w-3.5 h-3.5 text-[#9E7730]" />
+                          Inspect Monograph & Plans →
+                        </span>
                       </div>
                     </div>
 
@@ -2105,6 +1441,139 @@ export default function App() {
                 ))}
               </div>
             </section>
+          </div>
+        )}
+
+        {/* ======================================================== */}
+        {/* TAB: MEDIA GALLERY (RESPONSIVE GRID & LIGHTBOX) */}
+        {/* ======================================================== */}
+        {activeTab === 'gallery' && (
+          <div className="space-y-12 animate-in fade-in duration-200">
+            {/* Gallery Intro Banner */}
+            <div className="text-center space-y-3 max-w-3xl mx-auto">
+              <span className="text-xs font-cinzel tracking-[0.25em] text-[#9E7730] uppercase">
+                Visual Archive · 16 Master Photographic Plates
+              </span>
+              <h2 className="text-3xl sm:text-4xl font-serif-luxury text-[#1C1917]">
+                Sovereign Media Gallery
+              </h2>
+              <p className="text-xs sm:text-sm text-[#78716C] font-light leading-relaxed">
+                Inspect all completed master commissions, clifftop promontories, sacred courtyards, tower crane installations, and imperial atriums in high-resolution master plates. Click any image to launch the interactive full-screen Lightbox.
+              </p>
+            </div>
+
+            {/* Filter Pills */}
+            <div className="flex flex-wrap items-center justify-center gap-2 border-b border-[#E8E2D5] pb-6">
+              {[
+                { id: 'all', label: `All Plates (${projects.length})` },
+                { id: 'clifftop', label: `Clifftop Estates (${counts.clifftop})` },
+                { id: 'mosque', label: `Grand Mosques (${counts.mosque})` },
+                { id: 'cranes', label: `Active Cranes & Sites (${counts.cranes})` },
+                { id: 'museum', label: `Palaces & Museums (${counts.museum})` },
+                { id: 'antiquity', label: `Antiquities (${counts.antiquity})` },
+              ].map(f => (
+                <button
+                  key={f.id}
+                  type="button"
+                  onClick={() => setGalleryCategory(f.id)}
+                  className={`px-4 py-2 text-xs font-cinzel uppercase tracking-wider transition-all border ${
+                    galleryCategory === f.id
+                      ? 'bg-[#9E7730] text-white border-[#9E7730] shadow-xs'
+                      : 'bg-white text-[#57534E] border-[#E8E2D5] hover:border-[#9E7730]/60'
+                  }`}
+                >
+                  {f.label}
+                </button>
+              ))}
+            </div>
+
+            {/* Responsive Grid of 16 High-Res Project Plates */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+              {galleryProjects.map((proj) => {
+                const projectIndex = projects.findIndex(p => p.id === proj.id);
+                return (
+                  <div
+                    key={proj.id}
+                    className="group bg-white border border-[#E8E2D5] hover:border-[#9E7730] transition-all duration-300 shadow-xs flex flex-col overflow-hidden"
+                  >
+                    {/* Image Stage with Hover Zoom & Inspect Overlay */}
+                    <div 
+                      className="relative aspect-4/3 overflow-hidden bg-[#1C1917] cursor-pointer"
+                      onClick={() => setLightboxIndex(projectIndex)}
+                    >
+                      <img
+                        src={proj.image}
+                        alt={proj.title}
+                        className="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-105"
+                      />
+                      
+                      {/* Top Badges */}
+                      <div className="absolute top-3 left-3 flex items-center gap-2">
+                        <span className="px-2.5 py-1 bg-white/95 backdrop-blur-xs text-[#1C1917] text-[10px] font-cinzel font-semibold tracking-wider uppercase border border-[#E8E2D5] shadow-xs">
+                          Plate {proj.romanId}
+                        </span>
+                        <span className={`px-2 py-0.5 text-[9px] font-cinzel uppercase border backdrop-blur-xs ${
+                          proj.stage === 'Completed Commission'
+                            ? 'bg-emerald-950/80 text-emerald-300 border-emerald-500/30'
+                            : proj.stage === 'Ongoing Development'
+                            ? 'bg-amber-950/80 text-amber-300 border-amber-500/30'
+                            : 'bg-blue-950/80 text-blue-300 border-blue-500/30'
+                        }`}>
+                          {proj.stage === 'Completed Commission' ? 'Completed' : proj.stage === 'Ongoing Development' ? 'Site Active' : 'Preservation'}
+                        </span>
+                      </div>
+
+                      {/* Hover Overlay with Inspect CTA */}
+                      <div className="absolute inset-0 bg-[#1C1917]/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center p-4">
+                        <span className="px-4 py-2 bg-white/95 text-[#1C1917] text-xs font-cinzel uppercase tracking-[0.16em] flex items-center gap-2 shadow-lg">
+                          <BespokeZoom className="w-3.5 h-3.5 text-[#9E7730]" />
+                          Inspect Plate ⤢
+                        </span>
+                      </div>
+                    </div>
+
+                    {/* Metadata Card Info */}
+                    <div className="p-5 flex-1 flex flex-col justify-between space-y-3">
+                      <div>
+                        <div className="text-[10px] font-cinzel text-[#9E7730] uppercase tracking-wider">
+                          {proj.location} · {proj.categoryLabel}
+                        </div>
+                        <h3 
+                          onClick={() => setLightboxIndex(projectIndex)}
+                          className="font-serif-luxury text-lg text-[#1C1917] hover:text-[#9E7730] cursor-pointer mt-1 line-clamp-1 transition-colors"
+                        >
+                          {proj.title}
+                        </h3>
+                      </div>
+
+                      {/* Quick Action Footer */}
+                      <div className="pt-3 border-t border-[#F4EFEA] flex items-center justify-between text-xs font-cinzel">
+                        <button
+                          type="button"
+                          onClick={() => setLightboxIndex(projectIndex)}
+                          className="text-[#9E7730] hover:text-[#7A5B1E] flex items-center gap-1 font-semibold"
+                        >
+                          <BespokeZoom className="w-3.5 h-3.5" />
+                          <span>Lightbox</span>
+                        </button>
+                        <div className="flex items-center gap-2">
+                          <button
+                            type="button"
+                            onClick={() => {
+                              setModalItem(proj);
+                              setModalActiveSubTab('overview');
+                            }}
+                            className="text-[#78716C] hover:text-[#1C1917] px-3 py-1 bg-[#FAF8F5] border border-[#E8E2D5]"
+                          >
+                            Dossier & Plans →
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
           </div>
         )}
 
@@ -2393,72 +1862,66 @@ export default function App() {
                   </button>
                 </div>
 
-                {/* Milestone Short Scene Clips */}
+                {/* Milestone Photographic Inspection Plates */}
                 <div className="bg-white border border-[#E8E2D5] p-6 space-y-5">
-                  <div className="flex items-center justify-between">
+                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                     <div className="flex items-center gap-2">
                       <BespokeCrane className="w-5 h-5 text-[#9E7730]" />
                       <h3 className="font-serif-luxury text-xl text-[#1C1917]">
-                        Active Construction Milestone Clips
+                        Active Construction Milestone Photographic Plates
                       </h3>
                     </div>
                     <div className="flex items-center gap-1 bg-[#F4EFEA] p-1 border border-[#E8E2D5] text-xs font-cinzel">
                       <button 
                         type="button"
-                        onClick={() => setPortalSceneFeed('crane-ops')} 
-                        className={`px-3 py-1 ${portalSceneFeed === 'crane-ops' ? 'bg-[#9E7730] text-white font-semibold' : 'text-[#78716C]'}`}
+                        onClick={() => setPortalMilestonePlate('rigging')} 
+                        className={`px-3 py-1 ${portalMilestonePlate === 'rigging' ? 'bg-[#9E7730] text-white font-semibold' : 'text-[#78716C]'}`}
                       >
-                        Clip 01: Tower Cranes
+                        Plate 01: Tower Cranes
                       </button>
                       <button 
                         type="button"
-                        onClick={() => setPortalSceneFeed('masonry')} 
-                        className={`px-3 py-1 ${portalSceneFeed === 'masonry' ? 'bg-[#9E7730] text-white font-semibold' : 'text-[#78716C]'}`}
+                        onClick={() => setPortalMilestonePlate('shoring')} 
+                        className={`px-3 py-1 ${portalMilestonePlate === 'shoring' ? 'bg-[#9E7730] text-white font-semibold' : 'text-[#78716C]'}`}
                       >
-                        Clip 02: Piling & Shoring
+                        Plate 02: Piling & Shoring
                       </button>
                       <button 
                         type="button"
-                        onClick={() => setPortalSceneFeed('finished')} 
-                        className={`px-3 py-1 ${portalSceneFeed === 'finished' ? 'bg-[#9E7730] text-white font-semibold' : 'text-[#78716C]'}`}
+                        onClick={() => setPortalMilestonePlate('promenade')} 
+                        className={`px-3 py-1 ${portalMilestonePlate === 'promenade' ? 'bg-[#9E7730] text-white font-semibold' : 'text-[#78716C]'}`}
                       >
-                        Clip 03: Completed Terrace
+                        Plate 03: Completed Terrace
                       </button>
                     </div>
                   </div>
 
-                  {/* Video Stage */}
-                  <div className="relative aspect-video overflow-hidden bg-black border border-[#E8E2D5]">
-                    <video 
+                  {/* High-Resolution Photographic Stage */}
+                  <div className="relative aspect-video overflow-hidden bg-black border border-[#E8E2D5] group">
+                    <img 
                       src={
-                        portalSceneFeed === 'crane-ops'
-                          ? "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4"
-                          : portalSceneFeed === 'masonry'
-                          ? "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerJoyBlazes.mp4"
-                          : "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerEscapes.mp4"
-                      }
-                      poster={
-                        portalSceneFeed === 'crane-ops'
+                        portalMilestonePlate === 'rigging'
                           ? "/src/assets/images/cranes_clifftop_construction_1794058074178.jpg"
-                          : portalSceneFeed === 'masonry'
+                          : portalMilestonePlate === 'shoring'
                           ? "/src/assets/images/geotechnical_machinery_site_1794058074902.jpg"
                           : "/src/assets/images/villa_cliffside_terrace_1794056500832.jpg"
                       }
-                      autoPlay
-                      controls
-                      playsInline
-                      className="w-full h-full object-cover"
+                      alt="Milestone Archival Plate"
+                      className="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-105"
                     />
-                    <div className="absolute top-4 left-4 bg-black/75 backdrop-blur-xs px-3 py-1 text-white text-[11px] font-cinzel tracking-wider uppercase border border-white/20 pointer-events-none">
-                      {portalSceneFeed === 'crane-ops' && 'Scene Clip: Liebherr 280 EC-H High-Angle Rigging'}
-                      {portalSceneFeed === 'masonry' && 'Scene Clip: Bedrock Rotary Tieback Drilling'}
-                      {portalSceneFeed === 'finished' && 'Scene Clip: Completed Classical Marble Promenade'}
+                    <div className="absolute top-4 left-4 bg-black/75 backdrop-blur-xs px-3 py-1.5 text-white text-[11px] font-cinzel tracking-wider uppercase border border-white/20">
+                      {portalMilestonePlate === 'rigging' && 'Milestone Plate 01: Liebherr 280 EC-H High-Angle Rigging'}
+                      {portalMilestonePlate === 'shoring' && 'Milestone Plate 02: Bedrock Rotary Tieback Drilling & Shoring'}
+                      {portalMilestonePlate === 'promenade' && 'Milestone Plate 03: Completed Classical Marble Promenade'}
+                    </div>
+                    <div className="absolute bottom-4 right-4 bg-black/75 backdrop-blur-xs px-3 py-1 text-[#D9C496] text-[10px] font-cinzel uppercase tracking-widest border border-white/10">
+                      Master Photographic Archive · Sovereign Seal AM-2026
                     </div>
                   </div>
 
                   <div className="space-y-2 pt-1">
                     <div className="flex justify-between text-xs font-cinzel text-[#78716C]">
-                      <span>Commission Milestone Completion</span>
+                      <span>Commission Milestone Execution</span>
                       <span className="text-[#9E7730] font-semibold tabular-nums">78% Executed</span>
                     </div>
                     <div className="h-1.5 bg-[#E8E2D5] overflow-hidden">
@@ -2501,21 +1964,139 @@ export default function App() {
       </main>
 
       {/* ======================================================== */}
-      {/* DEDICATED SHORT SCENES PLAYER MODAL */}
+      {/* INTERACTIVE FULL-SCREEN LIGHTBOX VIEWER */}
       {/* ======================================================== */}
-      {videoModalProject && (
-        <ShortScenesPlayer 
-          projectTitle={videoModalProject.title}
-          scenes={videoModalProject.shortScenes}
-          onClose={() => setVideoModalProject(null)}
-          onOpenMonograph={() => {
-            const p = videoModalProject;
-            setVideoModalProject(null);
-            setModalItem(p);
-            setModalActiveSubTab('overview');
-          }}
-        />
-      )}
+      {lightboxIndex !== null && projects[lightboxIndex] && (() => {
+        const activeProj = projects[lightboxIndex];
+        return (
+          <div className="fixed inset-0 z-50 bg-[#0C0A09]/95 backdrop-blur-md flex flex-col justify-between overflow-hidden select-none animate-in fade-in duration-200">
+            {/* Top Bar */}
+            <div className="bg-[#141210]/90 border-b border-white/10 px-6 py-4 flex items-center justify-between z-10 shrink-0">
+              <div className="flex items-center gap-4">
+                <span className="text-[11px] font-cinzel uppercase tracking-[0.2em] text-[#D9C496] px-2.5 py-1 border border-[#D9C496]/40 bg-[#D9C496]/10">
+                  Plate {activeProj.romanId}
+                </span>
+                <div>
+                  <h3 className="font-serif-luxury text-xl text-white font-medium">
+                    {activeProj.title}
+                  </h3>
+                  <div className="text-[11px] text-[#A8A29E] font-cinzel tracking-wider">
+                    {activeProj.location} · {activeProj.categoryLabel}
+                  </div>
+                </div>
+              </div>
+
+              <div className="flex items-center gap-3">
+                <span className="hidden sm:inline text-xs font-mono text-[#D9C496] tracking-widest border border-white/10 px-3 py-1.5 bg-black/40">
+                  {lightboxIndex + 1} / {projects.length}
+                </span>
+
+                <button
+                  type="button"
+                  onClick={() => {
+                    const p = activeProj;
+                    setLightboxIndex(null);
+                    setModalItem(p);
+                    setModalActiveSubTab('overview');
+                  }}
+                  className="hidden sm:inline-flex items-center gap-1.5 px-4 py-1.5 bg-[#9E7730] hover:bg-[#886524] text-white text-xs font-cinzel uppercase tracking-[0.16em] transition-colors"
+                >
+                  Dossier & Plans →
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setLightboxIndex(null)}
+                  className="px-3.5 py-1.5 bg-white/10 hover:bg-white/20 text-white text-xs font-cinzel uppercase tracking-wider border border-white/20 transition-colors"
+                  title="Press Escape to Close"
+                >
+                  ✕ Close (Esc)
+                </button>
+              </div>
+            </div>
+
+            {/* Central Stage with Left/Right Arrows */}
+            <div className="relative flex-1 flex items-center justify-center p-4 sm:p-6 min-h-0 overflow-hidden">
+              {/* Previous Button */}
+              <button
+                type="button"
+                onClick={() => setLightboxIndex(prev => (prev !== null && prev > 0 ? prev - 1 : projects.length - 1))}
+                className="absolute left-3 sm:left-6 top-1/2 -translate-y-1/2 z-20 w-12 h-12 rounded-full bg-black/60 hover:bg-black/90 text-white border border-white/20 flex items-center justify-center text-2xl font-light hover:border-[#D9C496] transition-all cursor-pointer shadow-lg"
+                title="Previous Plate (Left Arrow)"
+              >
+                ‹
+              </button>
+
+              {/* Main Image Container */}
+              <div className="relative max-h-full max-w-5xl w-full flex flex-col items-center justify-center px-10">
+                <img
+                  src={activeProj.image}
+                  alt={activeProj.title}
+                  className="max-h-[60vh] w-auto max-w-full object-contain border border-white/15 shadow-2xl transition-all duration-300"
+                />
+
+                {/* Subtitle Caption & Metrics */}
+                <div className="mt-3 max-w-4xl w-full bg-[#141210]/80 backdrop-blur-xs border border-white/10 px-5 py-2.5 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs">
+                  <p className="text-[#D6D3D1] font-light text-center sm:text-left line-clamp-1">
+                    {activeProj.description}
+                  </p>
+                  <div className="flex items-center gap-3 text-[11px] font-mono text-[#D9C496] shrink-0">
+                    <span>{activeProj.stats.budget}</span>
+                    <span>·</span>
+                    <span>{activeProj.stats.duration}</span>
+                    <span>·</span>
+                    <span className="text-[#A8A29E]">{activeProj.stats.client}</span>
+                  </div>
+                </div>
+              </div>
+
+              {/* Next Button */}
+              <button
+                type="button"
+                onClick={() => setLightboxIndex(prev => (prev !== null && prev < projects.length - 1 ? prev + 1 : 0))}
+                className="absolute right-3 sm:right-6 top-1/2 -translate-y-1/2 z-20 w-12 h-12 rounded-full bg-black/60 hover:bg-black/90 text-white border border-white/20 flex items-center justify-center text-2xl font-light hover:border-[#D9C496] transition-all cursor-pointer shadow-lg"
+                title="Next Plate (Right Arrow)"
+              >
+                ›
+              </button>
+            </div>
+
+            {/* Bottom Thumbnail Strip Carousel */}
+            <div className="bg-[#141210]/95 border-t border-white/10 px-6 py-3 shrink-0">
+              <div className="flex items-center justify-between mb-2 text-[10px] font-cinzel text-[#A8A29E] uppercase tracking-wider">
+                <span>Select Plate ({projects.length} Total Master Compositions)</span>
+                <span className="hidden sm:inline">Use Left/Right keyboard arrows to navigate · Esc to close</span>
+              </div>
+              <div className="flex items-center gap-2 overflow-x-auto pb-1 scrollbar-thin">
+                {projects.map((proj, idx) => {
+                  const isActive = idx === lightboxIndex;
+                  return (
+                    <button
+                      key={proj.id}
+                      type="button"
+                      onClick={() => setLightboxIndex(idx)}
+                      className={`relative shrink-0 w-20 h-14 border transition-all overflow-hidden ${
+                        isActive
+                          ? 'border-[#D9C496] ring-2 ring-[#9E7730] scale-105 opacity-100'
+                          : 'border-white/20 opacity-50 hover:opacity-90 hover:border-white/50'
+                      }`}
+                    >
+                      <img
+                        src={proj.image}
+                        alt={proj.title}
+                        className="w-full h-full object-cover"
+                      />
+                      <span className="absolute bottom-0.5 right-1 text-[9px] font-cinzel bg-black/80 px-1 text-white">
+                        {proj.romanId}
+                      </span>
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+          </div>
+        );
+      })()}
+
 
       {/* ======================================================== */}
       {/* COMPREHENSIVE MONOGRAPH MODAL (With Before/After, Blueprint & Docs) */}
@@ -2556,18 +2137,7 @@ export default function App() {
               >
                 Overview & Monograph
               </button>
-              <button
-                type="button"
-                onClick={() => setModalActiveSubTab('before-after')}
-                className={`px-4 py-2 uppercase tracking-wider transition-colors flex items-center gap-1.5 ${
-                  modalActiveSubTab === 'before-after'
-                    ? 'bg-white text-[#1C1917] font-semibold border border-[#E8E2D5] shadow-xs'
-                    : 'text-[#78716C] hover:text-[#1C1917]'
-                }`}
-              >
-                <BespokeSplitGlyph className="w-3.5 h-3.5 text-[#9E7730]" />
-                <span>Before & After Slider</span>
-              </button>
+
               <button
                 type="button"
                 onClick={() => setModalActiveSubTab('blueprint')}
@@ -2607,18 +2177,7 @@ export default function App() {
                       className="w-full h-full object-cover"
                       referrerPolicy="no-referrer"
                     />
-                    <button
-                      type="button"
-                      onClick={() => {
-                        const item = modalItem;
-                        setModalItem(null);
-                        setVideoModalProject(item);
-                      }}
-                      className="absolute bottom-4 right-4 bg-[#9E7730] hover:bg-[#886524] text-white px-4 py-2 text-xs font-cinzel uppercase tracking-wider flex items-center gap-2 shadow-md"
-                    >
-                      <BespokePlay className="w-3.5 h-3.5" />
-                      <span>Play Short Scenes ({modalItem.shortScenes.length} Clips)</span>
-                    </button>
+
                   </div>
 
                   <div>
@@ -2664,28 +2223,6 @@ export default function App() {
                       <span className="font-serif-luxury text-base text-[#1C1917]">{modalItem.stats.completion}</span>
                     </div>
                   </div>
-                </div>
-              )}
-
-              {/* SUBTAB: BEFORE & AFTER SLIDER */}
-              {modalActiveSubTab === 'before-after' && (
-                <div className="space-y-4">
-                  <div>
-                    <h4 className="font-serif-luxury text-xl text-[#1C1917]">
-                      Interactive Transformation Analysis
-                    </h4>
-                    <p className="text-xs text-[#57534E] font-light mt-1">
-                      Compare the raw geotechnical excavation and tower crane operations directly against the finished classical architectural work.
-                    </p>
-                  </div>
-
-                  <BeforeAfterSlider 
-                    beforeImage={modalItem.beforeImage}
-                    afterImage={modalItem.afterImage}
-                    beforeLabel="Phase 01: Raw Excavation & Cranes"
-                    afterLabel="Phase 04: Completed Classical Architecture"
-                    aspectRatio="aspect-[16/10]"
-                  />
                 </div>
               )}
 
@@ -2887,6 +2424,7 @@ export default function App() {
               Commissions (16)
             </h4>
             <ul className="space-y-2 text-xs text-[#57534E]">
+              <li><button type="button" onClick={() => setActiveTab('gallery')} className="hover:text-[#9E7730] font-medium text-[#9E7730]">Master Media Gallery (16)</button></li>
               <li><button type="button" onClick={() => { setActiveTab('portfolio'); setSelectedDomain('clifftop'); }} className="hover:text-[#9E7730]">Clifftop Estates ({counts.clifftop})</button></li>
               <li><button type="button" onClick={() => { setActiveTab('portfolio'); setSelectedDomain('mosque'); }} className="hover:text-[#9E7730]">Grand Mosques ({counts.mosque})</button></li>
               <li><button type="button" onClick={() => { setActiveTab('portfolio'); setSelectedDomain('cranes'); }} className="hover:text-[#9E7730]">Active Cranes & Sites ({counts.cranes})</button></li>
@@ -2898,6 +2436,7 @@ export default function App() {
               Directorate
             </h4>
             <ul className="space-y-2 text-xs text-[#57534E]">
+              <li><button type="button" onClick={() => setActiveTab('gallery')} className="hover:text-[#9E7730]">Photographic Archive</button></li>
               <li><button type="button" onClick={() => setActiveTab('estimator')} className="hover:text-[#9E7730]">Scope & Cost Calculator</button></li>
               <li><button type="button" onClick={() => setActiveTab('heritage')} className="hover:text-[#9E7730]">Conservation Protocols</button></li>
               <li><button type="button" onClick={() => setActiveTab('client-portal')} className="hover:text-[#9E7730]">Private Client Vault</button></li>
@@ -2915,7 +2454,7 @@ export default function App() {
           </div>
         </div>
         <div className="max-w-7xl mx-auto px-6 lg:px-12 pt-8 mt-12 border-t border-[#E8E2D5] text-center text-xs text-[#78716C] font-cinzel tracking-wider">
-          © 2026 Aureus & Monument Architectural Consortium · 16 Sovereign Sites · Short Scene Reels & CAD Plans Archive
+          © 2026 Aureus & Monument Architectural Consortium · 16 Sovereign Photographic Plates & CAD Plans Archive
         </div>
       </footer>
 
