@@ -1,0 +1,536 @@
+import React, { useState } from 'react';
+import { 
+  Building2, Landmark, Castle, Sparkles, Calculator, 
+  FileText, Download, ShieldCheck, ArrowRight, Eye, 
+  CheckCircle2, Compass, Layers, Menu, X, ChevronRight, 
+  PhoneCall, Mail, MapPin, ExternalLink, RefreshCw
+} from 'lucide-react';
+
+export default function App() {
+  const [activeTab, setActiveTab] = useState('portfolio');
+  const [selectedDomain, setSelectedDomain] = useState('all');
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [modalItem, setModalItem] = useState(null);
+
+  // Estimator State
+  const [estimatorDomain, setEstimatorDomain] = useState('estate');
+  const [scopeSize, setScopeSize] = useState(5000); // sq ft or units
+  const [tier, setTier] = useState('ultra'); // standard, luxury, museum-grade, heritage-certified
+  const [includeConsortium, setIncludeConsortium] = useState(true);
+
+  // Public Portfolio Data
+  const projects = [
+    {
+      id: 1,
+      title: "Villa Medicea Cliffside Terraces",
+      category: "estate",
+      location: "Monaco & French Riviera",
+      image: "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=1200&q=80",
+      description: "Four-month architectural hardscaping contract involving multi-tiered dry-stack limestone retaining walls, cascading infinity reflection pools, and Mediterranean drought-tolerant arboriculture.",
+      stats: { budget: "$3.8M", duration: "16 Weeks", sustainability: "LEED Platinum Certified" }
+    },
+    {
+      id: 2,
+      title: "National Antiquities Museum Atrium Modernization",
+      category: "museum",
+      location: "Vienna, Austria",
+      image: "https://images.unsplash.com/photo-1565008447742-97f6f38c985c?auto=format&fit=crop&w=1200&q=80",
+      description: "Seamless integration of climate-controlled structural glass enclosures, fiber-optic artifact lighting, and limestone tactile pathways designed for high-capacity visitor flow.",
+      stats: { budget: "$12.4M", duration: "14 Months", sustainability: "Zero-Vibration Engineering" }
+    },
+    {
+      id: 3,
+      title: "Aegina Archaeological Acropolis Wall Stabilization",
+      category: "archaeological",
+      location: "Saronic Gulf, Greece",
+      image: "https://images.unsplash.com/photo-1552832230-c0197dd311b5?auto=format&fit=crop&w=1200&q=80",
+      description: "Non-invasive structural grouting, seismic isolation joints, and traditional mortar replication to secure 4th-century BCE ashlar masonry against coastal erosion.",
+      stats: { budget: "$5.1M", duration: "24 Months", sustainability: "UNESCO Heritage Compliant" }
+    },
+    {
+      id: 4,
+      title: "Sanctuary of the Gods Botanical Sanctuary",
+      category: "hospitality",
+      location: "Kyoto, Japan",
+      image: "https://images.unsplash.com/photo-1542601906990-b4d3fb778b09?auto=format&fit=crop&w=1200&q=80",
+      description: "High-end hospitality landscape architecture featuring volcanic basalt meandering pathways, natural spring-fed koi basins, and sacred moss garden curation.",
+      stats: { budget: "$4.6M", duration: "8 Months", sustainability: "Water Positive Ecosystem" }
+    }
+  ];
+
+  // Calculations for Estimator
+  const getBaseRate = () => {
+    switch(estimatorDomain) {
+      case 'estate': return 350;
+      case 'museum': return 850;
+      case 'archaeological': return 1200;
+      case 'hospitality': return 450;
+      default: return 400;
+    }
+  };
+
+  const getTierMultiplier = () => {
+    switch(tier) {
+      case 'standard': return 1.0;
+      case 'luxury': return 1.35;
+      case 'museum-grade': return 1.85;
+      case 'heritage-certified': return 2.4;
+      default: return 1.2;
+    }
+  };
+
+  const calculatedEstimate = Math.round(scopeSize * getBaseRate() * getTierMultiplier() + (includeConsortium ? 75000 : 0));
+
+  const filteredProjects = selectedDomain === 'all' 
+    ? projects 
+    : projects.filter(p => p.category === selectedDomain);
+
+  return (
+    <div className="min-h-screen bg-stone-950 text-stone-100 font-sans selection:bg-amber-600 selection:text-white">
+      
+      {/* Top Notification Bar */}
+      <div className="bg-gradient-to-r from-amber-900/60 via-stone-900 to-amber-950/60 border-b border-amber-800/30 px-4 py-2 text-xs text-amber-200/90 text-center tracking-widest uppercase">
+        ✦ Commissioning Private Estates & Institutional Conservation for 2026–2027 ✦
+      </div>
+
+      {/* Navigation Header */}
+      <header className="sticky top-0 z-50 bg-stone-950/90 backdrop-blur-md border-b border-stone-800">
+        <div className="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
+          
+          {/* Logo */}
+          <div className="flex items-center space-x-3 cursor-pointer" onClick={() => setActiveTab('portfolio')}>
+            <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-amber-500 to-stone-700 flex items-center justify-center shadow-lg shadow-amber-950/50">
+              <Landmark className="w-5 h-5 text-stone-950" />
+            </div>
+            <div>
+              <span className="text-xl font-serif tracking-widest text-amber-100 font-semibold block">AUREUS & MONUMENT</span>
+              <span className="text-[10px] tracking-widest text-amber-500/80 uppercase">Hardscaping & Heritage Preservation</span>
+            </div>
+          </div>
+
+          {/* Desktop Nav */}
+          <nav className="hidden md:flex items-center space-x-8 text-sm tracking-wider">
+            <button 
+              onClick={() => setActiveTab('portfolio')}
+              className={`transition-colors py-2 border-b-2 ${activeTab === 'portfolio' ? 'border-amber-500 text-amber-300 font-medium' : 'border-transparent text-stone-400 hover:text-stone-200'}`}
+            >
+              PROJECT PORTFOLIO
+            </button>
+            <button 
+              onClick={() => setActiveTab('estimator')}
+              className={`transition-colors py-2 border-b-2 ${activeTab === 'estimator' ? 'border-amber-500 text-amber-300 font-medium' : 'border-transparent text-stone-400 hover:text-stone-200'}`}
+            >
+              SCOPE & COST CALCULATOR
+            </button>
+            <button 
+              onClick={() => setActiveTab('heritage')}
+              className={`transition-colors py-2 border-b-2 ${activeTab === 'heritage' ? 'border-amber-500 text-amber-300 font-medium' : 'border-transparent text-stone-400 hover:text-stone-200'}`}
+            >
+              CONSERVATION STANDARDS
+            </button>
+            <button 
+              onClick={() => setActiveTab('client-portal')}
+              className={`transition-colors py-2 border-b-2 ${activeTab === 'client-portal' ? 'border-amber-500 text-amber-300 font-medium' : 'border-transparent text-stone-400 hover:text-stone-200'}`}
+            >
+              CLIENT ACCESS
+            </button>
+          </nav>
+
+          {/* Inquiry CTA */}
+          <div className="hidden md:flex items-center space-x-4">
+            <button 
+              onClick={() => setActiveTab('estimator')}
+              className="px-5 py-2.5 rounded bg-amber-600 hover:bg-amber-500 text-stone-950 font-medium text-xs tracking-widest uppercase transition-all shadow-lg shadow-amber-950"
+            >
+              Inquire / Estimate
+            </button>
+          </div>
+
+          {/* Mobile Menu Button */}
+          <button className="md:hidden text-stone-300" onClick={() => setMobileMenuOpen(!mobileMenuOpen)}>
+            {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+          </button>
+        </div>
+
+        {/* Mobile Navigation */}
+        {mobileMenuOpen && (
+          <div className="md:hidden bg-stone-900 border-b border-stone-800 px-6 py-4 space-y-3">
+            <button onClick={() => { setActiveTab('portfolio'); setMobileMenuOpen(false); }} className="block w-full text-left py-2 text-sm text-stone-300">Project Portfolio</button>
+            <button onClick={() => { setActiveTab('estimator'); setMobileMenuOpen(false); }} className="block w-full text-left py-2 text-sm text-stone-300">Scope & Cost Calculator</button>
+            <button onClick={() => { setActiveTab('heritage'); setMobileMenuOpen(false); }} className="block w-full text-left py-2 text-sm text-stone-300">Conservation Standards</button>
+            <button onClick={() => { setActiveTab('client-portal'); setMobileMenuOpen(false); }} className="block w-full text-left py-2 text-sm text-stone-300">Client Access</button>
+          </div>
+        )}
+      </header>
+
+      {/* Main Content Sections */}
+      <main className="max-w-7xl mx-auto px-6 py-12">
+
+        {/* TAB 1: PORTFOLIO */}
+        {activeTab === 'portfolio' && (
+          <div className="space-y-12">
+            {/* Hero Banner */}
+            <div className="relative rounded-2xl overflow-hidden border border-stone-800 bg-stone-900 p-8 md:p-16 flex flex-col items-start justify-center min-h-[450px]">
+              <div className="absolute inset-0 z-0">
+                <img 
+                  src="https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=1600&q=80" 
+                  alt="Luxury Estate Hardscaping" 
+                  className="w-full h-full object-cover opacity-30 scale-105 transform hover:scale-100 transition-transform duration-1000"
+                />
+                <div className="absolute inset-0 bg-gradient-to-r from-stone-950 via-stone-950/80 to-transparent"></div>
+              </div>
+              
+              <div className="relative z-10 max-w-2xl space-y-6">
+                <div className="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-amber-500/10 border border-amber-500/30 text-amber-400 text-xs tracking-widest uppercase">
+                  <Sparkles className="w-3.5 h-3.5" />
+                  <span>Master Architectural Hardscaping</span>
+                </div>
+                <h1 className="text-4xl md:text-6xl font-serif text-stone-100 tracking-tight leading-tight">
+                  Permanent Elegance for Estates & Heritage.
+                </h1>
+                <p className="text-stone-300 text-base md:text-lg font-light leading-relaxed">
+                  We engineer cliffside terracing, museum atrium modernization, and archaeological preservation with timeless stone craftsmanship and cutting-edge structural science.
+                </p>
+                <div className="flex flex-wrap gap-4 pt-2">
+                  <button 
+                    onClick={() => setActiveTab('estimator')}
+                    className="px-6 py-3 rounded bg-amber-600 hover:bg-amber-500 text-stone-950 font-medium text-xs tracking-widest uppercase transition-all flex items-center space-x-2 shadow-lg"
+                  >
+                    <span>Launch Project Estimator</span>
+                    <ArrowRight className="w-4 h-4" />
+                  </button>
+                  <button 
+                    onClick={() => setActiveTab('heritage')}
+                    className="px-6 py-3 rounded bg-stone-800 hover:bg-stone-700 text-stone-200 font-medium text-xs tracking-widest uppercase transition-all border border-stone-700"
+                  >
+                    Our Preservation Ethics
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            {/* Filter Bar */}
+            <div className="flex flex-col md:flex-row items-center justify-between gap-4 border-b border-stone-800 pb-6">
+              <div>
+                <h2 className="text-2xl font-serif text-stone-100">Featured Commissions</h2>
+                <p className="text-stone-400 text-sm">Explore our signature private estates, museum modernizations, and monument projects.</p>
+              </div>
+              <div className="flex flex-wrap gap-2 bg-stone-900 p-1.5 rounded-lg border border-stone-800">
+                {[
+                  { id: 'all', label: 'All Projects' },
+                  { id: 'estate', label: 'Luxury Estates' },
+                  { id: 'museum', label: 'Museums' },
+                  { id: 'archaeological', label: 'Archaeological' },
+                  { id: 'hospitality', label: 'Hospitality' }
+                ].map((tab) => (
+                  <button
+                    key={tab.id}
+                    onClick={() => setSelectedDomain(tab.id)}
+                    className={`px-4 py-2 rounded text-xs tracking-wider transition-all ${selectedDomain === tab.id ? 'bg-amber-600 text-stone-950 font-medium shadow' : 'text-stone-400 hover:text-stone-200'}`}
+                  >
+                    {tab.label}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* Project Grid */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+              {filteredProjects.map((project) => (
+                <div 
+                  key={project.id}
+                  className="group bg-stone-900 rounded-xl overflow-hidden border border-stone-800 hover:border-amber-600/50 transition-all duration-300 flex flex-col justify-between shadow-xl"
+                >
+                  <div className="relative h-72 overflow-hidden">
+                    <img 
+                      src={project.image} 
+                      alt={project.title} 
+                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-stone-950 via-transparent to-transparent"></div>
+                    <span className="absolute top-4 left-4 bg-stone-950/80 backdrop-blur-md text-amber-400 border border-amber-500/30 text-[10px] uppercase tracking-widest px-3 py-1 rounded">
+                      {project.category}
+                    </span>
+                    <span className="absolute bottom-4 left-4 text-xs tracking-wider text-stone-300 flex items-center space-x-1">
+                      <MapPin className="w-3.5 h-3.5 text-amber-500" />
+                      <span>{project.location}</span>
+                    </span>
+                  </div>
+
+                  <div className="p-6 space-y-4 flex-1 flex flex-col justify-between">
+                    <div>
+                      <h3 className="text-xl font-serif text-stone-100 group-hover:text-amber-400 transition-colors">
+                        {project.title}
+                      </h3>
+                      <p className="text-stone-400 text-sm mt-2 font-light leading-relaxed">
+                        {project.description}
+                      </p>
+                    </div>
+
+                    <div className="pt-4 border-t border-stone-800/80 grid grid-cols-3 gap-2 text-center text-xs">
+                      <div className="bg-stone-950/60 p-2 rounded border border-stone-800">
+                        <span className="text-stone-500 block text-[10px] uppercase">Investment</span>
+                        <span className="text-amber-400 font-semibold">{project.stats.budget}</span>
+                      </div>
+                      <div className="bg-stone-950/60 p-2 rounded border border-stone-800">
+                        <span className="text-stone-500 block text-[10px] uppercase">Duration</span>
+                        <span className="text-stone-200 font-semibold">{project.stats.duration}</span>
+                      </div>
+                      <div className="bg-stone-950/60 p-2 rounded border border-stone-800">
+                        <span className="text-stone-500 block text-[10px] uppercase">Standard</span>
+                        <span className="text-stone-300 font-semibold truncate block">{project.stats.sustainability}</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* TAB 2: ESTIMATOR */}
+        {activeTab === 'estimator' && (
+          <div className="max-w-4xl mx-auto space-y-8">
+            <div className="text-center space-y-3">
+              <span className="text-xs uppercase tracking-widest text-amber-500">Interactive Proposal Engine</span>
+              <h2 className="text-3xl md:text-4xl font-serif text-stone-100">Project Scope & Cost Calculator</h2>
+              <p className="text-stone-400 text-sm max-w-xl mx-auto">
+                Configure your estate parameters, museum modernization tier, or monument preservation scope for an instant preliminary budgetary projection.
+              </p>
+            </div>
+
+            <div className="bg-stone-900 border border-stone-800 rounded-2xl p-6 md:p-10 space-y-8 shadow-2xl">
+              
+              {/* Domain Selector */}
+              <div className="space-y-3">
+                <label className="text-xs uppercase tracking-wider text-stone-400 font-medium">1. Select Project Domain</label>
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+                  {[
+                    { id: 'estate', label: 'Luxury Estate', icon: Castle },
+                    { id: 'museum', label: 'Museum Modernization', icon: Building2 },
+                    { id: 'archaeological', label: 'Monument / Heritage', icon: Landmark },
+                    { id: 'hospitality', label: 'High-End Hospitality', icon: Sparkles }
+                  ].map((dom) => {
+                    const Icon = dom.icon;
+                    return (
+                      <button
+                        key={dom.id}
+                        onClick={() => setEstimatorDomain(dom.id)}
+                        className={`p-4 rounded-xl border flex flex-col items-center text-center space-y-2 transition-all ${estimatorDomain === dom.id ? 'bg-amber-600/10 border-amber-500 text-amber-300' : 'bg-stone-950/50 border-stone-800 text-stone-400 hover:border-stone-700'}`}
+                      >
+                        <Icon className="w-5 h-5 text-amber-500" />
+                        <span className="text-xs font-medium">{dom.label}</span>
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+
+              {/* Scope Size Slider */}
+              <div className="space-y-3">
+                <div className="flex justify-between items-center">
+                  <label className="text-xs uppercase tracking-wider text-stone-400 font-medium">2. Estimated Scope Scale (Square Feet / Units)</label>
+                  <span className="text-amber-400 font-mono font-bold text-lg">{scopeSize.toLocaleString()} sq. ft.</span>
+                </div>
+                <input 
+                  type="range" 
+                  min="1000" 
+                  max="50000" 
+                  step="500"
+                  value={scopeSize} 
+                  onChange={(e) => setScopeSize(Number(e.target.value))}
+                  className="w-full accent-amber-500 bg-stone-950 h-2 rounded-lg cursor-pointer"
+                />
+                <div className="flex justify-between text-[10px] text-stone-500">
+                  <span>1,000 sq.ft. (Intimate Pavilion)</span>
+                  <span>25,000 sq.ft. (Estate Grounds)</span>
+                  <span>50,000+ sq.ft. (Museum / Monument Complex)</span>
+                </div>
+              </div>
+
+              {/* Quality Tier */}
+              <div className="space-y-3">
+                <label className="text-xs uppercase tracking-wider text-stone-400 font-medium">3. Engineering & Material Tier</label>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                  {[
+                    { id: 'standard', name: 'Standard Architectural', desc: 'Commercial grade stone & native plantings' },
+                    { id: 'luxury', name: 'Luxury Estate Grade', desc: 'Hand-cut imported travertine & automated micro-irrigation' },
+                    { id: 'museum-grade', name: 'Museum Preservation Tier', desc: 'Zero-vibration foundations, seismic isolators & climate glass' },
+                    { id: 'heritage-certified', name: 'UNESCO Heritage Certified', desc: 'Non-invasive archaeological mortar & historical replication' }
+                  ].map((t) => (
+                    <div
+                      key={t.id}
+                      onClick={() => setTier(t.id)}
+                      className={`p-4 rounded-xl border cursor-pointer transition-all ${tier === t.id ? 'bg-amber-600/10 border-amber-500 text-amber-200' : 'bg-stone-950/50 border-stone-800 text-stone-400 hover:border-stone-700'}`}
+                    >
+                      <div className="font-medium text-sm text-stone-200">{t.name}</div>
+                      <div className="text-xs text-stone-500 mt-1">{t.desc}</div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Add-ons */}
+              <div className="flex items-center space-x-3 pt-2">
+                <input 
+                  type="checkbox" 
+                  id="consortium" 
+                  checked={includeConsortium} 
+                  onChange={(e) => setIncludeConsortium(e.target.checked)}
+                  className="w-4 h-4 accent-amber-500 rounded bg-stone-950 border-stone-700 cursor-pointer"
+                />
+                <label htmlFor="consortium" className="text-sm text-stone-300 cursor-pointer">
+                  Include Master Architectural Consortium Site Review & Heritage Impact Assessment ($75,000)
+                </label>
+              </div>
+
+              {/* Estimate Summary Box */}
+              <div className="bg-stone-950 border border-amber-500/30 rounded-xl p-6 flex flex-col md:flex-row items-center justify-between gap-6">
+                <div>
+                  <span className="text-xs text-amber-500/90 tracking-widest uppercase block">Estimated Project Investment</span>
+                  <div className="text-3xl md:text-4xl font-serif text-stone-100 font-bold mt-1">
+                    ${calculatedEstimate.toLocaleString()} <span className="text-xs font-sans font-normal text-stone-400">USD (Est.)</span>
+                  </div>
+                  <p className="text-xs text-stone-400 mt-1">Includes preliminary design, materials procurement, and expert oversight.</p>
+                </div>
+                <button 
+                  onClick={() => alert("Your preliminary estimate has been saved. A senior architectural consultant will contact you within 24 hours.")}
+                  className="w-full md:w-auto px-8 py-3.5 bg-amber-600 hover:bg-amber-500 text-stone-950 font-medium text-xs tracking-widest uppercase rounded shadow-lg transition-all whitespace-nowrap"
+                >
+                  Request Formal Proposal
+                </button>
+              </div>
+
+            </div>
+          </div>
+        )}
+
+        {/* TAB 3: HERITAGE STANDARDS */}
+        {activeTab === 'heritage' && (
+          <div className="max-w-4xl mx-auto space-y-12">
+            <div className="text-center space-y-3">
+              <span className="text-xs uppercase tracking-widest text-amber-500">Ethics & Craftsmanship</span>
+              <h2 className="text-3xl md:text-4xl font-serif text-stone-100">Preservation Standards & Protocols</h2>
+              <p className="text-stone-400 text-sm max-w-xl mx-auto">
+                How we protect historical integrity while integrating modern resilience for world monuments and private estates.
+              </p>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              {[
+                {
+                  title: "Reversible Interventions",
+                  desc: "All structural stabilization and hardscaping reinforcements are engineered to be entirely reversible without damaging original ancient ashlar masonry or historic topographies."
+                },
+                {
+                  title: "Climatic & Seismic Resilience",
+                  desc: "Integrating subterranean shock absorbers, discreet drainage corridors, and thermal expansion joints to protect structures against seismic activity and extreme weather."
+                },
+                {
+                  title: "Material Authenticity",
+                  desc: "Sourcing identical geologic mineral compositions from historic quarries to ensure aesthetic and chemical compatibility with original 4th-century BCE or Renaissance stonework."
+                },
+                {
+                  title: "Zero-Vibration Modernization",
+                  desc: "Employing micro-trenching and non-percussive geotechnical boring for museum atriums and monuments to safeguard fragile artifacts during construction."
+                }
+              ].map((item, idx) => (
+                <div key={idx} className="bg-stone-900 border border-stone-800 p-6 rounded-xl space-y-3">
+                  <div className="w-8 h-8 rounded bg-amber-600/10 border border-amber-500/30 flex items-center justify-center text-amber-400 font-serif font-bold">
+                    0{idx + 1}
+                  </div>
+                  <h3 className="text-lg font-serif text-stone-200">{item.title}</h3>
+                  <p className="text-stone-400 text-sm leading-relaxed font-light">{item.desc}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* TAB 4: CLIENT PORTAL */}
+        {activeTab === 'client-portal' && (
+          <div className="max-w-md mx-auto bg-stone-900 border border-stone-800 rounded-2xl p-8 space-y-6 shadow-2xl">
+            <div className="text-center space-y-2">
+              <div className="w-12 h-12 rounded-full bg-amber-600/10 border border-amber-500/30 flex items-center justify-center mx-auto text-amber-400">
+                <ShieldCheck className="w-6 h-6" />
+              </div>
+              <h2 className="text-2xl font-serif text-stone-100">Private Client Portal</h2>
+              <p className="text-stone-400 text-xs">Secure access for contracted estate owners and museum board trustees.</p>
+            </div>
+
+            <div className="space-y-4">
+              <div>
+                <label className="text-xs uppercase tracking-wider text-stone-400 block mb-2">Secure Access Key / Email</label>
+                <input 
+                  type="email" 
+                  placeholder="client@luxuryestate.com" 
+                  className="w-full bg-stone-950 border border-stone-800 rounded px-4 py-3 text-stone-200 text-sm focus:border-amber-500 focus:outline-none"
+                />
+              </div>
+              <div>
+                <label className="text-xs uppercase tracking-wider text-stone-400 block mb-2">PIN / Authorization Code</label>
+                <input 
+                  type="password" 
+                  placeholder="••••••••••••" 
+                  className="w-full bg-stone-950 border border-stone-800 rounded px-4 py-3 text-stone-200 text-sm focus:border-amber-500 focus:outline-none"
+                />
+              </div>
+              <button 
+                onClick={() => alert("Authentication simulated. In production, this unlocks confidential project spreadsheets and real-time webcam feeds of your site.")}
+                className="w-full py-3 bg-amber-600 hover:bg-amber-500 text-stone-950 font-medium text-xs tracking-widest uppercase rounded shadow-lg transition-all"
+              >
+                Access Secure Vault
+              </button>
+            </div>
+
+            <div className="text-center pt-2">
+              <span className="text-[10px] text-stone-500">Encrypted 256-bit SSL connection for institutional privacy.</span>
+            </div>
+          </div>
+        )}
+
+      </main>
+
+      {/* Footer */}
+      <footer className="border-t border-stone-800/80 bg-stone-950 py-12 mt-20">
+        <div className="max-w-7xl mx-auto px-6 grid grid-cols-1 md:grid-cols-4 gap-8">
+          <div className="space-y-3">
+            <span className="text-lg font-serif tracking-widest text-amber-100 font-semibold block">AUREUS & MONUMENT</span>
+            <p className="text-stone-400 text-xs leading-relaxed font-light">
+              World-class hardscaping, landscape architecture, museum gallery modernization, and archaeological monument preservation.
+            </p>
+          </div>
+          <div>
+            <h4 className="text-xs font-semibold uppercase tracking-widest text-stone-300 mb-3">Domains</h4>
+            <ul className="space-y-2 text-xs text-stone-400">
+              <li><button onClick={() => { setActiveTab('portfolio'); setSelectedDomain('estate'); }} className="hover:text-amber-400">Luxury Private Estates</button></li>
+              <li><button onClick={() => { setActiveTab('portfolio'); setSelectedDomain('museum'); }} className="hover:text-amber-400">Museum Modernization</button></li>
+              <li><button onClick={() => { setActiveTab('portfolio'); setSelectedDomain('archaeological'); }} className="hover:text-amber-400">Archaeological Monuments</button></li>
+              <li><button onClick={() => { setActiveTab('portfolio'); setSelectedDomain('hospitality'); }} className="hover:text-amber-400">High-End Hospitality</button></li>
+            </ul>
+          </div>
+          <div>
+            <h4 className="text-xs font-semibold uppercase tracking-widest text-stone-300 mb-3">Public Resources</h4>
+            <ul className="space-y-2 text-xs text-stone-400">
+              <li><button onClick={() => setActiveTab('estimator')} className="hover:text-amber-400">Project Cost Estimator</button></li>
+              <li><button onClick={() => setActiveTab('heritage')} className="hover:text-amber-400">Conservation Standards</button></li>
+              <li><button onClick={() => setActiveTab('client-portal')} className="hover:text-amber-400">Client Secure Vault</button></li>
+            </ul>
+          </div>
+          <div>
+            <h4 className="text-xs font-semibold uppercase tracking-widest text-stone-300 mb-3">Global Offices</h4>
+            <p className="text-xs text-stone-400 leading-relaxed font-light">
+              Monaco • Vienna • Athens • Kyoto<br/>
+              inquiries@aureusmonument.com<br/>
+              +1 (800) 555-STONE
+            </p>
+          </div>
+        </div>
+        <div className="max-w-7xl mx-auto px-6 pt-8 mt-8 border-t border-stone-900 text-center text-xs text-stone-600">
+          © 2026 Aureus & Monument Architectural Consortium. All Rights Reserved.
+        </div>
+      </footer>
+
+    </div>
+  );
+}
