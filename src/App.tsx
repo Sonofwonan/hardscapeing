@@ -420,7 +420,7 @@ export default function App() {
       role: "Managing Principal & Atelier Director",
       credentials: "M.Arch ETH Zürich · Royal Institute of British Architects (RIBA)",
       bio: "Peter leads the atelier's architectural vision and master commissions across North America, Europe, and the Mediterranean. With three decades directing clifftop estates and monumental public hardscaping, he balances classical proportions with cutting-edge structural innovation.",
-      image: "/src/assets/images/portrait_peter_van_hoff_1794421041103.jpg",
+      image: "/images/portrait_peter_van_hoff_1794421041103.jpg",
       oversight: ["Master Architectural Direction", "Sovereign Design Review", "Consortium Ethics"]
     },
     {
@@ -429,7 +429,7 @@ export default function App() {
       role: "Director of Geotechnical & Structural Engineering",
       credentials: "PE, SE · Ph.D. Geotechnical Engineering, UC Berkeley",
       bio: "Corinne oversees deep bedrock micro-piling, post-tensioned cantilevered slabs, and coastal slope stabilization. Her pioneering non-percussive anchoring techniques safeguard steep hillside estates and monumental ramparts against seismic and hydrostatic pressures.",
-      image: "/src/assets/images/corinne_w_smith.jpeg",
+      image: "/images/corinne_w_smith.jpeg",
       oversight: ["Bedrock Micropile Systems", "Seismic Base Isolation", "Hydrostatic Siphons"]
     },
     {
@@ -438,7 +438,7 @@ export default function App() {
       role: "Director of Sovereign Commissions & Private Estates",
       credentials: "B.A. Dartmouth College · Senior Member, International Society of Trustees",
       bio: "Jefferey oversees discreet liaison with private family offices, sovereign trusts, and philanthropic foundations. He guarantees absolute client privacy, fiduciary transparency, and bespoke execution for private estate hardscaping and private sanctuary developments.",
-      image: "/src/assets/images/portrait_jefferey_t_montgomery_1794421043329.jpg",
+      image: "/images/portrait_jefferey_t_montgomery_1794421043329.jpg",
       oversight: ["Private Family Office Liaison", "Fiduciary Governance", "Non-Disclosure Compliance"]
     },
     {
@@ -447,7 +447,7 @@ export default function App() {
       role: "Chief Conservator & Director of Heritage Charters",
       credentials: "M.Sc. Architectural Conservation, University of Rome La Sapienza · Fellow, ICOMOS",
       bio: "Gabriel leads the atelier's heritage preservation practice, ensuring all interventions strictly comply with the Venice Charter 1964. He directs quarry provenance verification, traditional lime mortar synthesis, and reversible non-invasive structural grouting for antiquities.",
-      image: "/src/assets/images/portrait_gabriel_derrickson_1794421044313.jpg",
+      image: "/images/portrait_gabriel_derrickson_1794421044313.jpg",
       oversight: ["ICOMOS Venice Charter Oversight", "Quarry Petrography Dossiers", "Reversible Conservation"]
     }
   ];
@@ -460,7 +460,7 @@ export default function App() {
       category: "clifftop",
       categoryLabel: "Clifftop Estate",
       location: "Cap d'Ail · Monaco & French Riviera",
-      image: "/src/assets/images/villa_cliffside_terrace_1794056500832.jpg",
+      image: "/images/villa_cliffside_terrace_1794056500832.jpg",
       blueprintType: "clifftop",
       blueprintTitle: "Terrace Retaining Bastion & Micropile Section",
       blueprintScale: "1:50 Metric",
@@ -482,7 +482,7 @@ export default function App() {
       category: "mosque",
       categoryLabel: "Grand Mosque",
       location: "Muscat Governorate · Sultanate of Oman",
-      image: "/src/assets/images/mosque_courtyard_marble_1794058073956.jpg",
+      image: "/images/mosque_courtyard_marble_1794058073956.jpg",
       blueprintType: "mosque",
       blueprintTitle: "Congregational Courtyard & Minaret Caisson Engineering",
       blueprintScale: "1:100 Metric",
@@ -503,7 +503,7 @@ export default function App() {
       category: "museum",
       categoryLabel: "Palace & Museum",
       location: "Vienna Royal Precinct · Austria",
-      image: "/src/assets/images/grand_palace_hardscaping_1794058074270.jpg",
+      image: "/images/grand_palace_hardscaping_1794058074270.jpg",
       blueprintType: "atrium",
       blueprintTitle: "Baroque Cascade Hydraulic Piping & Masonry Core",
       blueprintScale: "1:50 Metric",
@@ -523,7 +523,7 @@ export default function App() {
       category: "museum",
       categoryLabel: "Palace & Museum",
       location: "Ringstraße · Vienna, Austria",
-      image: "/src/assets/images/museum_atrium_marble_1794056502385.jpg",
+      image: "/images/museum_atrium_marble_1794056502385.jpg",
       blueprintType: "atrium",
       blueprintTitle: "Imperial Atrium Structural Glass Lantern & HVAC Trench",
       blueprintScale: "1:50 Metric",
@@ -543,7 +543,7 @@ export default function App() {
       category: "antiquity",
       categoryLabel: "Heritage & Antiquity",
       location: "Saronic Gulf · Aegina, Greece",
-      image: "/src/assets/images/acropolis_stone_wall_1794056512464.jpg",
+      image: "/images/acropolis_stone_wall_1794056512464.jpg",
       blueprintType: "archaeological",
       blueprintTitle: "Ashlar Masonry Reversible Tendon Cross-Section",
       blueprintScale: "1:20 Metric",
@@ -563,7 +563,7 @@ export default function App() {
       category: "antiquity",
       categoryLabel: "Heritage & Antiquity",
       location: "Kita Ward · Kyoto, Japan",
-      image: "/src/assets/images/kyoto_zen_garden_1794056511443.jpg",
+      image: "/images/kyoto_zen_garden_1794056511443.jpg",
       blueprintType: "archaeological",
       blueprintTitle: "Zen Sanctuary Hydraulic Drainage & Boulder Anchors",
       blueprintScale: "1:50 Metric",
@@ -583,7 +583,7 @@ export default function App() {
       category: "mosque",
       categoryLabel: "Grand Mosque",
       location: "Abu Dhabi Emirate · United Arab Emirates",
-      image: "/src/assets/images/sheikh_zayed_courtyard_1794312369396.jpg",
+      image: "/images/sheikh_zayed_courtyard_1794312369396.jpg",
       blueprintType: "mosque",
       blueprintTitle: "Reflective Basin Radiant Sub-Cooling Matrix",
       blueprintScale: "1:100 Metric",
@@ -603,7 +603,7 @@ export default function App() {
       category: "clifftop",
       categoryLabel: "Clifftop Estate",
       location: "Amalfi Coast · Campania, Italy",
-      image: "/src/assets/images/amalfi_cliff_terrace_1794312370486.jpg",
+      image: "/images/amalfi_cliff_terrace_1794312370486.jpg",
       blueprintType: "clifftop",
       blueprintTitle: "Amalfi Cliff Cantilever Post-Tension Slab",
       blueprintScale: "1:50 Metric",
@@ -623,7 +623,7 @@ export default function App() {
       category: "museum",
       categoryLabel: "Palace & Museum",
       location: "Piazza degli Uffizi · Florence, Italy",
-      image: "/src/assets/images/florence_uffizi_loggia_1794312385726.jpg",
+      image: "/images/florence_uffizi_loggia_1794312385726.jpg",
       blueprintType: "atrium",
       blueprintTitle: "Vasari Corridor Foundation & Pietra Serena Paving Plan",
       blueprintScale: "1:100 Metric",
@@ -643,7 +643,7 @@ export default function App() {
       category: "antiquity",
       categoryLabel: "Heritage & Antiquity",
       location: "Ma'an Governorate · Hashemite Kingdom of Jordan",
-      image: "/src/assets/images/petra_sandstone_monument_1794312385963.jpg",
+      image: "/images/petra_sandstone_monument_1794312385963.jpg",
       blueprintType: "archaeological",
       blueprintTitle: "Nabataean Hydraulic Dam & Sandstone Siphon Plan",
       blueprintScale: "1:150 Metric",
@@ -663,7 +663,7 @@ export default function App() {
       category: "mosque",
       categoryLabel: "Grand Mosque",
       location: "Central Anatolia · Konya, Turkey",
-      image: "/src/assets/images/seljuk_mosque_courtyard_1794312386347.jpg",
+      image: "/images/seljuk_mosque_courtyard_1794312386347.jpg",
       blueprintType: "mosque",
       blueprintTitle: "Seljuk Dome Thrust & Radiant Floor Matrix",
       blueprintScale: "1:75 Metric",
@@ -683,7 +683,7 @@ export default function App() {
       category: "clifftop",
       categoryLabel: "Clifftop Estate",
       location: "Lake Como · Lombardy, Italy",
-      image: "/src/assets/images/lake_como_villa_terrace_1794312399785.jpg",
+      image: "/images/lake_como_villa_terrace_1794312399785.jpg",
       blueprintType: "clifftop",
       blueprintTitle: "Lake Scour Sub-surface Grout & Terrace Section",
       blueprintScale: "1:50 Metric",
@@ -781,7 +781,7 @@ export default function App() {
   };
 
   return (
-    <div className="min-h-screen bg-[#FBF9F5] text-[#1C1917] font-sans antialiased selection:bg-[#855712] selection:text-white flex flex-col justify-between">
+    <div className="min-h-screen bg-[#FBF9F5] text-[#1C1917] font-sans antialiased selection:bg-[#855712] selection:text-white flex flex-col justify-between w-full max-w-full overflow-x-hidden">
       
       {/* Toast Notification */}
       {toastMessage && (
@@ -792,28 +792,28 @@ export default function App() {
       )}
 
       {/* Top Bar Header */}
-      <header className="sticky top-0 z-40 bg-[#FFFFFF]/95 backdrop-blur-md border-b border-[#E7E2D5] shadow-xs">
-        <div className="max-w-7xl mx-auto px-6 lg:px-12 h-20 flex items-center justify-between gap-8">
+      <header className="sticky top-0 z-40 bg-[#FFFFFF]/95 backdrop-blur-md border-b border-[#E7E2D5] shadow-xs w-full">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between gap-4 w-full">
           
           {/* Brand Wordmark */}
           <button 
             type="button"
             onClick={() => setActiveTab('home')}
-            className="flex items-center gap-3.5 text-left group shrink-0"
+            className="flex items-center gap-3 text-left group shrink-0"
           >
-            <BespokeMonogram className="w-8 h-8 text-[#855712] group-hover:rotate-12 transition-transform duration-500" />
+            <BespokeMonogram className="w-7 h-7 sm:w-8 sm:h-8 text-[#855712] group-hover:rotate-12 transition-transform duration-500 shrink-0" />
             <div>
-              <div className="font-cinzel text-lg tracking-[0.2em] font-semibold text-[#1C1917] uppercase">
+              <div className="font-cinzel text-base sm:text-lg tracking-[0.16em] sm:tracking-[0.2em] font-semibold text-[#1C1917] uppercase">
                 Aureus & Monument
               </div>
-              <div className="text-[11px] font-sans text-[#78716C] tracking-wide font-normal">
+              <div className="text-[10px] sm:text-[11px] font-sans text-[#78716C] tracking-wide font-normal">
                 Architectural Atelier · Tucson, Arizona
               </div>
             </div>
           </button>
 
-          {/* Navigation Links */}
-          <nav className="hidden lg:flex items-center gap-6 text-sm font-cinzel tracking-wider uppercase">
+          {/* Navigation Links (Visible on desktop xl+) */}
+          <nav className="hidden xl:flex items-center gap-4 2xl:gap-6 text-xs 2xl:text-sm font-cinzel tracking-wider uppercase">
             <button 
               type="button"
               onClick={() => setActiveTab('home')}
@@ -877,22 +877,22 @@ export default function App() {
           <div className="flex items-center gap-3 shrink-0">
             <a 
               href="tel:+18679881524" 
-              className="hidden sm:inline-block text-xs font-mono text-[#78716C] hover:text-[#855712] tracking-wider transition-colors"
+              className="hidden 2xl:inline-block text-xs font-mono text-[#78716C] hover:text-[#855712] tracking-wider transition-colors whitespace-nowrap"
             >
               +1 (867) 988-1524
             </a>
             <button 
               type="button"
               onClick={() => setActiveTab('estimator')}
-              className="px-5 py-2.5 bg-[#855712] hover:bg-[#6D470E] text-white text-xs font-cinzel font-medium tracking-[0.16em] uppercase transition-colors shadow-xs"
+              className="px-4 py-2 sm:px-5 sm:py-2.5 bg-[#855712] hover:bg-[#6D470E] text-white text-xs font-cinzel font-medium tracking-[0.16em] uppercase transition-colors shadow-xs shrink-0"
             >
               Inquire
             </button>
           </div>
         </div>
 
-        {/* Mobile Navigation Strip */}
-        <div className="lg:hidden bg-[#F7F4EE] border-t border-[#E7E2D5] px-4 py-2 flex items-center gap-2 overflow-x-auto text-xs font-cinzel uppercase tracking-wider">
+        {/* Mobile Navigation Strip (Visible below xl screens) */}
+        <div className="xl:hidden bg-[#F7F4EE] border-t border-[#E7E2D5] px-4 py-2 flex items-center gap-2 overflow-x-auto text-xs font-cinzel uppercase tracking-wider">
           <button
             type="button"
             onClick={() => setActiveTab('home')}
@@ -946,17 +946,17 @@ export default function App() {
       </header>
 
       {/* Main Container */}
-      <main className="max-w-7xl mx-auto px-6 lg:px-12 py-10 flex-1 w-full">
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 lg:py-10 flex-1 w-full max-w-full overflow-x-hidden">
         
         {/* ======================================================== */}
         {/* TAB: HOMEPAGE / LANDING PAGE (DEFAULT VIEW) */}
         {/* ======================================================== */}
         {activeTab === 'home' && (
-          <div className="space-y-20 animate-in fade-in duration-300">
+          <div className="space-y-16 lg:space-y-20 animate-in fade-in duration-300 w-full max-w-full">
             
             {/* Hero Section */}
-            <section className="bg-white border border-[#E7E2D5] p-6 sm:p-10 lg:p-14 shadow-xs">
-              <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 items-center">
+            <section className="bg-white border border-[#E7E2D5] p-6 sm:p-10 lg:p-12 shadow-xs w-full max-w-full">
+              <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-10 items-center">
                 
                 {/* Left Narrative */}
                 <div className="lg:col-span-6 space-y-5">
@@ -1011,7 +1011,7 @@ export default function App() {
                   }}
                 >
                   <img 
-                    src="/src/assets/images/villa_cliffside_terrace_1794056500832.jpg" 
+                    src="/images/villa_cliffside_terrace_1794056500832.jpg" 
                     alt="Featured Clifftop Estate: Villa Medicea"
                     className="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-103"
                   />
@@ -2288,8 +2288,8 @@ export default function App() {
       )}
 
       {/* Footer with Tucson, AZ Address and Contact Info */}
-      <footer className="border-t border-[#E7E2D5] bg-[#F7F4EE] py-14 mt-16">
-        <div className="max-w-7xl mx-auto px-6 lg:px-12 grid grid-cols-1 md:grid-cols-4 gap-10">
+      <footer className="border-t border-[#E7E2D5] bg-[#F7F4EE] py-12 lg:py-14 mt-16 w-full max-w-full overflow-x-hidden">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid grid-cols-1 md:grid-cols-4 gap-8 lg:gap-10">
           <div className="space-y-3">
             <div className="flex items-center gap-3">
               <BespokeMonogram className="w-7 h-7 text-[#855712]" />
@@ -2341,7 +2341,7 @@ export default function App() {
             </div>
           </div>
         </div>
-        <div className="max-w-7xl mx-auto px-6 lg:px-12 pt-8 mt-10 border-t border-[#E7E2D5] text-center text-xs text-[#78716C] font-cinzel tracking-wider">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-8 mt-10 border-t border-[#E7E2D5] text-center text-xs text-[#78716C] font-cinzel tracking-wider">
           © 2026 Aureus & Monument Architectural Atelier · Tucson, Arizona · Master Commissions & Heritage Archive
         </div>
       </footer>
