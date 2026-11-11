@@ -1,6 +1,6 @@
 {
   "name": "Aureus & Monument Atelier",
-  "description": "Architectural hardscaping, clifftop estate engineering, grand mosques, active heavy geotechnical civil works, and archaeological heritage preservation.",
+  "description": "Master architectural hardscaping, private clifftop estate terracing, grand mosque courtyards, and archaeological heritage preservation. Based in Tucson, AZ.",
   "requestFramePermissions": [],
   "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
 }
