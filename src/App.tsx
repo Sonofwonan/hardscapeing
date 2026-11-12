@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 
 // ==========================================
 // BESPOKE ARCHITECTURAL ICONS & GLYPHS
@@ -372,8 +372,10 @@ interface Leader {
 // MAIN APP COMPONENT
 // ==========================================
 
+export type TabType = 'home' | 'commissions' | 'directorate' | 'gallery' | 'estimator' | 'heritage' | 'client-portal' | 'contact';
+
 export default function App() {
-  const [activeTab, setActiveTab] = useState<'home' | 'commissions' | 'directorate' | 'gallery' | 'estimator' | 'heritage' | 'client-portal'>('home');
+  const [activeTab, setActiveTab] = useState<TabType>('home');
   const [selectedDomain, setSelectedDomain] = useState<string>('all');
   const [galleryCategory, setGalleryCategory] = useState<string>('all');
   const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
@@ -381,6 +383,17 @@ export default function App() {
   const [modalItem, setModalItem] = useState<Project | null>(null);
   const [modalActiveSubTab, setModalActiveSubTab] = useState<'overview' | 'blueprint' | 'plans'>('overview');
   const [toastMessage, setToastMessage] = useState<string | null>(null);
+
+  // Contact Form State
+  const [contactForm, setContactForm] = useState({
+    name: '',
+    entity: '',
+    email: '',
+    phone: '',
+    message: '',
+    scope: 'Private Clifftop Estate'
+  });
+  const [contactSubmitted, setContactSubmitted] = useState(false);
 
   // Estimator State
   const [estimatorDomain, setEstimatorDomain] = useState<'estate' | 'mosque' | 'palace' | 'heritage'>('estate');
@@ -412,6 +425,53 @@ export default function App() {
     }, 4000);
   };
 
+  // Dedicated URL Navigation (Every page has its own direct /)
+  const navigate = (tab: TabType, customPath?: string) => {
+    setActiveTab(tab);
+    const routeMap: Record<TabType, string> = {
+      'home': '/',
+      'commissions': '/commissions',
+      'directorate': '/directorate',
+      'gallery': '/gallery',
+      'estimator': '/calculator',
+      'heritage': '/charters',
+      'client-portal': '/vault',
+      'contact': '/contact'
+    };
+    const targetPath = customPath || routeMap[tab] || '/';
+    if (typeof window !== 'undefined' && window.location.pathname !== targetPath) {
+      window.history.pushState(null, '', targetPath);
+    }
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  useEffect(() => {
+    const handlePopState = () => {
+      const raw = window.location.pathname.toLowerCase().replace(/\/$/, '');
+      if (raw === '' || raw === '/' || raw === '/home') {
+        setActiveTab('home');
+      } else if (raw === '/commissions' || raw === '/projects' || raw === '/galaxy') {
+        setActiveTab('commissions');
+      } else if (raw === '/directorate' || raw === '/leadership') {
+        setActiveTab('directorate');
+      } else if (raw === '/gallery' || raw === '/archive') {
+        setActiveTab('gallery');
+      } else if (raw === '/calculator' || raw === '/estimator') {
+        setActiveTab('estimator');
+      } else if (raw === '/charters' || raw === '/heritage') {
+        setActiveTab('heritage');
+      } else if (raw === '/vault' || raw === '/client-portal') {
+        setActiveTab('client-portal');
+      } else if (raw === '/contact') {
+        setActiveTab('contact');
+      }
+    };
+
+    handlePopState();
+    window.addEventListener('popstate', handlePopState);
+    return () => window.removeEventListener('popstate', handlePopState);
+  }, []);
+
   // 4 DIRECTORATE LEADERS
   const leaders: Leader[] = [
     {
@@ -420,7 +480,7 @@ export default function App() {
       role: "Managing Principal & Atelier Director",
       credentials: "M.Arch ETH Zürich · Royal Institute of British Architects (RIBA)",
       bio: "Peter leads the atelier's architectural vision and master commissions across North America, Europe, and the Mediterranean. With three decades directing clifftop estates and monumental public hardscaping, he balances classical proportions with cutting-edge structural innovation.",
-      image: "/images/portrait_peter_van_hoff_1794421041103.jpg",
+      image: "/images/portrait_arab_prince_director_1794441904418.jpg",
       oversight: ["Master Architectural Direction", "Sovereign Design Review", "Consortium Ethics"]
     },
     {
@@ -429,7 +489,7 @@ export default function App() {
       role: "Director of Geotechnical & Structural Engineering",
       credentials: "PE, SE · Ph.D. Geotechnical Engineering, UC Berkeley",
       bio: "Corinne oversees deep bedrock micro-piling, post-tensioned cantilevered slabs, and coastal slope stabilization. Her pioneering non-percussive anchoring techniques safeguard steep hillside estates and monumental ramparts against seismic and hydrostatic pressures.",
-      image: "/images/corinne_w_smith.jpeg",
+      image: "/images/portrait_corinne_w_smith_passport_1794441905659.jpg",
       oversight: ["Bedrock Micropile Systems", "Seismic Base Isolation", "Hydrostatic Siphons"]
     },
     {
@@ -438,7 +498,7 @@ export default function App() {
       role: "Director of Sovereign Commissions & Private Estates",
       credentials: "B.A. Dartmouth College · Senior Member, International Society of Trustees",
       bio: "Jefferey oversees discreet liaison with private family offices, sovereign trusts, and philanthropic foundations. He guarantees absolute client privacy, fiduciary transparency, and bespoke execution for private estate hardscaping and private sanctuary developments.",
-      image: "/images/portrait_jefferey_t_montgomery_1794421043329.jpg",
+      image: "/images/portrait_black_american_director_1794441904183.jpg",
       oversight: ["Private Family Office Liaison", "Fiduciary Governance", "Non-Disclosure Compliance"]
     },
     {
@@ -447,7 +507,7 @@ export default function App() {
       role: "Chief Conservator & Director of Heritage Charters",
       credentials: "M.Sc. Architectural Conservation, University of Rome La Sapienza · Fellow, ICOMOS",
       bio: "Gabriel leads the atelier's heritage preservation practice, ensuring all interventions strictly comply with the Venice Charter 1964. He directs quarry provenance verification, traditional lime mortar synthesis, and reversible non-invasive structural grouting for antiquities.",
-      image: "/images/portrait_gabriel_derrickson_1794421044313.jpg",
+      image: "/images/portrait_chinese_director_1794441906290.jpg",
       oversight: ["ICOMOS Venice Charter Oversight", "Quarry Petrography Dossiers", "Reversible Conservation"]
     }
   ];
@@ -460,7 +520,7 @@ export default function App() {
       category: "clifftop",
       categoryLabel: "Clifftop Estate",
       location: "Cap d'Ail · Monaco & French Riviera",
-      image: "/images/villa_cliffside_terrace_1794056500832.jpg",
+      image: "/images/new_cliffside_villa_terrace_1794441906830.jpg",
       blueprintType: "clifftop",
       blueprintTitle: "Terrace Retaining Bastion & Micropile Section",
       blueprintScale: "1:50 Metric",
@@ -798,7 +858,7 @@ export default function App() {
           {/* Brand Wordmark */}
           <button 
             type="button"
-            onClick={() => setActiveTab('home')}
+            onClick={() => navigate('home')}
             className="flex items-center gap-3 text-left group shrink-0"
           >
             <BespokeMonogram className="w-7 h-7 sm:w-8 sm:h-8 text-[#855712] group-hover:rotate-12 transition-transform duration-500 shrink-0" />
@@ -813,10 +873,10 @@ export default function App() {
           </button>
 
           {/* Navigation Links (Visible on desktop xl+) */}
-          <nav className="hidden xl:flex items-center gap-4 2xl:gap-6 text-xs 2xl:text-sm font-cinzel tracking-wider uppercase">
+          <nav className="hidden xl:flex items-center gap-4 2xl:gap-5 text-xs 2xl:text-sm font-cinzel tracking-wider uppercase">
             <button 
               type="button"
-              onClick={() => setActiveTab('home')}
+              onClick={() => navigate('home')}
               className={`py-2 transition-colors relative whitespace-nowrap ${activeTab === 'home' ? 'text-[#855712] font-semibold' : 'text-[#44403C] hover:text-[#1C1917]'}`}
             >
               Home
@@ -824,15 +884,15 @@ export default function App() {
             </button>
             <button 
               type="button"
-              onClick={() => setActiveTab('commissions')}
+              onClick={() => navigate('commissions')}
               className={`py-2 transition-colors relative whitespace-nowrap ${activeTab === 'commissions' ? 'text-[#855712] font-semibold' : 'text-[#44403C] hover:text-[#1C1917]'}`}
             >
-              Commissions ({projects.length})
+              Project Galaxy ({projects.length})
               {activeTab === 'commissions' && <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-[#855712]" />}
             </button>
             <button 
               type="button"
-              onClick={() => setActiveTab('directorate')}
+              onClick={() => navigate('directorate')}
               className={`py-2 transition-colors relative whitespace-nowrap ${activeTab === 'directorate' ? 'text-[#855712] font-semibold' : 'text-[#44403C] hover:text-[#1C1917]'}`}
             >
               Directorate
@@ -840,7 +900,7 @@ export default function App() {
             </button>
             <button 
               type="button"
-              onClick={() => setActiveTab('gallery')}
+              onClick={() => navigate('gallery')}
               className={`py-2 transition-colors relative whitespace-nowrap ${activeTab === 'gallery' ? 'text-[#855712] font-semibold' : 'text-[#44403C] hover:text-[#1C1917]'}`}
             >
               Archive Gallery
@@ -848,7 +908,7 @@ export default function App() {
             </button>
             <button 
               type="button"
-              onClick={() => setActiveTab('estimator')}
+              onClick={() => navigate('estimator')}
               className={`py-2 transition-colors relative whitespace-nowrap ${activeTab === 'estimator' ? 'text-[#855712] font-semibold' : 'text-[#44403C] hover:text-[#1C1917]'}`}
             >
               Calculator
@@ -856,7 +916,7 @@ export default function App() {
             </button>
             <button 
               type="button"
-              onClick={() => setActiveTab('heritage')}
+              onClick={() => navigate('heritage')}
               className={`py-2 transition-colors relative whitespace-nowrap ${activeTab === 'heritage' ? 'text-[#855712] font-semibold' : 'text-[#44403C] hover:text-[#1C1917]'}`}
             >
               Charters
@@ -864,11 +924,19 @@ export default function App() {
             </button>
             <button 
               type="button"
-              onClick={() => setActiveTab('client-portal')}
+              onClick={() => navigate('contact')}
+              className={`py-2 transition-colors relative whitespace-nowrap ${activeTab === 'contact' ? 'text-[#855712] font-semibold' : 'text-[#44403C] hover:text-[#1C1917]'}`}
+            >
+              Contact
+              {activeTab === 'contact' && <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-[#855712]" />}
+            </button>
+            <button 
+              type="button"
+              onClick={() => navigate('client-portal')}
               className={`py-2 transition-colors relative flex items-center gap-1.5 whitespace-nowrap ${activeTab === 'client-portal' ? 'text-[#855712] font-semibold' : 'text-[#44403C] hover:text-[#1C1917]'}`}
             >
               <BespokeVault className="w-4 h-4 text-[#855712]" />
-              <span>Client Vault</span>
+              <span>Vault</span>
               {activeTab === 'client-portal' && <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-[#855712]" />}
             </button>
           </nav>
@@ -883,7 +951,7 @@ export default function App() {
             </a>
             <button 
               type="button"
-              onClick={() => setActiveTab('estimator')}
+              onClick={() => navigate('contact')}
               className="px-4 py-2 sm:px-5 sm:py-2.5 bg-[#855712] hover:bg-[#6D470E] text-white text-xs font-cinzel font-medium tracking-[0.16em] uppercase transition-colors shadow-xs shrink-0"
             >
               Inquire
@@ -895,49 +963,56 @@ export default function App() {
         <div className="xl:hidden bg-[#F7F4EE] border-t border-[#E7E2D5] px-4 py-2 flex items-center gap-2 overflow-x-auto text-xs font-cinzel uppercase tracking-wider">
           <button
             type="button"
-            onClick={() => setActiveTab('home')}
+            onClick={() => navigate('home')}
             className={`shrink-0 px-3 py-1.5 border transition-colors ${activeTab === 'home' ? 'bg-[#855712] text-white border-[#855712]' : 'bg-white text-[#44403C] border-[#E7E2D5]'}`}
           >
             Home
           </button>
           <button
             type="button"
-            onClick={() => setActiveTab('commissions')}
+            onClick={() => navigate('commissions')}
             className={`shrink-0 px-3 py-1.5 border transition-colors ${activeTab === 'commissions' ? 'bg-[#855712] text-white border-[#855712]' : 'bg-white text-[#44403C] border-[#E7E2D5]'}`}
           >
-            Commissions
+            Galaxy
           </button>
           <button
             type="button"
-            onClick={() => setActiveTab('directorate')}
+            onClick={() => navigate('directorate')}
             className={`shrink-0 px-3 py-1.5 border transition-colors ${activeTab === 'directorate' ? 'bg-[#855712] text-white border-[#855712]' : 'bg-white text-[#44403C] border-[#E7E2D5]'}`}
           >
             Directorate
           </button>
           <button
             type="button"
-            onClick={() => setActiveTab('gallery')}
+            onClick={() => navigate('gallery')}
             className={`shrink-0 px-3 py-1.5 border transition-colors ${activeTab === 'gallery' ? 'bg-[#855712] text-white border-[#855712]' : 'bg-white text-[#44403C] border-[#E7E2D5]'}`}
           >
             Gallery
           </button>
           <button
             type="button"
-            onClick={() => setActiveTab('estimator')}
+            onClick={() => navigate('estimator')}
             className={`shrink-0 px-3 py-1.5 border transition-colors ${activeTab === 'estimator' ? 'bg-[#855712] text-white border-[#855712]' : 'bg-white text-[#44403C] border-[#E7E2D5]'}`}
           >
             Calculator
           </button>
           <button
             type="button"
-            onClick={() => setActiveTab('heritage')}
+            onClick={() => navigate('heritage')}
             className={`shrink-0 px-3 py-1.5 border transition-colors ${activeTab === 'heritage' ? 'bg-[#855712] text-white border-[#855712]' : 'bg-white text-[#44403C] border-[#E7E2D5]'}`}
           >
             Charters
           </button>
           <button
             type="button"
-            onClick={() => setActiveTab('client-portal')}
+            onClick={() => navigate('contact')}
+            className={`shrink-0 px-3 py-1.5 border transition-colors ${activeTab === 'contact' ? 'bg-[#855712] text-white border-[#855712]' : 'bg-white text-[#44403C] border-[#E7E2D5]'}`}
+          >
+            Contact
+          </button>
+          <button
+            type="button"
+            onClick={() => navigate('client-portal')}
             className={`shrink-0 px-3 py-1.5 border transition-colors ${activeTab === 'client-portal' ? 'bg-[#855712] text-white border-[#855712]' : 'bg-white text-[#44403C] border-[#E7E2D5]'}`}
           >
             Vault
@@ -952,14 +1027,14 @@ export default function App() {
         {/* TAB: HOMEPAGE / LANDING PAGE (DEFAULT VIEW) */}
         {/* ======================================================== */}
         {activeTab === 'home' && (
-          <div className="space-y-16 lg:space-y-20 animate-in fade-in duration-300 w-full max-w-full">
+          <div className="space-y-20 lg:space-y-28 animate-in fade-in duration-300 w-full max-w-full">
             
-            {/* Hero Section */}
-            <section className="bg-white border border-[#E7E2D5] p-6 sm:p-10 lg:p-12 shadow-xs w-full max-w-full">
-              <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-10 items-center">
+            {/* 1. Hero Section (Clean, spacious, no misplaced contact text) */}
+            <section className="bg-white border border-[#E7E2D5] p-6 sm:p-10 lg:p-14 shadow-xs w-full max-w-full">
+              <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center">
                 
                 {/* Left Narrative */}
-                <div className="lg:col-span-6 space-y-5">
+                <div className="lg:col-span-6 space-y-6">
                   <div className="inline-flex items-center gap-2 text-xs font-cinzel uppercase tracking-[0.25em] text-[#855712] font-semibold">
                     <span>Atelier Established in Tucson, Arizona</span>
                   </div>
@@ -975,31 +1050,27 @@ export default function App() {
                   <div className="pt-2 flex flex-wrap items-center gap-4">
                     <button
                       type="button"
-                      onClick={() => setActiveTab('commissions')}
+                      onClick={() => {
+                        const el = document.getElementById('project-galaxy');
+                        if (el) el.scrollIntoView({ behavior: 'smooth' });
+                        else navigate('commissions');
+                      }}
                       className="px-6 py-3.5 bg-[#855712] hover:bg-[#6D470E] text-white text-xs font-cinzel tracking-[0.18em] uppercase transition-colors shadow-xs"
                     >
-                      Explore Commissions ({projects.length})
+                      Explore Project Galaxy ({projects.length})
                     </button>
 
                     <button
                       type="button"
-                      onClick={() => setActiveTab('directorate')}
+                      onClick={() => navigate('directorate')}
                       className="px-6 py-3.5 bg-[#FBF9F5] hover:bg-[#F3EFE8] border border-[#E7E2D5] text-[#1C1917] text-xs font-cinzel tracking-[0.18em] uppercase transition-colors"
                     >
                       Meet the Directorate
                     </button>
                   </div>
-
-                  <div className="pt-4 border-t border-[#F3EFE8] flex flex-wrap items-center gap-x-6 gap-y-2 text-xs text-[#78716C] font-cinzel">
-                    <span>4500 E Skyline Dr, Tucson, AZ</span>
-                    <span>·</span>
-                    <a href="tel:+18679881524" className="hover:text-[#855712] text-[#44403C] font-mono">+1 (867) 988-1524</a>
-                    <span>·</span>
-                    <a href="mailto:aureusmonument@email.com" className="hover:text-[#855712] text-[#44403C]">aureusmonument@email.com</a>
-                  </div>
                 </div>
 
-                {/* Right Hero Visual Plate */}
+                {/* Right Hero Visual Plate (New Cliffside Architecture) */}
                 <div 
                   className="lg:col-span-6 relative aspect-[4/3] overflow-hidden bg-[#1C1917] border border-[#E7E2D5] shadow-md group cursor-pointer"
                   onClick={() => {
@@ -1011,7 +1082,7 @@ export default function App() {
                   }}
                 >
                   <img 
-                    src="/images/villa_cliffside_terrace_1794056500832.jpg" 
+                    src="/images/new_cliffside_villa_terrace_1794441906830.jpg" 
                     alt="Featured Clifftop Estate: Villa Medicea"
                     className="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-103"
                   />
@@ -1033,7 +1104,164 @@ export default function App() {
               </div>
             </section>
 
-            {/* Core Architectural Pillars */}
+            {/* 2. PROJECT GALAXY SECTION (Clean thumbnails, interactive category filter) */}
+            <section className="space-y-8" id="project-galaxy">
+              <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 border-b border-[#E7E2D5] pb-5">
+                <div>
+                  <span className="text-xs font-cinzel uppercase tracking-[0.25em] text-[#855712] font-semibold">
+                    Curated Masterworks Archive
+                  </span>
+                  <h2 className="text-3xl font-serif-luxury text-[#1C1917] font-normal mt-1">
+                    Project Galaxy
+                  </h2>
+                  <p className="text-sm text-[#44403C] mt-1">
+                    Twelve completed sovereign commissions across private clifftop terraces, sacred grand mosque courtyards, and classical museum atriums.
+                  </p>
+                </div>
+
+                {/* Filter Controls */}
+                <div className="flex items-center gap-2 overflow-x-auto pb-1 text-xs font-cinzel uppercase tracking-wider shrink-0">
+                  {[
+                    { id: 'all', label: `All Galaxy (${projects.length})` },
+                    { id: 'clifftop', label: 'Clifftop Estates (4)' },
+                    { id: 'mosque', label: 'Grand Mosques (4)' },
+                    { id: 'antiquity', label: 'Heritage & Palaces (4)' }
+                  ].map((tab) => (
+                    <button
+                      key={tab.id}
+                      type="button"
+                      onClick={() => setSelectedDomain(tab.id)}
+                      className={`px-3 py-1.5 border transition-colors whitespace-nowrap ${
+                        selectedDomain === tab.id
+                          ? 'bg-[#855712] text-white border-[#855712]'
+                          : 'bg-white text-[#44403C] border-[#E7E2D5] hover:border-[#855712]'
+                      }`}
+                    >
+                      {tab.label}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {/* Project Galaxy Card Grid */}
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {projects
+                  .filter(p => selectedDomain === 'all' || p.category === selectedDomain || (selectedDomain === 'antiquity' && (p.category === 'antiquity' || p.category === 'museum')))
+                  .map((proj) => (
+                    <article
+                      key={proj.id}
+                      onClick={() => {
+                        setModalItem(proj);
+                        setModalActiveSubTab('overview');
+                      }}
+                      className="bg-white border border-[#E7E2D5] hover:border-[#855712] transition-all cursor-pointer group shadow-xs overflow-hidden flex flex-col justify-between"
+                    >
+                      <div className="aspect-[16/10] overflow-hidden bg-[#F3EFE8] relative">
+                        <img 
+                          src={proj.image} 
+                          alt={proj.title}
+                          className="w-full h-full object-cover group-hover:scale-104 transition-transform duration-700 ease-out"
+                        />
+                        <div className="absolute inset-0 bg-[#1C1917]/35 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                          <span className="px-4 py-2 bg-white text-[#1C1917] text-xs font-cinzel uppercase tracking-wider shadow-md">
+                            Inspect Monograph
+                          </span>
+                        </div>
+                        <div className="absolute top-3 left-3 bg-[#1C1917]/85 backdrop-blur-xs px-2.5 py-1 text-[10px] font-cinzel uppercase tracking-wider text-[#E6C687] border border-white/10">
+                          {proj.categoryLabel}
+                        </div>
+                      </div>
+                      <div className="p-5 space-y-2 flex-1 flex flex-col justify-between">
+                        <div>
+                          <h3 className="font-serif-luxury text-xl text-[#1C1917] group-hover:text-[#855712] transition-colors leading-snug font-normal">
+                            {proj.title}
+                          </h3>
+                          <p className="text-xs text-[#78716C] mt-0.5">
+                            {proj.location}
+                          </p>
+                          <p className="text-xs text-[#44403C] line-clamp-2 mt-2 leading-relaxed">
+                            {proj.description}
+                          </p>
+                        </div>
+                        <div className="pt-3 border-t border-[#F3EFE8] flex items-center justify-between text-[11px] font-cinzel">
+                          <span className="text-[#855712] font-semibold">{proj.stats.scopeSqFt}</span>
+                          <span className="text-[#78716C] group-hover:text-[#855712] transition-colors">View Dossier →</span>
+                        </div>
+                      </div>
+                    </article>
+                  ))}
+              </div>
+
+              <div className="text-center pt-2">
+                <button
+                  type="button"
+                  onClick={() => navigate('commissions')}
+                  className="px-8 py-3.5 bg-[#FBF9F5] hover:bg-[#F3EFE8] border border-[#E7E2D5] text-[#1C1917] text-xs font-cinzel tracking-[0.18em] uppercase transition-colors"
+                >
+                  Open Full Technical Dossiers & Blueprint Schematics →
+                </button>
+              </div>
+            </section>
+
+            {/* 3. The Atelier Directorate (Passport Headshots with Studio Grey Backgrounds) */}
+            <section className="bg-white border border-[#E7E2D5] p-8 lg:p-12 space-y-8 shadow-xs">
+              <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 border-b border-[#E7E2D5] pb-6">
+                <div>
+                  <span className="text-xs font-cinzel uppercase tracking-[0.25em] text-[#855712] font-semibold">
+                    Atelier Governance
+                  </span>
+                  <h2 className="text-3xl font-serif-luxury text-[#1C1917] font-normal mt-1">
+                    The Atelier Directorate
+                  </h2>
+                  <p className="text-sm text-[#44403C] mt-1">
+                    Executive leadership governing our structural engineering, sovereign commissions, architectural direction, and heritage charters.
+                  </p>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => navigate('directorate')}
+                  className="text-xs font-cinzel text-[#855712] hover:text-[#6D470E] font-semibold uppercase tracking-wider whitespace-nowrap"
+                >
+                  View Complete Profiles →
+                </button>
+              </div>
+
+              {/* 4 Passport-Style Headshot Cards with Uniform Studio Grey Background */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                {leaders.map((leader) => (
+                  <div 
+                    key={leader.id} 
+                    className="space-y-3 group cursor-pointer bg-[#FAF8F5] border border-[#E7E2D5] p-4 hover:border-[#855712] transition-colors shadow-2xs" 
+                    onClick={() => navigate('directorate')}
+                  >
+                    {/* Passport Portrait Frame */}
+                    <div className="aspect-square overflow-hidden bg-[#525252] border border-[#D5CCBD]">
+                      <img 
+                        src={leader.image} 
+                        alt={leader.name}
+                        className="w-full h-full object-cover object-top group-hover:scale-104 transition-transform duration-500"
+                      />
+                    </div>
+                    <div className="space-y-1">
+                      <h4 className="font-serif-luxury text-lg text-[#1C1917] group-hover:text-[#855712] transition-colors font-medium">
+                        {leader.name}
+                      </h4>
+                      <p className="text-xs text-[#855712] font-cinzel font-semibold leading-snug">
+                        {leader.role}
+                      </p>
+                      <p className="text-[11px] text-[#78716C] font-mono leading-tight">
+                        {leader.credentials}
+                      </p>
+                      <p className="text-xs text-[#57534E] pt-1 line-clamp-3 leading-relaxed">
+                        {leader.bio}
+                      </p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </section>
+
+            {/* 4. Core Disciplines & Architectural Capabilities */}
             <section className="space-y-8">
               <div className="text-center max-w-2xl mx-auto space-y-2">
                 <span className="text-xs font-cinzel uppercase tracking-[0.25em] text-[#855712] font-semibold">
@@ -1086,144 +1314,67 @@ export default function App() {
               </div>
             </section>
 
-            {/* Leadership Spotlight Preview */}
-            <section className="bg-white border border-[#E7E2D5] p-8 lg:p-12 space-y-8 shadow-xs">
-              <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 border-b border-[#E7E2D5] pb-6">
-                <div>
-                  <span className="text-xs font-cinzel uppercase tracking-[0.25em] text-[#855712] font-semibold">
-                    Atelier Governance
-                  </span>
-                  <h2 className="text-3xl font-serif-luxury text-[#1C1917] font-normal mt-1">
-                    The Atelier Directorate
-                  </h2>
-                </div>
-                <button
-                  type="button"
-                  onClick={() => setActiveTab('directorate')}
-                  className="text-xs font-cinzel text-[#855712] hover:text-[#6D470E] font-semibold uppercase tracking-wider"
-                >
-                  View Complete Profiles →
-                </button>
-              </div>
-
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-                {leaders.map((leader) => (
-                  <div key={leader.id} className="space-y-3 group cursor-pointer" onClick={() => setActiveTab('directorate')}>
-                    <div className="aspect-square overflow-hidden bg-[#F3EFE8] border border-[#E7E2D5]">
-                      <img 
-                        src={leader.image} 
-                        alt={leader.name}
-                        className="w-full h-full object-cover object-top group-hover:scale-104 transition-transform duration-500"
-                      />
-                    </div>
-                    <div>
-                      <h4 className="font-serif-luxury text-lg text-[#1C1917] group-hover:text-[#855712] transition-colors font-medium">
-                        {leader.name}
-                      </h4>
-                      <p className="text-xs text-[#855712] font-cinzel font-medium mt-0.5">
-                        {leader.role}
-                      </p>
-                      <p className="text-xs text-[#78716C] mt-1 line-clamp-2">
-                        {leader.bio}
-                      </p>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </section>
-
-            {/* Featured Masterworks Carousel/Grid Preview */}
-            <section className="space-y-8">
-              <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 border-b border-[#E7E2D5] pb-5">
-                <div>
-                  <span className="text-xs font-cinzel uppercase tracking-[0.25em] text-[#855712] font-semibold">
-                    Curated Archive
-                  </span>
-                  <h2 className="text-3xl font-serif-luxury text-[#1C1917] font-normal mt-1">
-                    Featured Master Commissions
-                  </h2>
-                </div>
-                <button
-                  type="button"
-                  onClick={() => setActiveTab('commissions')}
-                  className="text-xs font-cinzel text-[#855712] hover:text-[#6D470E] font-semibold uppercase tracking-wider"
-                >
-                  View All 12 Works →
-                </button>
-              </div>
-
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                {projects.slice(0, 3).map((proj) => (
-                  <article
-                    key={proj.id}
-                    onClick={() => {
-                      setModalItem(proj);
-                      setModalActiveSubTab('overview');
-                    }}
-                    className="bg-white border border-[#E7E2D5] hover:border-[#855712] transition-all cursor-pointer group shadow-xs overflow-hidden flex flex-col justify-between"
-                  >
-                    <div className="aspect-[16/10] overflow-hidden bg-[#F3EFE8] relative">
-                      <img 
-                        src={proj.image} 
-                        alt={proj.title}
-                        className="w-full h-full object-cover group-hover:scale-104 transition-transform duration-700 ease-out"
-                      />
-                      <div className="absolute inset-0 bg-[#1C1917]/35 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-                        <span className="px-4 py-2 bg-white text-[#1C1917] text-xs font-cinzel uppercase tracking-wider">
-                          Inspect Monograph
-                        </span>
-                      </div>
-                    </div>
-                    <div className="p-5 space-y-2">
-                      <div className="text-xs text-[#855712] font-cinzel uppercase tracking-wider font-semibold">
-                        {proj.categoryLabel}
-                      </div>
-                      <h3 className="font-serif-luxury text-lg text-[#1C1917] group-hover:text-[#855712] transition-colors leading-snug font-normal">
-                        {proj.title}
-                      </h3>
-                      <p className="text-xs text-[#78716C]">
-                        {proj.location}
-                      </p>
-                      <p className="text-xs text-[#44403C] line-clamp-2 pt-1">
-                        {proj.description}
-                      </p>
-                    </div>
-                  </article>
-                ))}
-              </div>
-            </section>
-
-            {/* Direct Contact Banner */}
-            <section className="bg-[#1C1917] text-[#FAF8F5] p-8 sm:p-12 border border-[#855712]/30 shadow-xl space-y-6">
-              <div className="max-w-2xl space-y-3">
-                <span className="text-xs font-cinzel uppercase tracking-[0.25em] text-[#E6C687] font-semibold">
-                  Tucson, Arizona Atelier
+            {/* 5. Dedicated Tucson Atelier & Fiduciary Office */}
+            <section className="bg-white border border-[#E7E2D5] p-8 sm:p-12 shadow-xs space-y-8">
+              <div className="max-w-2xl space-y-2">
+                <span className="text-xs font-cinzel uppercase tracking-[0.25em] text-[#855712] font-semibold">
+                  Atelier Headquarters & Consultations
                 </span>
-                <h3 className="text-3xl font-serif-luxury text-white font-normal">
-                  Initiate an Architectural Commission
+                <h3 className="text-3xl font-serif-luxury text-[#1C1917] font-normal">
+                  Tucson Studio & Fiduciary Office
                 </h3>
-                <p className="text-sm text-[#CBD5E1] leading-relaxed">
-                  Our directorate conducts private consultations for sovereign trusts, estate managers, and cultural authorities worldwide.
+                <p className="text-sm text-[#44403C] leading-relaxed">
+                  Consultations for sovereign commissions, private clifftop estates, and monumental conservation are conducted under strict non-disclosure conventions.
                 </p>
               </div>
 
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 pt-4 border-t border-white/10 text-xs font-cinzel">
-                <div>
-                  <span className="text-[#94A3B8] block text-[11px] uppercase">Studio Address</span>
-                  <span className="text-white font-medium mt-1 block">4500 E Skyline Drive, Suite 240<br/>Tucson, AZ 85718</span>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6 pt-4 border-t border-[#E7E2D5]">
+                <div className="space-y-1.5 text-xs">
+                  <span className="font-cinzel uppercase tracking-wider text-[#855712] font-semibold block text-[11px]">
+                    Architectural Studio Address
+                  </span>
+                  <p className="text-[#1C1917] font-medium leading-relaxed">
+                    4500 E Skyline Drive, Suite 240<br />
+                    Tucson, Arizona 85718, United States
+                  </p>
                 </div>
-                <div>
-                  <span className="text-[#94A3B8] block text-[11px] uppercase">Direct Inquiries</span>
-                  <a href="mailto:aureusmonument@email.com" className="text-[#E6C687] hover:underline font-mono mt-1 block text-sm">
-                    aureusmonument@email.com
-                  </a>
-                </div>
-                <div>
-                  <span className="text-[#94A3B8] block text-[11px] uppercase">Telephone</span>
-                  <a href="tel:+18679881524" className="text-[#E6C687] hover:underline font-mono mt-1 block text-sm">
+
+                <div className="space-y-1.5 text-xs">
+                  <span className="font-cinzel uppercase tracking-wider text-[#855712] font-semibold block text-[11px]">
+                    Confidential Telephone Line
+                  </span>
+                  <a href="tel:+18679881524" className="text-[#1C1917] hover:text-[#855712] font-mono text-sm block font-medium">
                     +1 (867) 988-1524
                   </a>
+                  <span className="text-[#78716C] text-[11px]">Mon – Fri, 08:00 – 18:00 MST</span>
                 </div>
+
+                <div className="space-y-1.5 text-xs">
+                  <span className="font-cinzel uppercase tracking-wider text-[#855712] font-semibold block text-[11px]">
+                    Electronic Inquiries
+                  </span>
+                  <a href="mailto:aureusmonument@email.com" className="text-[#855712] hover:underline font-medium text-sm block">
+                    aureusmonument@email.com
+                  </a>
+                  <span className="text-[#78716C] text-[11px]">Encrypted correspondence available</span>
+                </div>
+              </div>
+
+              <div className="pt-2 flex flex-wrap items-center gap-4">
+                <button
+                  type="button"
+                  onClick={() => navigate('contact')}
+                  className="px-6 py-3.5 bg-[#855712] hover:bg-[#6D470E] text-white text-xs font-cinzel tracking-[0.18em] uppercase transition-colors shadow-xs"
+                >
+                  Request Commission Consultation →
+                </button>
+                <button
+                  type="button"
+                  onClick={() => navigate('estimator')}
+                  className="px-6 py-3.5 bg-[#FBF9F5] hover:bg-[#F3EFE8] border border-[#E7E2D5] text-[#1C1917] text-xs font-cinzel tracking-[0.18em] uppercase transition-colors"
+                >
+                  Launch Scope Calculator
+                </button>
               </div>
             </section>
 
@@ -1859,6 +2010,225 @@ export default function App() {
           </div>
         )}
 
+        {/* ======================================================== */}
+        {/* TAB: DEDICATED TUCSON ATELIER & CONTACT PAGE */}
+        {/* ======================================================== */}
+        {activeTab === 'contact' && (
+          <div className="space-y-12 animate-in fade-in duration-200 max-w-5xl mx-auto">
+            <div className="text-center max-w-2xl mx-auto space-y-2">
+              <span className="text-xs font-cinzel tracking-[0.25em] text-[#855712] uppercase font-semibold">
+                Atelier Fiduciary Office
+              </span>
+              <h2 className="text-3xl sm:text-4xl font-serif-luxury text-[#1C1917] font-normal">
+                Tucson Studio & Consultations
+              </h2>
+              <p className="text-sm text-[#44403C]">
+                Private liaison for sovereign trusts, family offices, and cultural preservation authorities worldwide.
+              </p>
+            </div>
+
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+              
+              {/* Studio Information Plate */}
+              <div className="lg:col-span-5 bg-white border border-[#E7E2D5] p-6 sm:p-8 space-y-6 shadow-xs">
+                <div>
+                  <div className="flex items-center gap-3">
+                    <BespokeMonogram className="w-6 h-6 text-[#855712]" />
+                    <span className="font-cinzel text-sm font-semibold tracking-wider text-[#1C1917] uppercase">
+                      Aureus & Monument
+                    </span>
+                  </div>
+                  <p className="text-xs text-[#78716C] mt-1 font-cinzel">
+                    Architectural Atelier · Tucson, Arizona
+                  </p>
+                </div>
+
+                <div className="space-y-4 pt-4 border-t border-[#E7E2D5] text-xs">
+                  <div>
+                    <span className="font-cinzel text-[#855712] uppercase tracking-wider block font-semibold text-[11px]">
+                      Atelier Address
+                    </span>
+                    <p className="text-[#1C1917] font-medium leading-relaxed mt-1">
+                      4500 E Skyline Drive, Suite 240<br />
+                      Tucson, Arizona 85718<br />
+                      United States
+                    </p>
+                  </div>
+
+                  <div>
+                    <span className="font-cinzel text-[#855712] uppercase tracking-wider block font-semibold text-[11px]">
+                      Direct Telephone
+                    </span>
+                    <a href="tel:+18679881524" className="text-[#1C1917] hover:text-[#855712] font-mono text-sm block mt-1 font-medium">
+                      +1 (867) 988-1524
+                    </a>
+                    <span className="text-[#78716C] text-[11px]">Direct liaison to Managing Principal</span>
+                  </div>
+
+                  <div>
+                    <span className="font-cinzel text-[#855712] uppercase tracking-wider block font-semibold text-[11px]">
+                      Electronic Correspondence
+                    </span>
+                    <a href="mailto:aureusmonument@email.com" className="text-[#855712] hover:underline font-medium text-sm block mt-1">
+                      aureusmonument@email.com
+                    </a>
+                  </div>
+                </div>
+
+                <div className="pt-4 border-t border-[#E7E2D5] space-y-2 text-xs">
+                  <span className="font-cinzel uppercase tracking-wider text-[#855712] font-semibold block text-[11px]">
+                    Fiduciary Protocols
+                  </span>
+                  <ul className="space-y-1.5 text-[#57534E]">
+                    <li>• Mutual Non-Disclosure Agreement executed prior to site review</li>
+                    <li>• Comprehensive geotechnical feasibility & quarry petrography</li>
+                    <li>• Direct Directorate partner stewardship on all commissions</li>
+                  </ul>
+                </div>
+              </div>
+
+              {/* Consultation Inquiry Form */}
+              <div className="lg:col-span-7 bg-white border border-[#E7E2D5] p-6 sm:p-8 shadow-xs">
+                {contactSubmitted ? (
+                  <div className="py-12 text-center space-y-4">
+                    <div className="w-12 h-12 bg-[#855712]/10 text-[#855712] rounded-full mx-auto flex items-center justify-center font-cinzel text-xl font-bold">
+                      ✓
+                    </div>
+                    <h3 className="font-serif-luxury text-2xl text-[#1C1917]">Inquiry Dispatched</h3>
+                    <p className="text-xs sm:text-sm text-[#44403C] max-w-md mx-auto leading-relaxed">
+                      Thank you. Your commission consultation brief has been transmitted to the Atelier Directorate in Tucson, Arizona. A principal will initiate contact within 24 business hours.
+                    </p>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setContactSubmitted(false);
+                        setContactForm({ name: '', entity: '', email: '', phone: '', message: '', scope: 'Private Clifftop Estate' });
+                      }}
+                      className="px-6 py-2.5 bg-[#855712] text-white text-xs font-cinzel uppercase tracking-wider hover:bg-[#6D470E] transition-colors"
+                    >
+                      Submit Another Inquiry
+                    </button>
+                  </div>
+                ) : (
+                  <form
+                    onSubmit={(e) => {
+                      e.preventDefault();
+                      setContactSubmitted(true);
+                      showToast('Commission consultation inquiry submitted to Tucson Atelier.');
+                    }}
+                    className="space-y-5 text-xs"
+                  >
+                    <div>
+                      <h3 className="font-serif-luxury text-2xl text-[#1C1917] font-normal">
+                        Request Commission Consultation
+                      </h3>
+                      <p className="text-xs text-[#78716C] mt-1">
+                        Please indicate the nature of your private estate, sacred, or institutional project.
+                      </p>
+                    </div>
+
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                      <div className="space-y-1">
+                        <label className="font-cinzel text-[11px] text-[#44403C] uppercase tracking-wider block font-medium">
+                          Principal Name *
+                        </label>
+                        <input
+                          type="text"
+                          required
+                          value={contactForm.name}
+                          onChange={(e) => setContactForm({ ...contactForm, name: e.target.value })}
+                          placeholder="e.g. Lord Alistair Vance"
+                          className="w-full px-3.5 py-2.5 border border-[#E7E2D5] bg-[#FBF9F5] text-[#1C1917] focus:outline-hidden focus:border-[#855712]"
+                        />
+                      </div>
+
+                      <div className="space-y-1">
+                        <label className="font-cinzel text-[11px] text-[#44403C] uppercase tracking-wider block font-medium">
+                          Entity / Trust
+                        </label>
+                        <input
+                          type="text"
+                          value={contactForm.entity}
+                          onChange={(e) => setContactForm({ ...contactForm, entity: e.target.value })}
+                          placeholder="Family Office, Sovereign Trust, or Agency"
+                          className="w-full px-3.5 py-2.5 border border-[#E7E2D5] bg-[#FBF9F5] text-[#1C1917] focus:outline-hidden focus:border-[#855712]"
+                        />
+                      </div>
+                    </div>
+
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                      <div className="space-y-1">
+                        <label className="font-cinzel text-[11px] text-[#44403C] uppercase tracking-wider block font-medium">
+                          Email Address *
+                        </label>
+                        <input
+                          type="email"
+                          required
+                          value={contactForm.email}
+                          onChange={(e) => setContactForm({ ...contactForm, email: e.target.value })}
+                          placeholder="fiduciary@familyoffice.com"
+                          className="w-full px-3.5 py-2.5 border border-[#E7E2D5] bg-[#FBF9F5] text-[#1C1917] focus:outline-hidden focus:border-[#855712]"
+                        />
+                      </div>
+
+                      <div className="space-y-1">
+                        <label className="font-cinzel text-[11px] text-[#44403C] uppercase tracking-wider block font-medium">
+                          Telephone
+                        </label>
+                        <input
+                          type="tel"
+                          value={contactForm.phone}
+                          onChange={(e) => setContactForm({ ...contactForm, phone: e.target.value })}
+                          placeholder="+1 (867) 988-1524"
+                          className="w-full px-3.5 py-2.5 border border-[#E7E2D5] bg-[#FBF9F5] text-[#1C1917] focus:outline-hidden focus:border-[#855712]"
+                        />
+                      </div>
+                    </div>
+
+                    <div className="space-y-1">
+                      <label className="font-cinzel text-[11px] text-[#44403C] uppercase tracking-wider block font-medium">
+                        Commission Category
+                      </label>
+                      <select
+                        value={contactForm.scope}
+                        onChange={(e) => setContactForm({ ...contactForm, scope: e.target.value })}
+                        className="w-full px-3.5 py-2.5 border border-[#E7E2D5] bg-[#FBF9F5] text-[#1C1917] focus:outline-hidden focus:border-[#855712]"
+                      >
+                        <option value="Private Clifftop Estate">Private Clifftop Estate Terraces</option>
+                        <option value="Grand Mosque Courtyard">Sacred Grand Mosque Courtyard</option>
+                        <option value="Museum & Palace Loggia">Museum Loggia & Classical Repaving</option>
+                        <option value="Heritage & Antiquities">Heritage & Archaeological Monument Conservation</option>
+                      </select>
+                    </div>
+
+                    <div className="space-y-1">
+                      <label className="font-cinzel text-[11px] text-[#44403C] uppercase tracking-wider block font-medium">
+                        Project Scope & Topographical Context *
+                      </label>
+                      <textarea
+                        required
+                        rows={4}
+                        value={contactForm.message}
+                        onChange={(e) => setContactForm({ ...contactForm, message: e.target.value })}
+                        placeholder="Provide details regarding the site location, square footage, existing slope or historical masonry conditions..."
+                        className="w-full px-3.5 py-2.5 border border-[#E7E2D5] bg-[#FBF9F5] text-[#1C1917] focus:outline-hidden focus:border-[#855712]"
+                      />
+                    </div>
+
+                    <button
+                      type="submit"
+                      className="w-full py-3.5 bg-[#855712] hover:bg-[#6D470E] text-white text-xs font-cinzel uppercase tracking-[0.18em] transition-colors shadow-xs"
+                    >
+                      Transmit Confidential Consultation Request →
+                    </button>
+                  </form>
+                )}
+              </div>
+
+            </div>
+          </div>
+        )}
+
       </main>
 
       {/* ======================================================== */}
@@ -2306,11 +2676,12 @@ export default function App() {
               Navigation
             </h4>
             <ul className="space-y-2 text-xs text-[#44403C]">
-              <li><button type="button" onClick={() => setActiveTab('home')} className="hover:text-[#855712]">Atelier Home</button></li>
-              <li><button type="button" onClick={() => setActiveTab('commissions')} className="hover:text-[#855712]">Commissions ({projects.length})</button></li>
-              <li><button type="button" onClick={() => setActiveTab('directorate')} className="hover:text-[#855712]">The Directorate</button></li>
-              <li><button type="button" onClick={() => setActiveTab('gallery')} className="hover:text-[#855712]">Media Gallery</button></li>
-              <li><button type="button" onClick={() => setActiveTab('estimator')} className="hover:text-[#855712]">Scope Calculator</button></li>
+              <li><button type="button" onClick={() => navigate('home')} className="hover:text-[#855712]">Atelier Home</button></li>
+              <li><button type="button" onClick={() => navigate('commissions')} className="hover:text-[#855712]">Project Galaxy ({projects.length})</button></li>
+              <li><button type="button" onClick={() => navigate('directorate')} className="hover:text-[#855712]">The Directorate</button></li>
+              <li><button type="button" onClick={() => navigate('gallery')} className="hover:text-[#855712]">Media Gallery</button></li>
+              <li><button type="button" onClick={() => navigate('estimator')} className="hover:text-[#855712]">Scope Calculator</button></li>
+              <li><button type="button" onClick={() => navigate('contact')} className="hover:text-[#855712]">Tucson Studio & Inquiries</button></li>
             </ul>
           </div>
           <div>
