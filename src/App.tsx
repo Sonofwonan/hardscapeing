@@ -978,64 +978,6 @@ export default function App() {
               </div>
             </section>
 
-            {/* 4. GALLERY SHOWCASE (FRAMLESS PHOTOGRAPHY, NATURAL MONOGRAPH RHYTHM) */}
-            <section className="w-full bg-[#FAF8F5] py-20 sm:py-28 border-b border-[#EAE5DB]">
-              <div className="w-full max-w-[1720px] mx-auto px-6 sm:px-12 lg:px-16 space-y-12">
-                
-                <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-6 border-b border-[#EAE5DB] pb-6">
-                  <div>
-                    <span className="text-xs uppercase tracking-widest text-[#8E795B] font-semibold">
-                      Selected Works
-                    </span>
-                    <h2 className="text-3xl sm:text-5xl font-serif-luxury text-[#1F1C18] font-normal mt-1">
-                      International Portfolio
-                    </h2>
-                  </div>
-                  <button
-                    type="button"
-                    onClick={() => handleNavigate('projects')}
-                    className="text-xs font-semibold text-[#8E795B] hover:text-[#1F1C18] flex items-center gap-1.5 transition-colors cursor-pointer"
-                  >
-                    <span>View All Works ({projects.length})</span>
-                    <ChevronRight className="w-4 h-4" />
-                  </button>
-                </div>
-
-                {/* 3 Large Frameless Project Showcases */}
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-8 sm:gap-10">
-                  {projects.slice(0, 3).map((p) => (
-                    <article 
-                      key={p.id}
-                      onClick={() => setModalProject(p)}
-                      className="group cursor-pointer space-y-4"
-                    >
-                      <div className="relative aspect-16/11 overflow-hidden rounded-sm bg-stone-200">
-                        <img 
-                          src={p.image} 
-                          alt={p.title}
-                          className="w-full h-full object-cover group-hover:scale-103 transition-transform duration-700 ease-out"
-                        />
-                        <div className="absolute top-3 left-3 bg-[#FAF8F5]/90 backdrop-blur-xs px-2.5 py-1 text-[11px] font-mono text-[#1F1C18]">
-                          {p.year}
-                        </div>
-                      </div>
-
-                      <div className="space-y-1.5">
-                        <div className="text-xs text-[#8E795B] font-medium tracking-wide">
-                          {p.categoryLabel} · {p.location.split('·')[0].trim()}
-                        </div>
-                        <h3 className="text-xl sm:text-2xl font-serif-luxury text-[#1F1C18] group-hover:text-[#967241] transition-colors font-medium leading-snug">
-                          {p.title}
-                        </h3>
-                        <p className="text-xs sm:text-sm text-[#5A5247] line-clamp-2 leading-relaxed">
-                          {p.description}
-                        </p>
-                      </div>
-                    </article>
-                  ))}
-                </div>
-              </div>
-            </section>
 
             {/* 5. HUMAN CRAFTSMEN SECTION (WARM, AUTHENTIC, REVERENT TO STONE) */}
             <section className="w-full bg-[#F5F2EC] py-20 sm:py-28 border-b border-[#EAE5DB]">
