@@ -8,8 +8,8 @@
     margin: 0;
     padding: 0;
     font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
-    background-color: #FBF9F5;
-    color: #1C1917;
+    background-color: #FAFAF9;
+    color: #18181B;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
   }
@@ -21,13 +21,12 @@
     min-height: 100vh;
   }
 
-  /* High-contrast headings and readable body text */
   h1, h2, h3, h4, h5, h6 {
-    color: #1C1917;
+    color: #18181B;
   }
 
   p {
-    color: #292524;
+    color: #3F3F46;
   }
 }
 
@@ -35,26 +34,22 @@
   font-family: 'Cormorant Garamond', Georgia, serif;
 }
 
-.font-cinzel {
-  font-family: 'Cinzel', serif;
-}
-
-.font-sans-luxury {
+.font-sans-clean {
   font-family: 'Plus Jakarta Sans', system-ui, sans-serif;
 }
 
-/* Custom scrollbars for clean presentation */
+/* Elegant slim scrollbar */
 ::-webkit-scrollbar {
   width: 6px;
   height: 6px;
 }
 ::-webkit-scrollbar-track {
-  background: #F3EFE8;
+  background: #F5F5F4;
 }
 ::-webkit-scrollbar-thumb {
-  background: #D5CCBD;
+  background: #D4D4D8;
   border-radius: 3px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: #B4A48E;
+  background: #A1A1AA;
 }
