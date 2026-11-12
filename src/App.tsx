@@ -628,21 +628,21 @@ export default function App() {
       {/* EDITORIAL HEADER (SEAMLESS, BORDERLESS LUXURY) */}
       {/* ======================================================== */}
       <header className="sticky top-0 z-40 bg-[#FAF8F5]/90 backdrop-blur-md border-b border-[#EAE5DB] transition-all">
-        <div className="w-full max-w-[1720px] mx-auto px-6 sm:px-12 lg:px-16 h-20 sm:h-22 flex items-center justify-between gap-6">
+        <div className="w-full max-w-[1720px] mx-auto px-4 sm:px-12 lg:px-16 h-16 sm:h-22 flex items-center justify-between gap-3 sm:gap-6">
           
           {/* Brand Wordmark & Bespoke Logo */}
           <button 
             type="button"
             onClick={handleLogoClick}
-            className="flex items-center gap-3 text-left group cursor-pointer focus:outline-none shrink-0"
+            className="flex items-center gap-2.5 sm:gap-3 text-left group cursor-pointer focus:outline-none shrink-0"
             aria-label="Aureus & Monument Home"
           >
-            <BespokeLogo className="w-9 h-9 sm:w-10 sm:h-10 group-hover:scale-105 transition-transform duration-300 shrink-0" />
-            <div>
-              <span className="text-lg sm:text-2xl font-serif-luxury font-medium tracking-wide text-[#1F1C18] block leading-tight">
+            <BespokeLogo className="w-8 h-8 sm:w-10 sm:h-10 group-hover:scale-105 transition-transform duration-300 shrink-0" />
+            <div className="min-w-0">
+              <span className="text-base sm:text-2xl font-serif-luxury font-medium tracking-wide text-[#1F1C18] block leading-tight">
                 AUREUS & MONUMENT
               </span>
-              <span className="text-[11px] text-[#787168] font-sans tracking-normal block">
+              <span className="text-[9px] sm:text-[11px] text-[#787168] font-sans tracking-normal block truncate max-w-[185px] sm:max-w-none">
                 Architectural Hardscaping & Monument Preservation
               </span>
             </div>
@@ -713,7 +713,7 @@ export default function App() {
           </nav>
 
           {/* Action Trigger */}
-          <div className="flex items-center gap-5">
+          <div className="flex items-center gap-2 sm:gap-5">
             <a 
               href="tel:+18679881524" 
               className="hidden xl:flex items-center gap-2 text-xs font-mono text-[#787168] hover:text-[#1F1C18] transition-colors"
@@ -721,9 +721,9 @@ export default function App() {
               <span>+1 (867) 988-1524</span>
             </a>
             <button 
-              type="button"
-              onClick={() => handleNavigate('contact')}
-              className="px-5 py-2.5 bg-[#1F1C18] hover:bg-[#38332B] text-[#FAF8F5] text-xs font-medium tracking-wide rounded-sm transition-colors cursor-pointer"
+              type="button" 
+              onClick={() => handleNavigate('contact')} 
+              className="hidden sm:inline-flex px-4 sm:px-5 py-2 sm:py-2.5 bg-[#1F1C18] hover:bg-[#38332B] text-[#FAF8F5] text-xs font-medium tracking-wide rounded-sm transition-colors cursor-pointer"
             >
               Request a Consultation
             </button>
@@ -732,62 +732,77 @@ export default function App() {
             <button
               type="button"
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className="lg:hidden p-2 text-[#1F1C18] hover:bg-[#EAE5DB] rounded-sm transition-colors"
+              className="lg:hidden p-2 text-[#1F1C18] hover:bg-[#EAE5DB] rounded-sm transition-colors cursor-pointer"
               aria-label="Toggle Navigation Menu"
             >
-              {mobileMenuOpen ? <X className="w-5 h-5" /> : <div className="space-y-1 w-5"><div className="h-0.5 bg-current w-full" /><div className="h-0.5 bg-current w-full" /><div className="h-0.5 bg-current w-full" /></div>}
+              {mobileMenuOpen ? <X className="w-5 h-5" /> : (
+                <div className="space-y-1 w-5">
+                  <div className="h-0.5 bg-current w-full" />
+                  <div className="h-0.5 bg-current w-full" />
+                  <div className="h-0.5 bg-current w-full" />
+                </div>
+              )}
             </button>
           </div>
         </div>
 
-        {/* Mobile Dropdown */}
+        {/* Compact Organized Mobile Dropdown */}
         {mobileMenuOpen && (
-          <div className="lg:hidden bg-[#FAF8F5] border-b border-[#EAE5DB] px-6 py-6 space-y-4 animate-in slide-in-from-top-2 duration-150">
+          <div className="lg:hidden bg-[#FAF8F5] border-b border-[#EAE5DB] px-4 py-3 space-y-1 animate-in slide-in-from-top-2 duration-150 shadow-lg">
             <button 
               type="button" 
               onClick={() => handleNavigate('home')} 
-              className={`block w-full text-left py-2 text-sm ${activeTab === 'home' ? 'text-[#967241] font-semibold' : 'text-[#1F1C18]'}`}
+              className={`block w-full text-left py-2 px-2 text-sm rounded-sm ${activeTab === 'home' ? 'bg-[#EAE5DB]/60 text-[#1F1C18] font-semibold' : 'text-[#4A453E]'}`}
             >
               Home
             </button>
             <button 
               type="button" 
               onClick={() => handleNavigate('projects')} 
-              className={`block w-full text-left py-2 text-sm ${activeTab === 'projects' ? 'text-[#967241] font-semibold' : 'text-[#1F1C18]'}`}
+              className={`block w-full text-left py-2 px-2 text-sm rounded-sm ${activeTab === 'projects' ? 'bg-[#EAE5DB]/60 text-[#1F1C18] font-semibold' : 'text-[#4A453E]'}`}
             >
               Projects
             </button>
             <button 
               type="button" 
               onClick={() => handleNavigate('services')} 
-              className={`block w-full text-left py-2 text-sm ${activeTab === 'services' ? 'text-[#967241] font-semibold' : 'text-[#1F1C18]'}`}
+              className={`block w-full text-left py-2 px-2 text-sm rounded-sm ${activeTab === 'services' ? 'bg-[#EAE5DB]/60 text-[#1F1C18] font-semibold' : 'text-[#4A453E]'}`}
             >
-              Services & Heritage Conservation
+              Services & Heritage
             </button>
             <button 
               type="button" 
               onClick={() => handleNavigate('materials')} 
-              className={`block w-full text-left py-2 text-sm ${activeTab === 'materials' ? 'text-[#967241] font-semibold' : 'text-[#1F1C18]'}`}
+              className={`block w-full text-left py-2 px-2 text-sm rounded-sm ${activeTab === 'materials' ? 'bg-[#EAE5DB]/60 text-[#1F1C18] font-semibold' : 'text-[#4A453E]'}`}
             >
-              Materials & Royal Craft
+              Materials & Craft
             </button>
             <button 
               type="button" 
               onClick={() => handleNavigate('team')} 
-              className={`block w-full text-left py-2 text-sm ${activeTab === 'team' ? 'text-[#967241] font-semibold' : 'text-[#1F1C18]'}`}
+              className={`block w-full text-left py-2 px-2 text-sm rounded-sm ${activeTab === 'team' ? 'bg-[#EAE5DB]/60 text-[#1F1C18] font-semibold' : 'text-[#4A453E]'}`}
             >
               Our Team
             </button>
             <button 
               type="button" 
               onClick={() => handleNavigate('contact')} 
-              className={`block w-full text-left py-2 text-sm ${activeTab === 'contact' ? 'text-[#967241] font-semibold' : 'text-[#1F1C18]'}`}
+              className={`block w-full text-left py-2 px-2 text-sm rounded-sm ${activeTab === 'contact' ? 'bg-[#EAE5DB]/60 text-[#1F1C18] font-semibold' : 'text-[#4A453E]'}`}
             >
-              Contact & Inquiries
+              Contact
             </button>
-            <div className="pt-3 border-t border-[#EAE5DB] flex items-center justify-between text-xs text-[#787168]">
-              <span className="flex items-center gap-1.5"><Globe className="w-3.5 h-3.5 text-[#967241]" /> Worldwide Practice</span>
-              <a href="tel:+18679881524" className="text-[#1F1C18] font-mono font-medium">+1 (867) 988-1524</a>
+            <div className="pt-2 mt-1 border-t border-[#EAE5DB] space-y-2">
+              <button 
+                type="button" 
+                onClick={() => handleNavigate('contact')} 
+                className="w-full py-2.5 bg-[#1F1C18] text-[#FAF8F5] text-xs font-medium rounded-sm text-center cursor-pointer"
+              >
+                Request a Consultation
+              </button>
+              <div className="flex items-center justify-between text-xs text-[#787168] px-1 pt-1">
+                <span className="flex items-center gap-1"><Globe className="w-3.5 h-3.5 text-[#967241]" /> Worldwide Practice</span>
+                <a href="tel:+18679881524" className="text-[#1F1C18] font-mono font-medium">+1 (867) 988-1524</a>
+              </div>
             </div>
           </div>
         )}
@@ -802,8 +817,8 @@ export default function App() {
         {activeTab === 'home' && (
           <div className="w-full flex flex-col">
             
-            {/* 1. SEAMLESS FULL-BLEED CINEMATIC HERO (ENLARGED IMAGE, NO CARD BORDER, ONLY TITLE & 2 BUTTONS) */}
-            <section className="relative w-full h-[82vh] sm:h-[88vh] min-h-[560px] max-h-[920px] overflow-hidden">
+            {/* 1. SEAMLESS FULL-BLEED CINEMATIC HERO (COMPACT & RESPONSIVE FOR MOBILE) */}
+            <section className="relative w-full h-[70vh] sm:h-[88vh] min-h-[460px] max-h-[920px] overflow-hidden">
               
               {/* Full Bleed Image Filling the Entire Width */}
               <img 
@@ -813,21 +828,21 @@ export default function App() {
               />
 
               {/* Gentle Natural Film Gradient */}
-              <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/35 to-black/15" />
-              <div className="absolute inset-0 bg-gradient-to-r from-black/70 via-transparent to-black/30" />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/40 to-black/20" />
+              <div className="absolute inset-0 bg-gradient-to-r from-black/75 via-transparent to-black/30" />
 
               {/* Foreground: ONLY Title and the Two Action Buttons */}
-              <div className="relative w-full max-w-[1720px] mx-auto h-full px-6 sm:px-12 lg:px-16 flex flex-col justify-end pb-16 sm:pb-20 max-w-5xl">
-                <div className="space-y-6">
-                  <h1 className="text-4xl sm:text-6xl lg:text-7xl font-serif-luxury text-white font-normal leading-[1.08] drop-shadow-[0_4px_24px_rgba(0,0,0,0.85)] max-w-4xl">
+              <div className="relative w-full max-w-[1720px] mx-auto h-full px-4 sm:px-12 lg:px-16 flex flex-col justify-end pb-8 sm:pb-20 max-w-5xl">
+                <div className="space-y-4 sm:space-y-6">
+                  <h1 className="text-3xl sm:text-6xl lg:text-7xl font-serif-luxury text-white font-normal leading-[1.12] sm:leading-[1.08] drop-shadow-[0_4px_24px_rgba(0,0,0,0.85)] max-w-4xl">
                     Architectural Hardscaping & Master Stonework
                   </h1>
 
-                  <div className="flex flex-wrap items-center gap-4 pt-2">
+                  <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2.5 sm:gap-4 pt-1 sm:pt-2">
                     <button
                       type="button"
                       onClick={() => handleNavigate('projects')}
-                      className="px-7 py-4 bg-[#FAF8F5] hover:bg-white text-[#1F1C18] text-xs sm:text-sm font-medium tracking-wide rounded-sm transition-all shadow-xl flex items-center gap-2 cursor-pointer"
+                      className="w-full sm:w-auto px-5 sm:px-7 py-3 sm:py-4 bg-[#FAF8F5] hover:bg-white text-[#1F1C18] text-xs sm:text-sm font-medium tracking-wide rounded-sm transition-all shadow-xl flex items-center justify-center gap-2 cursor-pointer"
                     >
                       <span>Explore Our Projects</span>
                       <ArrowRight className="w-4 h-4 text-[#967241]" />
@@ -836,7 +851,7 @@ export default function App() {
                     <button
                       type="button"
                       onClick={() => handleNavigate('contact')}
-                      className="px-7 py-4 bg-black/40 hover:bg-black/60 text-white text-xs sm:text-sm font-medium tracking-wide rounded-sm transition-all border border-white/50 backdrop-blur-md cursor-pointer"
+                      className="w-full sm:w-auto px-5 sm:px-7 py-3 sm:py-4 bg-black/40 hover:bg-black/60 text-white text-xs sm:text-sm font-medium tracking-wide rounded-sm transition-all border border-white/50 backdrop-blur-md cursor-pointer text-center justify-center"
                     >
                       Request a Consultation
                     </button>
@@ -845,13 +860,13 @@ export default function App() {
               </div>
             </section>
 
-            {/* 2. HUMAN EDITORIAL INTRO STRIP (SEAMLESSLY BLENDED, NO FLOATING BOXES) */}
-            <section className="w-full bg-[#FAF8F5] py-20 sm:py-28 border-b border-[#EAE5DB]">
-              <div className="w-full max-w-[1720px] mx-auto px-6 sm:px-12 lg:px-16">
-                <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-start">
+            {/* 2. HUMAN EDITORIAL INTRO STRIP (COMPACT PADDING ON MOBILE) */}
+            <section className="w-full bg-[#FAF8F5] py-10 sm:py-24 border-b border-[#EAE5DB]">
+              <div className="w-full max-w-[1720px] mx-auto px-4 sm:px-12 lg:px-16">
+                <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 lg:gap-16 items-start">
                   
-                  <div className="lg:col-span-4 space-y-3">
-                    <span className="text-xs uppercase tracking-widest text-[#8E795B] font-semibold">
+                  <div className="lg:col-span-4 space-y-2 sm:space-y-3">
+                    <span className="text-[11px] sm:text-xs uppercase tracking-widest text-[#8E795B] font-semibold">
                       The Atelier Ethos
                     </span>
                     <h2 className="text-2xl sm:text-3xl font-serif-luxury font-normal text-[#1F1C18] leading-tight">
@@ -859,11 +874,11 @@ export default function App() {
                     </h2>
                   </div>
 
-                  <div className="lg:col-span-8 space-y-6 text-[#5A5247] text-base sm:text-lg leading-relaxed font-light">
+                  <div className="lg:col-span-8 space-y-3 sm:space-y-6 text-[#5A5247] text-sm sm:text-lg leading-relaxed font-light">
                     <p>
                       We work with raw, honest materials drawn from the earth: crystalline marbles, porous travertines, volcanic basalts, and glacial boulders. Every commission begins with the terrain itself—its natural contours, subterranean aquifers, and sun angles.
                     </p>
-                    <p className="text-sm sm:text-base text-[#787168]">
+                    <p className="text-xs sm:text-base text-[#787168]">
                       Our team pairs deep geotechnical engineering—micropiles, bedrock ties, concealed hydrostatic drainage—with the patience of master stonemasons who hand-dress each block to endure generations of weather and human life.
                     </p>
                   </div>
@@ -872,41 +887,41 @@ export default function App() {
               </div>
             </section>
 
-            {/* 3. REFACTORED & HIGHLY ORGANIZED ARCHITECTURAL DISCIPLINES (SEAMLESS HAIRLINE GRID, NO FLOATING CARDS) */}
-            <section className="w-full bg-[#FAF8F5] py-20 sm:py-28 border-b border-[#EAE5DB]">
-              <div className="w-full max-w-[1720px] mx-auto px-6 sm:px-12 lg:px-16 space-y-12">
+            {/* 3. REFACTORED & HIGHLY ORGANIZED ARCHITECTURAL DISCIPLINES */}
+            <section className="w-full bg-[#FAF8F5] py-10 sm:py-24 border-b border-[#EAE5DB]">
+              <div className="w-full max-w-[1720px] mx-auto px-4 sm:px-12 lg:px-16 space-y-6 sm:space-y-12">
                 
                 {/* Header & Sector Navigation */}
-                <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-8 border-b border-[#EAE5DB] pb-8">
-                  <div className="max-w-3xl space-y-3">
-                    <div className="flex items-center gap-3">
-                      <span className="text-xs uppercase tracking-widest text-[#8E795B] font-semibold">
+                <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-4 sm:gap-8 border-b border-[#EAE5DB] pb-4 sm:pb-8">
+                  <div className="max-w-3xl space-y-2 sm:space-y-3">
+                    <div className="flex items-center gap-2 sm:gap-3">
+                      <span className="text-[11px] sm:text-xs uppercase tracking-widest text-[#8E795B] font-semibold">
                         Disciplines of Practice
                       </span>
-                      <span className="h-px w-8 bg-[#DFD9CD]" />
-                      <span className="text-[11px] font-mono text-[#787168]">8 Global Specializations</span>
+                      <span className="h-px w-6 sm:w-8 bg-[#DFD9CD]" />
+                      <span className="text-[10px] sm:text-[11px] font-mono text-[#787168]">8 Global Specializations</span>
                     </div>
-                    <h2 className="text-3xl sm:text-5xl font-serif-luxury text-[#1F1C18] font-normal leading-tight">
+                    <h2 className="text-2xl sm:text-5xl font-serif-luxury text-[#1F1C18] font-normal leading-tight">
                       Comprehensive Architectural & Heritage Services
                     </h2>
-                    <p className="text-sm sm:text-base text-[#5A5247] font-light leading-relaxed">
+                    <p className="text-xs sm:text-base text-[#5A5247] font-light leading-relaxed">
                       Structured across three foundational sectors: deep bedrock slope retention, museum climate galleries, and imperial white marble courtyards worldwide.
                     </p>
                   </div>
 
-                  {/* Clean Minimal Sector Filter Tabs */}
-                  <div className="flex flex-wrap items-center gap-2">
+                  {/* Clean Minimal Sector Filter Tabs (Horizontal Scrollable on Mobile) */}
+                  <div className="flex items-center gap-1.5 sm:gap-2 overflow-x-auto no-scrollbar pb-1 sm:pb-0 -mx-4 px-4 sm:mx-0 sm:px-0">
                     {[
                       { id: 'all', label: 'All Disciplines (8)' },
-                      { id: 'estates', label: 'Sovereign Estates & Terracing (3)' },
-                      { id: 'heritage', label: 'Museum & Heritage Sites (3)' },
-                      { id: 'courtyards', label: 'Royal Courtyards & Waters (2)' }
+                      { id: 'estates', label: 'Sovereign Estates (3)' },
+                      { id: 'heritage', label: 'Heritage Sites (3)' },
+                      { id: 'courtyards', label: 'Royal Courtyards (2)' }
                     ].map((tab) => (
                       <button
                         key={tab.id}
                         type="button"
                         onClick={() => setHomeServiceSector(tab.id as 'all' | 'estates' | 'heritage' | 'courtyards')}
-                        className={`px-3.5 py-2 text-xs font-medium rounded-sm transition-all cursor-pointer ${
+                        className={`whitespace-nowrap shrink-0 px-3 py-1.5 sm:px-3.5 sm:py-2 text-[11px] sm:text-xs font-medium rounded-sm transition-all cursor-pointer ${
                           homeServiceSector === tab.id
                             ? 'bg-[#1F1C18] text-[#FAF8F5] shadow-xs'
                             : 'bg-[#F5F2EC] text-[#5A5247] hover:bg-[#EAE5DB] hover:text-[#1F1C18]'
@@ -918,7 +933,7 @@ export default function App() {
                   </div>
                 </div>
 
-                {/* Clean, Simple Architectural Grid (Clean Images, No Image Wordings, Few Words, No Floating Buttons) */}
+                {/* Clean, Simple Architectural Grid */}
                 <div className="border border-[#DFD9CD] bg-[#DFD9CD] gap-px grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4">
                   {filteredHomeServices.map((service) => (
                     <div 
@@ -927,11 +942,11 @@ export default function App() {
                         setSelectedCategory(service.scopeTarget);
                         handleNavigate('projects');
                       }}
-                      className="bg-[#FAF8F5] p-6 sm:p-7 flex flex-col justify-between hover:bg-[#F7F4EE] transition-colors group cursor-pointer"
+                      className="bg-[#FAF8F5] p-4 sm:p-7 flex flex-col justify-between hover:bg-[#F7F4EE] transition-colors group cursor-pointer"
                     >
-                      <div className="space-y-3.5">
+                      <div className="space-y-2.5 sm:space-y-3.5">
                         
-                        {/* Pure Clean Photographic Plate (Zero Wordings on Image) */}
+                        {/* Pure Clean Photographic Plate */}
                         <div className="relative aspect-16/10 overflow-hidden rounded-xs bg-stone-200">
                           <img 
                             src={service.image} 
@@ -942,31 +957,31 @@ export default function App() {
 
                         {/* Category Label */}
                         <div className="flex items-center justify-between text-xs pt-0.5">
-                          <span className="text-[11px] uppercase tracking-wider text-[#8E795B] font-semibold">
+                          <span className="text-[10px] sm:text-[11px] uppercase tracking-wider text-[#8E795B] font-semibold">
                             {service.categoryLabel}
                           </span>
-                          <span className="text-[11px] text-[#8E795B] font-mono">
+                          <span className="text-[10px] sm:text-[11px] text-[#8E795B] font-mono">
                             {service.number}
                           </span>
                         </div>
 
                         {/* Title & Subtitle */}
                         <div className="space-y-0.5">
-                          <h3 className="text-xl font-serif-luxury text-[#1F1C18] group-hover:text-[#967241] transition-colors leading-snug font-medium">
+                          <h3 className="text-lg sm:text-xl font-serif-luxury text-[#1F1C18] group-hover:text-[#967241] transition-colors leading-snug font-medium">
                             {service.title}
                           </h3>
-                          <p className="text-xs text-[#8E795B] font-medium">
+                          <p className="text-[11px] sm:text-xs text-[#8E795B] font-medium">
                             {service.subtitle}
                           </p>
                         </div>
 
-                        {/* Concise Few Words Description */}
-                        <p className="text-xs text-[#5A5247] leading-relaxed line-clamp-2 font-light">
+                        {/* Concise Description */}
+                        <p className="text-xs sm:text-sm text-[#5A5247] leading-relaxed line-clamp-2 font-light">
                           {service.description}
                         </p>
 
                         {/* Clean Materials Label */}
-                        <div className="pt-1.5 text-[11px] text-[#787168] border-t border-[#EAE5DB]">
+                        <div className="pt-1.5 text-[10px] sm:text-[11px] text-[#787168] border-t border-[#EAE5DB]">
                           <span>{service.materials.join(' · ')}</span>
                         </div>
 
@@ -978,39 +993,41 @@ export default function App() {
               </div>
             </section>
 
-
-            {/* 5. HUMAN CRAFTSMEN SECTION (WARM, AUTHENTIC, REVERENT TO STONE) */}
-            <section className="w-full bg-[#F5F2EC] py-20 sm:py-28 border-b border-[#EAE5DB]">
-              <div className="w-full max-w-[1720px] mx-auto px-6 sm:px-12 lg:px-16 space-y-14">
+            {/* 4. HUMAN CRAFTSMEN & DIRECTORATE (COMPACT & CLEAN ON MOBILE) */}
+            <section className="w-full bg-[#F5F2EC] py-10 sm:py-24 border-b border-[#EAE5DB]">
+              <div className="w-full max-w-[1720px] mx-auto px-4 sm:px-12 lg:px-16 space-y-6 sm:space-y-14">
                 
-                <div className="max-w-2xl space-y-2 border-b border-[#DFD9CD] pb-6">
-                  <span className="text-xs uppercase tracking-widest text-[#8E795B] font-semibold">
+                <div className="max-w-2xl space-y-1.5 sm:space-y-2 border-b border-[#DFD9CD] pb-4 sm:pb-6">
+                  <span className="text-[11px] sm:text-xs uppercase tracking-widest text-[#8E795B] font-semibold">
                     The Directorate & Guild
                   </span>
-                  <h2 className="text-3xl sm:text-5xl font-serif-luxury text-[#1F1C18] font-normal">
+                  <h2 className="text-2xl sm:text-5xl font-serif-luxury text-[#1F1C18] font-normal">
                     Master Craftsmen & Engineers
                   </h2>
-                  <p className="text-sm text-[#5A5247]">
+                  <p className="text-xs sm:text-sm text-[#5A5247]">
                     Governed by four senior principals who personally oversee bedrock analysis, quarry extraction, and stone jointing on-site.
                   </p>
                 </div>
 
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-8">
                   {team.map((member) => (
-                    <div key={member.id} className="space-y-4">
-                      {/* Human Circular Portrait */}
-                      <div className="w-24 h-24 rounded-full overflow-hidden shadow-xs ring-2 ring-[#DFD9CD] bg-stone-200">
+                    <div 
+                      key={member.id} 
+                      className="p-3.5 sm:p-0 bg-white/70 sm:bg-transparent rounded-sm sm:rounded-none border border-[#EAE5DB] sm:border-0 flex items-start sm:block gap-3.5 sm:space-y-4"
+                    >
+                      {/* Circular Portrait */}
+                      <div className="w-14 h-14 sm:w-24 sm:h-24 rounded-full overflow-hidden shrink-0 shadow-xs ring-2 ring-[#DFD9CD] bg-stone-200">
                         <img 
                           src={member.image} 
                           alt={member.name}
                           className="w-full h-full object-cover object-top"
                         />
                       </div>
-                      <div className="space-y-1">
-                        <h3 className="text-xl font-serif-luxury text-[#1F1C18] font-medium">{member.name}</h3>
-                        <p className="text-xs font-semibold text-[#8E795B]">{member.role}</p>
-                        <p className="text-xs text-[#787168] italic">{member.specialty}</p>
-                        <p className="text-xs text-[#5A5247] pt-2 leading-relaxed">
+                      <div className="space-y-0.5 sm:space-y-1 flex-1 min-w-0">
+                        <h3 className="text-base sm:text-xl font-serif-luxury text-[#1F1C18] font-medium leading-snug">{member.name}</h3>
+                        <p className="text-[11px] sm:text-xs font-semibold text-[#8E795B] leading-tight">{member.role}</p>
+                        <p className="text-[10px] sm:text-xs text-[#787168] italic line-clamp-1">{member.specialty}</p>
+                        <p className="text-xs sm:text-sm text-[#5A5247] pt-1 leading-relaxed line-clamp-2 sm:line-clamp-none font-light">
                           {member.bio}
                         </p>
                       </div>
@@ -1020,23 +1037,23 @@ export default function App() {
               </div>
             </section>
 
-            {/* 6. CONVERSATION STRIP (INVITING, CALM, UNRUSHED) */}
-            <section className="w-full bg-[#FAF8F5] py-20 sm:py-24">
-              <div className="w-full max-w-[1720px] mx-auto px-6 sm:px-12 lg:px-16 text-center space-y-6 max-w-3xl">
-                <span className="text-xs uppercase tracking-widest text-[#8E795B] font-semibold">
+            {/* 5. CONVERSATION STRIP (INVITING, CALM, UNRUSHED) */}
+            <section className="w-full bg-[#FAF8F5] py-10 sm:py-20">
+              <div className="w-full max-w-[1720px] mx-auto px-4 sm:px-12 lg:px-16 text-center space-y-4 sm:space-y-6 max-w-3xl">
+                <span className="text-[11px] sm:text-xs uppercase tracking-widest text-[#8E795B] font-semibold">
                   Global Inquiries
                 </span>
-                <h2 className="text-3xl sm:text-5xl font-serif-luxury font-normal text-[#1F1C18]">
+                <h2 className="text-2xl sm:text-5xl font-serif-luxury font-normal text-[#1F1C18]">
                   Commission an architectural dialogue
                 </h2>
-                <p className="text-sm sm:text-base text-[#5A5247] leading-relaxed">
+                <p className="text-xs sm:text-base text-[#5A5247] leading-relaxed">
                   Whether establishing a new clifftop terrace, revitalizing an imperial parterre, or preserving an archaeological landmark, our principals are available for initial site studies.
                 </p>
                 <div className="pt-2">
                   <button
                     type="button"
                     onClick={() => handleNavigate('contact')}
-                    className="px-8 py-4 bg-[#1F1C18] hover:bg-[#38332B] text-[#FAF8F5] text-xs font-medium tracking-wide rounded-sm transition-colors cursor-pointer"
+                    className="w-full sm:w-auto px-6 sm:px-8 py-3.5 sm:py-4 bg-[#1F1C18] hover:bg-[#38332B] text-[#FAF8F5] text-xs font-medium tracking-wide rounded-sm transition-colors cursor-pointer"
                   >
                     Initiate Private Commission Brief
                   </button>
@@ -1051,21 +1068,21 @@ export default function App() {
         {/* TAB: PROJECTS / PORTFOLIO */}
         {/* ======================================================== */}
         {activeTab === 'projects' && (
-          <div className="w-full max-w-[1720px] mx-auto px-6 sm:px-12 lg:px-16 py-12 sm:py-16 space-y-12">
+          <div className="w-full max-w-[1720px] mx-auto px-4 sm:px-12 lg:px-16 py-8 sm:py-16 space-y-8 sm:space-y-12">
             
-            <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-6 border-b border-[#EAE5DB] pb-6">
+            <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 sm:gap-6 border-b border-[#EAE5DB] pb-4 sm:pb-6">
               <div>
-                <span className="text-xs uppercase tracking-widest text-[#8E795B] font-semibold">Archive</span>
-                <h1 className="text-3xl sm:text-5xl font-serif-luxury text-[#1F1C18] font-normal mt-1">
+                <span className="text-[11px] sm:text-xs uppercase tracking-widest text-[#8E795B] font-semibold">Archive</span>
+                <h1 className="text-2xl sm:text-5xl font-serif-luxury text-[#1F1C18] font-normal mt-1">
                   International Masterworks
                 </h1>
-                <p className="text-sm text-[#5A5247] mt-1">
+                <p className="text-xs sm:text-sm text-[#5A5247] mt-1">
                   Explore completed clifftop terraces, royal courtyards, palace water amphitheatres, and archaeological conservations worldwide.
                 </p>
               </div>
 
-              {/* Minimal Category Tabs */}
-              <div className="flex flex-wrap items-center gap-2 text-xs">
+              {/* Minimal Category Tabs with sleek horizontal scroll on mobile */}
+              <div className="flex items-center gap-2 overflow-x-auto no-scrollbar -mx-4 px-4 sm:mx-0 sm:px-0 whitespace-nowrap text-xs pb-1 sm:pb-0">
                 {[
                   { id: 'all', label: 'All Works' },
                   { id: 'terraces', label: 'Clifftop & Terraces' },
@@ -1077,7 +1094,7 @@ export default function App() {
                     key={cat.id}
                     type="button"
                     onClick={() => setSelectedCategory(cat.id)}
-                    className={`px-3.5 py-1.5 rounded-sm transition-all cursor-pointer ${
+                    className={`px-3 py-1.5 rounded-sm transition-all shrink-0 cursor-pointer text-xs ${
                       selectedCategory === cat.id
                         ? 'bg-[#1F1C18] text-[#FAF8F5] font-medium'
                         : 'bg-[#F5F2EC] text-[#5A5247] hover:bg-[#EAE5DB]'
@@ -1090,12 +1107,12 @@ export default function App() {
             </div>
 
             {/* Frameless Projects Grid */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-10">
               {filteredProjects.map((project) => (
                 <article
                   key={project.id}
                   onClick={() => setModalProject(project)}
-                  className="group cursor-pointer space-y-3"
+                  className="group cursor-pointer space-y-2.5 sm:space-y-3"
                 >
                   <div className="relative aspect-16/11 overflow-hidden rounded-sm bg-stone-200">
                     <img 
@@ -1103,22 +1120,22 @@ export default function App() {
                       alt={project.title}
                       className="w-full h-full object-cover group-hover:scale-103 transition-transform duration-700 ease-out"
                     />
-                    <div className="absolute top-3 left-3 bg-[#FAF8F5]/95 backdrop-blur-xs px-2.5 py-1 text-[11px] font-mono text-[#1F1C18]">
+                    <div className="absolute top-2.5 left-2.5 bg-[#FAF8F5]/95 backdrop-blur-xs px-2 py-0.5 text-[10px] sm:text-[11px] font-mono text-[#1F1C18]">
                       {project.scope}
                     </div>
                   </div>
 
                   <div className="space-y-1">
-                    <span className="text-xs text-[#8E795B] font-medium">{project.categoryLabel}</span>
-                    <h3 className="text-xl font-serif-luxury text-[#1F1C18] group-hover:text-[#967241] transition-colors leading-snug">
+                    <span className="text-[11px] sm:text-xs text-[#8E795B] font-medium">{project.categoryLabel}</span>
+                    <h3 className="text-lg sm:text-xl font-serif-luxury text-[#1F1C18] group-hover:text-[#967241] transition-colors leading-snug">
                       {project.title}
                     </h3>
-                    <p className="text-xs text-[#5A5247] line-clamp-2 leading-relaxed">
+                    <p className="text-xs sm:text-sm text-[#5A5247] line-clamp-2 leading-relaxed">
                       {project.description}
                     </p>
-                    <div className="pt-2 text-xs text-[#787168] flex items-center justify-between">
+                    <div className="pt-1.5 text-xs text-[#787168] flex items-center justify-between">
                       <span>{project.location.split('·')[0].trim()}</span>
-                      <span className="text-[#1F1C18] font-medium group-hover:translate-x-0.5 transition-transform">View Dossier →</span>
+                      <span className="text-[#1F1C18] font-medium group-hover:translate-x-0.5 transition-transform text-xs">View Dossier →</span>
                     </div>
                   </div>
                 </article>
@@ -1132,35 +1149,35 @@ export default function App() {
         {/* TAB: SERVICES */}
         {/* ======================================================== */}
         {activeTab === 'services' && (
-          <div className="w-full max-w-[1720px] mx-auto px-6 sm:px-12 lg:px-16 py-12 sm:py-16 space-y-16">
+          <div className="w-full max-w-[1720px] mx-auto px-4 sm:px-12 lg:px-16 py-8 sm:py-16 space-y-8 sm:space-y-16">
             
-            <div className="max-w-3xl space-y-2 border-b border-[#EAE5DB] pb-6">
-              <span className="text-xs uppercase tracking-widest text-[#8E795B] font-semibold">Disciplines</span>
-              <h1 className="text-3xl sm:text-5xl font-serif-luxury text-[#1F1C18] font-normal">
+            <div className="max-w-3xl space-y-1.5 sm:space-y-2 border-b border-[#EAE5DB] pb-4 sm:pb-6">
+              <span className="text-[11px] sm:text-xs uppercase tracking-widest text-[#8E795B] font-semibold">Disciplines</span>
+              <h1 className="text-2xl sm:text-5xl font-serif-luxury text-[#1F1C18] font-normal">
                 Master Hardscaping, Museum Modernization & Heritage Preservation
               </h1>
-              <p className="text-sm text-[#5A5247]">
+              <p className="text-xs sm:text-sm text-[#5A5247]">
                 A world-class suite of architectural stone disciplines serving royal trusts, cultural ministries, private family offices, and monumental estates worldwide.
               </p>
             </div>
 
             <div className="divide-y divide-[#EAE5DB]">
               {servicesList.map((svc) => (
-                <div key={svc.number} className="py-10 grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
-                  <div className="lg:col-span-3 flex items-baseline gap-4">
-                    <span className="font-mono text-xl text-[#8E795B]">{svc.number}</span>
-                    <h3 className="text-2xl font-serif-luxury font-medium text-[#1F1C18] leading-tight">
+                <div key={svc.number} className="py-6 sm:py-10 grid grid-cols-1 lg:grid-cols-12 gap-4 sm:gap-8 items-start">
+                  <div className="lg:col-span-3 flex items-baseline gap-3 sm:gap-4">
+                    <span className="font-mono text-base sm:text-xl text-[#8E795B] font-semibold">{svc.number}</span>
+                    <h3 className="text-lg sm:text-2xl font-serif-luxury font-medium text-[#1F1C18] leading-snug">
                       {svc.title}
                     </h3>
                   </div>
 
-                  <div className="lg:col-span-5 space-y-4">
-                    <p className="text-sm text-[#5A5247] leading-relaxed">
+                  <div className="lg:col-span-5 space-y-3 sm:space-y-4">
+                    <p className="text-xs sm:text-sm text-[#5A5247] leading-relaxed">
                       {svc.description}
                     </p>
                     <div className="space-y-1 text-xs text-[#787168]">
-                      <span className="font-medium text-[#1F1C18] block">Primary Materials:</span>
-                      <p>{svc.materials.join(' · ')}</p>
+                      <span className="font-medium text-[#1F1C18] block text-[11px] sm:text-xs">Primary Materials:</span>
+                      <p className="text-[11px] sm:text-xs">{svc.materials.join(' · ')}</p>
                     </div>
                   </div>
 
@@ -1182,20 +1199,20 @@ export default function App() {
         {/* TAB: MATERIALS & ROYAL CRAFT */}
         {/* ======================================================== */}
         {activeTab === 'materials' && (
-          <div className="w-full max-w-[1720px] mx-auto px-6 sm:px-12 lg:px-16 py-12 sm:py-16 space-y-14">
+          <div className="w-full max-w-[1720px] mx-auto px-4 sm:px-12 lg:px-16 py-8 sm:py-16 space-y-8 sm:space-y-14">
             
-            <div className="max-w-3xl space-y-2 border-b border-[#EAE5DB] pb-6">
-              <span className="text-xs uppercase tracking-widest text-[#8E795B] font-semibold">Provenance</span>
-              <h1 className="text-3xl sm:text-5xl font-serif-luxury text-[#1F1C18] font-normal">
+            <div className="max-w-3xl space-y-1.5 sm:space-y-2 border-b border-[#EAE5DB] pb-4 sm:pb-6">
+              <span className="text-[11px] sm:text-xs uppercase tracking-widest text-[#8E795B] font-semibold">Provenance</span>
+              <h1 className="text-2xl sm:text-5xl font-serif-luxury text-[#1F1C18] font-normal">
                 Rare, Luxury & Royal Materials
               </h1>
-              <p className="text-sm text-[#5A5247]">
+              <p className="text-xs sm:text-sm text-[#5A5247]">
                 Certified quarried natural stones, crystalline marbles, historic travertines, and semiprecious inlays curated for royal palaces, museums, and clifftop estates.
               </p>
             </div>
 
-            {/* Filter Tabs */}
-            <div className="flex flex-wrap items-center gap-2 text-xs border-b border-[#EAE5DB] pb-5">
+            {/* Filter Tabs with horizontal scroll on mobile */}
+            <div className="flex items-center gap-2 overflow-x-auto no-scrollbar -mx-4 px-4 sm:mx-0 sm:px-0 whitespace-nowrap text-xs border-b border-[#EAE5DB] pb-3 sm:pb-5">
               {[
                 { id: 'all', label: `All Materials (${luxuryMaterials.length})` },
                 { id: 'marble', label: 'Imperial & Sacred Marbles' },
@@ -1207,7 +1224,7 @@ export default function App() {
                   key={c.id}
                   type="button"
                   onClick={() => setSelectedMaterialCategory(c.id)}
-                  className={`px-3.5 py-1.5 rounded-sm transition-all cursor-pointer ${
+                  className={`px-3 py-1.5 rounded-sm transition-all shrink-0 cursor-pointer text-xs ${
                     selectedMaterialCategory === c.id
                       ? 'bg-[#1F1C18] text-[#FAF8F5] font-medium'
                       : 'bg-[#F5F2EC] text-[#5A5247] hover:bg-[#EAE5DB]'
@@ -1219,14 +1236,14 @@ export default function App() {
             </div>
 
             {/* Materials Grid */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 sm:gap-8">
               {filteredMaterials.map((mat, idx) => (
-                <div key={idx} className="border-t border-[#DFD9CD] pt-6 space-y-3">
-                  <span className="text-[11px] font-mono text-[#8E795B] uppercase tracking-wider block">
+                <div key={idx} className="border-t border-[#DFD9CD] pt-4 sm:pt-6 space-y-2 sm:space-y-3">
+                  <span className="text-[10px] sm:text-[11px] font-mono text-[#8E795B] uppercase tracking-wider block">
                     {mat.provenance}
                   </span>
 
-                  <h3 className="text-xl font-serif-luxury font-medium text-[#1F1C18]">
+                  <h3 className="text-lg sm:text-xl font-serif-luxury font-medium text-[#1F1C18]">
                     {mat.name}
                   </h3>
 
@@ -1234,18 +1251,18 @@ export default function App() {
                     {mat.description}
                   </p>
 
-                  <div className="pt-2 text-xs space-y-1">
-                    <span className="text-[11px] font-medium text-[#1F1C18] block">Characteristics:</span>
-                    <p className="text-[#787168]">{mat.characteristics.join(' · ')}</p>
+                  <div className="pt-1.5 text-xs space-y-1">
+                    <span className="text-[10px] sm:text-[11px] font-medium text-[#1F1C18] block">Characteristics:</span>
+                    <p className="text-[#787168] text-xs">{mat.characteristics.join(' · ')}</p>
                   </div>
                 </div>
               ))}
             </div>
 
             {/* Provenance Banner */}
-            <div className="bg-[#F5F2EC] p-8 sm:p-12 border-l-2 border-[#967241] space-y-3">
-              <h3 className="text-2xl font-serif-luxury text-[#1F1C18]">Quarry Provenance Guarantee</h3>
-              <p className="text-sm text-[#5A5247] max-w-2xl leading-relaxed">
+            <div className="bg-[#F5F2EC] p-5 sm:p-10 border-l-2 border-[#967241] space-y-2 sm:space-y-3 rounded-xs">
+              <h3 className="text-xl sm:text-2xl font-serif-luxury text-[#1F1C18]">Quarry Provenance Guarantee</h3>
+              <p className="text-xs sm:text-sm text-[#5A5247] max-w-2xl leading-relaxed">
                 Every consignment of Thassos marble, Istrian limestone, Adnet calcarenite, and Roman travertine is personally verified at the quarry source by Corinne W. Smith to ensure geological purity and compressive density.
               </p>
             </div>
@@ -1257,33 +1274,33 @@ export default function App() {
         {/* TAB: OUR TEAM */}
         {/* ======================================================== */}
         {activeTab === 'team' && (
-          <div className="w-full max-w-[1720px] mx-auto px-6 sm:px-12 lg:px-16 py-12 sm:py-16 space-y-14">
+          <div className="w-full max-w-[1720px] mx-auto px-4 sm:px-12 lg:px-16 py-8 sm:py-16 space-y-8 sm:space-y-14">
             
-            <div className="max-w-2xl space-y-2 border-b border-[#EAE5DB] pb-6">
-              <span className="text-xs uppercase tracking-widest text-[#8E795B] font-semibold">Leadership</span>
-              <h1 className="text-3xl sm:text-5xl font-serif-luxury text-[#1F1C18] font-normal">
+            <div className="max-w-2xl space-y-1.5 sm:space-y-2 border-b border-[#EAE5DB] pb-4 sm:pb-6">
+              <span className="text-[11px] sm:text-xs uppercase tracking-widest text-[#8E795B] font-semibold">Leadership</span>
+              <h1 className="text-2xl sm:text-5xl font-serif-luxury text-[#1F1C18] font-normal">
                 Master Craftsmen & Project Directors
               </h1>
-              <p className="text-sm text-[#5A5247]">
+              <p className="text-xs sm:text-sm text-[#5A5247]">
                 Uniting licensed structural and geotechnical engineering with multi-generational royal stonemasonry artistry.
               </p>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-12">
               {team.map((member) => (
-                <div key={member.id} className="flex flex-col sm:flex-row items-start gap-6 border-t border-[#DFD9CD] pt-8">
-                  <div className="w-24 h-24 rounded-full overflow-hidden shrink-0 ring-2 ring-[#DFD9CD] bg-stone-200">
+                <div key={member.id} className="p-4 sm:p-0 bg-white/70 sm:bg-transparent rounded-sm sm:rounded-none border border-[#EAE5DB] sm:border-0 flex items-start gap-4 sm:gap-6 sm:border-t sm:border-[#DFD9CD] sm:pt-8">
+                  <div className="w-16 h-16 sm:w-24 sm:h-24 rounded-full overflow-hidden shrink-0 ring-2 ring-[#DFD9CD] bg-stone-200 shadow-xs">
                     <img 
                       src={member.image} 
                       alt={member.name}
                       className="w-full h-full object-cover object-top"
                     />
                   </div>
-                  <div className="space-y-1.5 flex-1">
-                    <h3 className="text-2xl font-serif-luxury font-medium text-[#1F1C18]">{member.name}</h3>
-                    <p className="text-xs font-semibold text-[#8E795B]">{member.role}</p>
-                    <p className="text-xs text-[#787168] italic">{member.specialty}</p>
-                    <p className="text-xs sm:text-sm text-[#5A5247] leading-relaxed pt-2">
+                  <div className="space-y-1 sm:space-y-1.5 flex-1 min-w-0">
+                    <h3 className="text-lg sm:text-2xl font-serif-luxury font-medium text-[#1F1C18] leading-snug">{member.name}</h3>
+                    <p className="text-[11px] sm:text-xs font-semibold text-[#8E795B]">{member.role}</p>
+                    <p className="text-[11px] sm:text-xs text-[#787168] italic">{member.specialty}</p>
+                    <p className="text-xs sm:text-sm text-[#5A5247] leading-relaxed pt-1 sm:pt-2">
                       {member.bio}
                     </p>
                   </div>
@@ -1298,30 +1315,30 @@ export default function App() {
         {/* TAB: CONTACT */}
         {/* ======================================================== */}
         {activeTab === 'contact' && (
-          <div className="w-full max-w-[1720px] mx-auto px-6 sm:px-12 lg:px-16 py-12 sm:py-16 space-y-14">
+          <div className="w-full max-w-[1720px] mx-auto px-4 sm:px-12 lg:px-16 py-8 sm:py-16 space-y-8 sm:space-y-14">
             
-            <div className="max-w-2xl space-y-2 border-b border-[#EAE5DB] pb-6">
-              <span className="text-xs uppercase tracking-widest text-[#8E795B] font-semibold">Dialogue</span>
-              <h1 className="text-3xl sm:text-5xl font-serif-luxury text-[#1F1C18] font-normal">
+            <div className="max-w-2xl space-y-1.5 sm:space-y-2 border-b border-[#EAE5DB] pb-4 sm:pb-6">
+              <span className="text-[11px] sm:text-xs uppercase tracking-widest text-[#8E795B] font-semibold">Dialogue</span>
+              <h1 className="text-2xl sm:text-5xl font-serif-luxury text-[#1F1C18] font-normal">
                 Consult With Our Atelier Principals
               </h1>
-              <p className="text-sm text-[#5A5247]">
+              <p className="text-xs sm:text-sm text-[#5A5247]">
                 Share details regarding your upcoming estate commission, museum project, or heritage site conservation. We review briefs across all continents.
               </p>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-12 gap-12">
+            <div className="grid grid-cols-1 md:grid-cols-12 gap-8 sm:gap-12">
               
               {/* Studio Info */}
-              <div className="md:col-span-5 space-y-6">
+              <div className="md:col-span-5 space-y-5 sm:space-y-6">
                 <div>
-                  <h3 className="text-xl font-serif-luxury text-[#1F1C18]">Global Headquarters</h3>
-                  <p className="text-xs text-[#787168] mt-0.5">Central Atelier & Directorate</p>
+                  <h3 className="text-lg sm:text-xl font-serif-luxury text-[#1F1C18]">Global Headquarters</h3>
+                  <p className="text-[11px] sm:text-xs text-[#787168] mt-0.5">Central Atelier & Directorate</p>
                 </div>
 
-                <div className="space-y-4 text-xs sm:text-sm text-[#5A5247]">
+                <div className="space-y-3.5 sm:space-y-4 text-xs sm:text-sm text-[#5A5247]">
                   <div className="flex items-start gap-3">
-                    <MapPin className="w-4 h-4 text-[#8E795B] shrink-0 mt-1" />
+                    <MapPin className="w-4 h-4 text-[#8E795B] shrink-0 mt-0.5" />
                     <div>
                       <div className="font-medium text-[#1F1C18]">100 King Street West, Suite 5600</div>
                       <div>Toronto, ON M5X 1C9, Canada</div>
@@ -1347,7 +1364,7 @@ export default function App() {
                   </div>
 
                   <div className="flex items-start gap-3">
-                    <Clock className="w-4 h-4 text-[#8E795B] shrink-0 mt-1" />
+                    <Clock className="w-4 h-4 text-[#8E795B] shrink-0 mt-0.5" />
                     <div>
                       <div>Monday – Friday: 8:00 AM – 6:00 PM EST</div>
                       <div className="text-[#787168]">Private Consultations: By advance appointment</div>
@@ -1355,7 +1372,7 @@ export default function App() {
                   </div>
                 </div>
 
-                <div className="pt-4 border-t border-[#EAE5DB]">
+                <div className="pt-3.5 border-t border-[#EAE5DB]">
                   <span className="text-xs font-semibold text-[#1F1C18] block mb-1">Global Commissions:</span>
                   <p className="text-xs text-[#787168] leading-relaxed">
                     Commissions executed worldwide across North America, Europe, the Mediterranean, the Arabian Gulf, and East Asia.
@@ -1364,27 +1381,27 @@ export default function App() {
               </div>
 
               {/* Seamless Form */}
-              <div className="md:col-span-7 bg-[#F5F2EC] p-8 sm:p-10 rounded-sm">
+              <div className="md:col-span-7 bg-[#F5F2EC] p-4 sm:p-10 rounded-sm">
                 {formSubmitted ? (
-                  <div className="text-center py-12 space-y-4">
+                  <div className="text-center py-8 sm:py-12 space-y-4">
                     <div className="w-12 h-12 rounded-full bg-[#EAE5DB] text-[#1F1C18] mx-auto flex items-center justify-center">
                       <Check className="w-6 h-6" />
                     </div>
-                    <h3 className="text-2xl font-serif-luxury text-[#1F1C18]">Thank you for reaching out</h3>
+                    <h3 className="text-xl sm:text-2xl font-serif-luxury text-[#1F1C18]">Thank you for reaching out</h3>
                     <p className="text-xs sm:text-sm text-[#5A5247] max-w-md mx-auto">
                       Your consultation brief has been transmitted to our principals. A director will review your project requirements and initiate contact within 24 business hours.
                     </p>
                     <button
                       type="button"
                       onClick={() => setFormSubmitted(false)}
-                      className="px-5 py-2.5 bg-[#1F1C18] text-[#FAF8F5] text-xs font-medium rounded-sm transition-colors"
+                      className="px-5 py-2.5 bg-[#1F1C18] text-[#FAF8F5] text-xs font-medium rounded-sm transition-colors cursor-pointer"
                     >
                       Submit Another Inquiry
                     </button>
                   </div>
                 ) : (
-                  <form onSubmit={handleFormSubmit} className="space-y-4">
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <form onSubmit={handleFormSubmit} className="space-y-3 sm:space-y-4">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
                       <div className="space-y-1">
                         <label className="text-xs font-medium text-[#1F1C18]">Your Full Name *</label>
                         <input
@@ -1496,13 +1513,13 @@ export default function App() {
       {/* CLEAN PROJECT DETAILS MODAL */}
       {/* ======================================================== */}
       {modalProject && (
-        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-center justify-center p-4 sm:p-6 overflow-y-auto">
-          <div className="bg-[#FAF8F5] border border-[#EAE5DB] rounded-sm max-w-3xl w-full overflow-hidden shadow-2xl animate-in zoom-in-95 duration-150 my-8">
+        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-center justify-center p-3 sm:p-6 overflow-y-auto">
+          <div className="bg-[#FAF8F5] border border-[#EAE5DB] rounded-sm max-w-3xl w-full overflow-hidden shadow-2xl animate-in zoom-in-95 duration-150 my-4 sm:my-8">
             
-            <div className="px-6 py-5 border-b border-[#EAE5DB] flex items-center justify-between">
+            <div className="px-4 py-3.5 sm:px-6 sm:py-5 border-b border-[#EAE5DB] flex items-center justify-between">
               <div>
-                <span className="text-xs font-medium text-[#8E795B] uppercase tracking-wider">{modalProject.categoryLabel}</span>
-                <h3 className="text-xl sm:text-2xl font-serif-luxury font-medium text-[#1F1C18]">
+                <span className="text-[10px] sm:text-xs font-medium text-[#8E795B] uppercase tracking-wider">{modalProject.categoryLabel}</span>
+                <h3 className="text-lg sm:text-2xl font-serif-luxury font-medium text-[#1F1C18]">
                   {modalProject.title}
                 </h3>
               </div>
@@ -1516,7 +1533,7 @@ export default function App() {
               </button>
             </div>
 
-            <div className="p-6 space-y-6 max-h-[75vh] overflow-y-auto">
+            <div className="p-4 sm:p-6 space-y-4 sm:space-y-6 max-h-[75vh] overflow-y-auto">
               <div className="relative aspect-16/10 rounded-sm overflow-hidden bg-stone-200">
                 <img 
                   src={modalProject.image} 
@@ -1525,47 +1542,47 @@ export default function App() {
                 />
               </div>
 
-              <div className="space-y-2">
+              <div className="space-y-1.5 sm:space-y-2">
                 <div className="flex items-center gap-1.5 text-xs text-[#8E795B] font-medium">
-                  <MapPin className="w-3.5 h-3.5" />
+                  <MapPin className="w-3.5 h-3.5 shrink-0" />
                   <span>{modalProject.location}</span>
                 </div>
-                <p className="text-sm text-[#5A5247] leading-relaxed">
+                <p className="text-xs sm:text-sm text-[#5A5247] leading-relaxed">
                   {modalProject.description}
                 </p>
               </div>
 
-              <div className="bg-[#F5F2EC] rounded-sm p-4 space-y-2">
-                <h5 className="text-xs font-medium text-[#1F1C18]">Quarried Natural Stone & Structural Matrix</h5>
-                <div className="flex flex-wrap gap-2">
+              <div className="bg-[#F5F2EC] rounded-sm p-3.5 sm:p-4 space-y-2">
+                <h5 className="text-[11px] sm:text-xs font-medium text-[#1F1C18]">Quarried Natural Stone & Structural Matrix</h5>
+                <div className="flex flex-wrap gap-1.5 sm:gap-2">
                   {modalProject.materials.map((mat, i) => (
-                    <span key={i} className="text-xs bg-[#FAF8F5] border border-[#DFD9CD] px-3 py-1 rounded-sm text-[#1F1C18]">
+                    <span key={i} className="text-[11px] sm:text-xs bg-[#FAF8F5] border border-[#DFD9CD] px-2.5 py-1 rounded-sm text-[#1F1C18]">
                       {mat}
                     </span>
                   ))}
                 </div>
               </div>
 
-              <div className="grid grid-cols-3 gap-3 text-center">
-                <div className="p-3 bg-[#F5F2EC] rounded-sm">
-                  <span className="text-[11px] text-[#787168] block">Commission Scope</span>
-                  <span className="text-sm font-medium text-[#1F1C18]">{modalProject.scope}</span>
+              <div className="grid grid-cols-3 gap-2 sm:gap-3 text-center">
+                <div className="p-2 sm:p-3 bg-[#F5F2EC] rounded-sm">
+                  <span className="text-[10px] sm:text-[11px] text-[#787168] block">Commission Scope</span>
+                  <span className="text-xs sm:text-sm font-medium text-[#1F1C18] truncate block">{modalProject.scope}</span>
                 </div>
-                <div className="p-3 bg-[#F5F2EC] rounded-sm">
-                  <span className="text-[11px] text-[#787168] block">Execution Window</span>
-                  <span className="text-sm font-medium text-[#1F1C18]">{modalProject.timeline}</span>
+                <div className="p-2 sm:p-3 bg-[#F5F2EC] rounded-sm">
+                  <span className="text-[10px] sm:text-[11px] text-[#787168] block">Execution Window</span>
+                  <span className="text-xs sm:text-sm font-medium text-[#1F1C18] truncate block">{modalProject.timeline}</span>
                 </div>
-                <div className="p-3 bg-[#F5F2EC] rounded-sm">
-                  <span className="text-[11px] text-[#787168] block">Year Completed</span>
-                  <span className="text-sm font-medium text-[#1F1C18]">{modalProject.year}</span>
+                <div className="p-2 sm:p-3 bg-[#F5F2EC] rounded-sm">
+                  <span className="text-[10px] sm:text-[11px] text-[#787168] block">Year Completed</span>
+                  <span className="text-xs sm:text-sm font-medium text-[#1F1C18] truncate block">{modalProject.year}</span>
                 </div>
               </div>
 
-              <div className="pt-2 flex items-center justify-end gap-3 border-t border-[#EAE5DB]">
+              <div className="pt-2 flex items-center justify-end gap-2.5 sm:gap-3 border-t border-[#EAE5DB]">
                 <button
                   type="button"
                   onClick={() => setModalProject(null)}
-                  className="px-4 py-2 border border-[#DFD9CD] text-[#5A5247] hover:bg-[#F5F2EC] hover:text-[#1F1C18] text-xs font-medium rounded-sm transition-colors"
+                  className="px-3.5 sm:px-4 py-2 border border-[#DFD9CD] text-[#5A5247] hover:bg-[#F5F2EC] hover:text-[#1F1C18] text-xs font-medium rounded-sm transition-colors cursor-pointer"
                 >
                   Close
                 </button>
@@ -1575,7 +1592,7 @@ export default function App() {
                     setModalProject(null);
                     handleNavigate('contact');
                   }}
-                  className="px-5 py-2.5 bg-[#1F1C18] hover:bg-[#38332B] text-[#FAF8F5] text-xs font-medium rounded-sm transition-colors"
+                  className="px-4 sm:px-5 py-2 sm:py-2.5 bg-[#1F1C18] hover:bg-[#38332B] text-[#FAF8F5] text-xs font-medium rounded-sm transition-colors cursor-pointer"
                 >
                   Inquire on Similar Commission
                 </button>
@@ -1589,18 +1606,18 @@ export default function App() {
       {/* ======================================================== */}
       {/* SEAMLESS ARCHITECTURAL FOOTER */}
       {/* ======================================================== */}
-      <footer className="bg-[#FAF8F5] border-t border-[#EAE5DB] py-16 w-full">
-        <div className="w-full max-w-[1720px] mx-auto px-6 sm:px-12 lg:px-16">
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-10">
+      <footer className="bg-[#FAF8F5] border-t border-[#EAE5DB] py-10 sm:py-16 w-full">
+        <div className="w-full max-w-[1720px] mx-auto px-4 sm:px-12 lg:px-16">
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-8 sm:gap-10">
             
-            <div className="space-y-3.5 md:col-span-1">
+            <div className="space-y-3 md:col-span-1">
               <button
                 type="button"
                 onClick={handleLogoClick}
-                className="flex items-center gap-3 text-left cursor-pointer group focus:outline-none"
+                className="flex items-center gap-2.5 sm:gap-3 text-left cursor-pointer group focus:outline-none"
               >
-                <BespokeLogo className="w-8 h-8 shrink-0" />
-                <span className="font-serif-luxury text-lg font-medium text-[#1F1C18]">
+                <BespokeLogo className="w-7 h-7 sm:w-8 sm:h-8 shrink-0" />
+                <span className="font-serif-luxury text-base sm:text-lg font-medium text-[#1F1C18]">
                   AUREUS & MONUMENT
                 </span>
               </button>
@@ -1651,11 +1668,11 @@ export default function App() {
 
           </div>
 
-          <div className="pt-8 mt-12 border-t border-[#EAE5DB] flex flex-col sm:flex-row items-center justify-between text-xs text-[#787168] gap-4">
+          <div className="pt-6 sm:pt-8 mt-8 sm:mt-12 border-t border-[#EAE5DB] flex flex-col sm:flex-row items-center justify-between text-xs text-[#787168] gap-3 sm:gap-4">
             <div>
               © 2026 Aureus & Monument Atelier. All rights reserved.
             </div>
-            <div className="flex items-center gap-4 text-[#787168]">
+            <div className="flex items-center gap-3 sm:gap-4 text-[#787168]">
               <button type="button" onClick={() => handleNavigate('contact')} className="hover:text-[#1F1C18]">Global Charter</button>
               <span>·</span>
               <button type="button" onClick={() => handleNavigate('contact')} className="hover:text-[#1F1C18]">Privacy Policy</button>
