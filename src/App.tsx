@@ -1,8 +1,5 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import { 
-  Compass, 
-  Layers, 
-  ShieldCheck, 
   Phone, 
   Mail, 
   MapPin, 
@@ -10,30 +7,38 @@ import {
   Check, 
   X, 
   ChevronRight, 
-  Sparkles, 
-  Clock, 
-  Hammer,
-  Droplets,
-  Flame,
-  Landmark,
-  History,
-  Crown,
-  Gem,
-  Award,
-  Globe
+  Globe,
+  Clock,
+  ArrowUpRight
 } from 'lucide-react';
 
 // ==========================================
-// ELEGANT BESPOKE BRAND MONOGRAM
+// BESPOKE ARCHITECTURAL MONOGRAM LOGO
 // ==========================================
 
-function BrandMonogram({ className = "w-7 h-7 text-[#9A6B2F]" }: { className?: string }) {
+export function BespokeLogo({ className = "w-9 h-9" }: { className?: string }) {
   return (
-    <svg viewBox="0 0 40 40" fill="none" className={className} stroke="currentColor" strokeWidth="1.5">
-      <circle cx="20" cy="20" r="18" stroke="currentColor" strokeWidth="1.2" opacity="0.4" />
-      <path d="M12 28L20 12L28 28" strokeLinecap="round" strokeLinejoin="round" />
-      <path d="M15 23H25" strokeLinecap="round" />
-      <circle cx="20" cy="12" r="1.5" fill="currentColor" />
+    <svg viewBox="0 0 64 64" fill="none" className={className} xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <linearGradient id="goldGradientMain" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" stopColor="#D4A860" />
+          <stop offset="50%" stopColor="#A87A38" />
+          <stop offset="100%" stopColor="#75501C" />
+        </linearGradient>
+      </defs>
+      
+      {/* Outer Circle with Fine Tick Marks */}
+      <circle cx="32" cy="32" r="29" stroke="url(#goldGradientMain)" strokeWidth="1" strokeDasharray="1 3" opacity="0.6" />
+      <circle cx="32" cy="32" r="26" stroke="url(#goldGradientMain)" strokeWidth="1.2" />
+
+      {/* Upright Monogram Structure */}
+      <path d="M19 44V24L32 37L45 24V44" stroke="url(#goldGradientMain)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+      <path d="M23 44L32 18L41 44" stroke="url(#goldGradientMain)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+      <path d="M26 36H38" stroke="url(#goldGradientMain)" strokeWidth="1.5" strokeLinecap="round" />
+      
+      {/* Keystone Diamond Accent */}
+      <polygon points="32,15 34.5,19 32,23 29.5,19" fill="#A87A38" />
+      <path d="M16 46H48" stroke="url(#goldGradientMain)" strokeWidth="1.2" strokeLinecap="round" opacity="0.8" />
     </svg>
   );
 }
@@ -83,6 +88,17 @@ export default function App() {
   const [modalProject, setModalProject] = useState<Project | null>(null);
   const [toastMessage, setToastMessage] = useState<string | null>(null);
   const [mobileMenuOpen, setMobileMenuOpen] = useState<boolean>(false);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [activeServiceIndex, setActiveServiceIndex] = useState<number>(0);
+  const [homeServiceSector, setHomeServiceSector] = useState<'all' | 'estates' | 'heritage' | 'courtyards'>('all');
+
+  // Loading Screen Timer
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setIsLoading(false);
+    }, 700);
+    return () => clearTimeout(timer);
+  }, []);
 
   // Form State
   const [formSubmitted, setFormSubmitted] = useState<boolean>(false);
@@ -115,8 +131,11 @@ export default function App() {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
-  // Team Members with compact circular avatars
-  // Names updated: Peter Van Hoff -> Fahad Al-Sabah (Kuwaiti), Gabriel Derrickson -> Gabriel Chen (Chinese)
+  // TEAM MEMBERS ARRANGED STRICTLY BY HIERARCHY ACCORDING TO POSITION
+  // 1. Fahad Al-Sabah: Principal & Managing Director
+  // 2. Gabriel Chen: Structural & Geotechnical Director
+  // 3. Jefferey T. Montgomery: Director of Sovereign Commissions & Private Estates
+  // 4. Corinne W. Smith: Master Stonemason & Materials Director
   const team: TeamMember[] = [
     {
       id: "fahad",
@@ -127,12 +146,12 @@ export default function App() {
       image: "/images/portrait_arab_prince_director_1794441904418.jpg"
     },
     {
-      id: "corinne",
-      name: "Corinne W. Smith",
+      id: "gabriel",
+      name: "Gabriel Chen",
       role: "Structural & Geotechnical Director",
       specialty: "Slope retention, bedrock micropiling & subterranean hydro-engineering",
       bio: "Specializes in deep bedrock anchoring, seismic soil retention, and concealed hydrostatic drainage systems for monumental hillside estates, marine bluffs, and coastal ramparts globally.",
-      image: "/images/portrait_corinne_w_smith_passport_1794441905659.jpg"
+      image: "/images/portrait_chinese_director_1794441906290.jpg"
     },
     {
       id: "jefferey",
@@ -143,12 +162,12 @@ export default function App() {
       image: "/images/portrait_black_american_director_1794441904183.jpg"
     },
     {
-      id: "gabriel",
-      name: "Gabriel Chen",
+      id: "corinne",
+      name: "Corinne W. Smith",
       role: "Master Stonemason & Materials Director",
       specialty: "Quarry provenance, imperial stonecutting & heritage conservation",
       bio: "Directs international quarry provenance verification, traditional lime mortar synthesis, and artisanal stone masonry for luxury private estates, museum atriums, and ancient archaeological monuments worldwide.",
-      image: "/images/portrait_chinese_director_1794441906290.jpg"
+      image: "/images/portrait_corinne_w_smith_passport_1794441905659.jpg"
     }
   ];
 
@@ -428,6 +447,128 @@ export default function App() {
     }
   ];
 
+  // 8 Human Master Disciplines Categorized & Organized
+  const servicesList = [
+    {
+      number: "01",
+      category: "estates" as const,
+      categoryLabel: "Sovereign Estates",
+      title: "Clifftop & Private Island Terraces",
+      subtitle: "Bedrock Micropiling & Sea Bastions",
+      director: "Gabriel Chen",
+      directorRole: "Geotechnical Director",
+      description: "Multi-tier dry-stack Istrian limestone retaining bastions anchored into coastal dolomite cliffs. Integrated cantilevered stone platforms and infinity plunge pools overhanging ocean promontories.",
+      image: "/images/new_cliffside_villa_terrace_1794441906830.jpg",
+      materials: ["Istrian Limestone", "Titanium Tiebacks", "Dolomite Stone"],
+      leadTime: "14 – 24 Weeks",
+      scopeTarget: "terraces" as const
+    },
+    {
+      number: "02",
+      category: "heritage" as const,
+      categoryLabel: "Museum & Heritage",
+      title: "Museum Atrium Modernization",
+      subtitle: "Zero-Vibration Cultural Hardscaping",
+      director: "Corinne W. Smith",
+      directorRole: "Master Stonemason & Materials Director",
+      description: "Non-percussive micro-trenching for climate conduits and fiber optics safeguarding priceless Hellenistic antiquities. Honey marble and crystalline flagstone galleries with seismic base isolation.",
+      image: "/images/museum_atrium_marble_1794056502385.jpg",
+      materials: ["Adnet Honey Marble", "Architectural Bronze", "Base Isolators"],
+      leadTime: "12 – 18 Months",
+      scopeTarget: "heritage" as const
+    },
+    {
+      number: "03",
+      category: "heritage" as const,
+      categoryLabel: "Museum & Heritage",
+      title: "Archaeological Monument Conservation",
+      subtitle: "Reversible Pozzolanic Grouting",
+      director: "Corinne W. Smith",
+      directorRole: "Master Stonemason & Materials Director",
+      description: "Stabilization of ancient ashlar fortifications using custom pozzolanic mortars matching classical chemical fingerprints. Reversible marine-grade stainless tendons without piercing historic stone.",
+      image: "/images/acropolis_stone_wall_1794056512464.jpg",
+      materials: ["Volcanic Pozzolan", "Air Lime CL-90", "316L Stainless"],
+      leadTime: "18 – 36 Months",
+      scopeTarget: "heritage" as const
+    },
+    {
+      number: "04",
+      category: "courtyards" as const,
+      categoryLabel: "Sacred & Palaces",
+      title: "Monumental Sacred Courtyards",
+      subtitle: "Thermal Sub-cooling & Crystalline Marble",
+      director: "Fahad Al-Sabah",
+      directorRole: "Principal Director",
+      description: "Hand-dressed Greek Thassos and Macedonian Sivec white marble arcades framing expansive reflection basins. Subterranean radiant sub-cooling and intricate lapis lazuli floral inlays.",
+      image: "/images/sheikh_zayed_courtyard_1794312369396.jpg",
+      materials: ["Thassos White Marble", "Lapis Lazuli Inlays", "24K Gold Leaf"],
+      leadTime: "16 – 28 Months",
+      scopeTarget: "courtyards" as const
+    },
+    {
+      number: "05",
+      category: "courtyards" as const,
+      categoryLabel: "Sacred & Palaces",
+      title: "Palace Water Amphitheaters",
+      subtitle: "Closed-Loop Hydraulic Cascades",
+      director: "Gabriel Chen",
+      directorRole: "Geotechnical Director",
+      description: "Tiered travertine water stairways, cascading stone spillways, and restored royal parterre promenades. Concealed variable-velocity hydraulic pumps with classical carved stone balustrades.",
+      image: "/images/grand_palace_hardscaping_1794058074270.jpg",
+      materials: ["Roman Travertine", "Cast Bronze Spouts", "Austrian Calcarenite"],
+      leadTime: "16 – 24 Months",
+      scopeTarget: "pools" as const
+    },
+    {
+      number: "06",
+      category: "estates" as const,
+      categoryLabel: "Sovereign Estates",
+      title: "Luxury Pool Surrounds & Thermal Decks",
+      subtitle: "Bespoke Coping & Heated Stone",
+      director: "Corinne W. Smith",
+      directorRole: "Master Stonemason & Materials Director",
+      description: "Zero-edge travertine wet-decks that stay naturally cool under intense sunlight. Flush coping transitions, integrated stone fire features, and sunken outdoor conversation lounges.",
+      image: "/images/amalfi_cliff_terrace_1794312370486.jpg",
+      materials: ["Vein-Cut Travertine", "Flamed Granite", "Bronze Handrails"],
+      leadTime: "10 – 16 Weeks",
+      scopeTarget: "pools" as const
+    },
+    {
+      number: "07",
+      category: "heritage" as const,
+      categoryLabel: "Museum & Heritage",
+      title: "Heritage Maintenance Charters",
+      subtitle: "Laser Stone Cleaning & Preservation",
+      director: "Corinne W. Smith",
+      directorRole: "Master Stonemason & Materials Director",
+      description: "Cyclic microclimatic stone consolidation, non-destructive pulsed laser patina cleaning, and biological biocide regimens to protect irreplaceable historical masonry against weathering.",
+      image: "/images/monemvasia_citadel_cliff_1794312400083.jpg",
+      materials: ["Silicic Acid Consolidant", "Pure Lime Mortar", "Hydrophobic Seal"],
+      leadTime: "Annual / Multi-Year",
+      scopeTarget: "heritage" as const
+    },
+    {
+      number: "08",
+      category: "estates" as const,
+      categoryLabel: "Sovereign Estates",
+      title: "Driveway Courtyards & Permeable Pavers",
+      subtitle: "Hand-Set European Porphyry & Granite",
+      director: "Gabriel Chen",
+      directorRole: "Geotechnical Director",
+      description: "European porphyry and granite cobblestone motor courts engineered for high-load vehicular traffic. Monolithic limestone entrance pillars and subterranean stormwater retention chambers.",
+      image: "/images/florence_uffizi_loggia_1794312385726.jpg",
+      materials: ["Porphyry Pavers", "Belgian Blue Stone", "Limestone Pillars"],
+      leadTime: "8 – 14 Weeks",
+      scopeTarget: "courtyards" as const
+    }
+  ];
+
+  // Filtered home services by practice sector
+  const filteredHomeServices = useMemo(() => {
+    if (homeServiceSector === 'all') return servicesList;
+    return servicesList.filter(s => s.category === homeServiceSector);
+  }, [homeServiceSector, servicesList]);
+
   // Filtered projects
   const filteredProjects = useMemo(() => {
     if (selectedCategory === 'all') return projects;
@@ -447,130 +588,151 @@ export default function App() {
       return;
     }
     setFormSubmitted(true);
-    showToast('Consultation brief received! A principal will initiate contact within 24 hours.');
+    showToast('Consultation brief received! A director will initiate contact within 24 hours.');
   };
 
   return (
-    <div className="min-h-screen bg-[#FAFAF9] text-[#18181B] flex flex-col selection:bg-[#9A6B2F]/20 selection:text-[#18181B]">
+    <div className="min-h-screen bg-[#FAF8F5] text-[#1F1C18] flex flex-col selection:bg-[#967241]/20 selection:text-[#1F1C18]">
       
+      {/* ======================================================== */}
+      {/* SERENE GALLERY LOADING SCREEN */}
+      {/* ======================================================== */}
+      <div 
+        className={`fixed inset-0 z-50 bg-[#FAF8F5] flex flex-col items-center justify-center transition-opacity duration-700 ${
+          isLoading ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'
+        }`}
+        onClick={() => setIsLoading(false)}
+      >
+        <div className="flex flex-col items-center space-y-4 text-center px-6 animate-in fade-in duration-500">
+          <BespokeLogo className="w-16 h-16 drop-shadow-sm" />
+          <div className="space-y-1">
+            <h2 className="text-xl sm:text-2xl font-serif-luxury tracking-widest text-[#1F1C18]">
+              AUREUS & MONUMENT
+            </h2>
+            <p className="text-xs text-[#8E795B] tracking-wider uppercase font-medium">
+              Architectural Hardscaping & Monument Preservation
+            </p>
+          </div>
+        </div>
+      </div>
+
       {/* Toast Notification */}
       {toastMessage && (
-        <div className="fixed bottom-6 right-6 z-50 bg-[#18181B] text-white px-5 py-3 rounded-lg shadow-xl border border-stone-800 text-sm flex items-center gap-3 animate-in fade-in slide-in-from-bottom-2 duration-200">
-          <Check className="w-4 h-4 text-[#C59B58]" />
+        <div className="fixed bottom-6 right-6 z-50 bg-[#1F1C18] text-[#FAF8F5] px-5 py-3 rounded-md shadow-2xl text-sm flex items-center gap-3 animate-in fade-in slide-in-from-bottom-2 duration-200">
+          <Check className="w-4 h-4 text-[#D4A860]" />
           <span>{toastMessage}</span>
         </div>
       )}
 
       {/* ======================================================== */}
-      {/* TOP BAR HEADER (NO CITY AT THE TOP, CLEAN BRAND LOGO) */}
+      {/* EDITORIAL HEADER (SEAMLESS, BORDERLESS LUXURY) */}
       {/* ======================================================== */}
-      <header className="sticky top-0 z-40 bg-white/95 backdrop-blur-md border-b border-stone-200 shadow-xs">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between gap-4">
+      <header className="sticky top-0 z-40 bg-[#FAF8F5]/90 backdrop-blur-md border-b border-[#EAE5DB] transition-all">
+        <div className="w-full max-w-[1720px] mx-auto px-6 sm:px-12 lg:px-16 h-20 sm:h-22 flex items-center justify-between gap-6">
           
-          {/* Brand Wordmark & Monogram -> Takes user directly to Homepage */}
+          {/* Brand Wordmark & Bespoke Logo */}
           <button 
             type="button"
             onClick={handleLogoClick}
-            className="flex items-center gap-3 text-left group cursor-pointer focus:outline-none"
+            className="flex items-center gap-3 text-left group cursor-pointer focus:outline-none shrink-0"
             aria-label="Aureus & Monument Home"
           >
-            <BrandMonogram className="w-8 h-8 text-[#9A6B2F] group-hover:scale-105 transition-transform duration-300" />
+            <BespokeLogo className="w-9 h-9 sm:w-10 sm:h-10 group-hover:scale-105 transition-transform duration-300 shrink-0" />
             <div>
-              <span className="text-lg sm:text-xl font-serif-luxury font-medium tracking-wide text-[#18181B] block">
+              <span className="text-lg sm:text-2xl font-serif-luxury font-medium tracking-wide text-[#1F1C18] block leading-tight">
                 AUREUS & MONUMENT
               </span>
-              <span className="text-xs text-stone-500 font-sans tracking-normal block">
+              <span className="text-[11px] text-[#787168] font-sans tracking-normal block">
                 Architectural Hardscaping & Monument Preservation
               </span>
             </div>
           </button>
 
           {/* Desktop Navigation */}
-          <nav className="hidden lg:flex items-center gap-6 xl:gap-8 text-sm font-medium text-stone-600">
+          <nav className="hidden lg:flex items-center gap-8 xl:gap-10 text-sm font-medium text-[#5A5247]">
             <button 
               type="button"
               onClick={() => handleNavigate('home')}
               className={`py-2 transition-colors relative cursor-pointer ${
-                activeTab === 'home' ? 'text-[#9A6B2F] font-semibold' : 'hover:text-[#18181B]'
+                activeTab === 'home' ? 'text-[#1F1C18] font-semibold' : 'hover:text-[#1F1C18]'
               }`}
             >
               Home
-              {activeTab === 'home' && <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-[#9A6B2F]" />}
+              {activeTab === 'home' && <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-[#967241]" />}
             </button>
             <button 
               type="button"
               onClick={() => handleNavigate('projects')}
               className={`py-2 transition-colors relative cursor-pointer ${
-                activeTab === 'projects' ? 'text-[#9A6B2F] font-semibold' : 'hover:text-[#18181B]'
+                activeTab === 'projects' ? 'text-[#1F1C18] font-semibold' : 'hover:text-[#1F1C18]'
               }`}
             >
               Projects
-              {activeTab === 'projects' && <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-[#9A6B2F]" />}
+              {activeTab === 'projects' && <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-[#967241]" />}
             </button>
             <button 
               type="button"
               onClick={() => handleNavigate('services')}
               className={`py-2 transition-colors relative cursor-pointer ${
-                activeTab === 'services' ? 'text-[#9A6B2F] font-semibold' : 'hover:text-[#18181B]'
+                activeTab === 'services' ? 'text-[#1F1C18] font-semibold' : 'hover:text-[#1F1C18]'
               }`}
             >
               Services
-              {activeTab === 'services' && <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-[#9A6B2F]" />}
+              {activeTab === 'services' && <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-[#967241]" />}
             </button>
             <button 
               type="button"
               onClick={() => handleNavigate('materials')}
               className={`py-2 transition-colors relative cursor-pointer ${
-                activeTab === 'materials' ? 'text-[#9A6B2F] font-semibold' : 'hover:text-[#18181B]'
+                activeTab === 'materials' ? 'text-[#1F1C18] font-semibold' : 'hover:text-[#1F1C18]'
               }`}
             >
               Materials & Craft
-              {activeTab === 'materials' && <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-[#9A6B2F]" />}
+              {activeTab === 'materials' && <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-[#967241]" />}
             </button>
             <button 
               type="button"
               onClick={() => handleNavigate('team')}
               className={`py-2 transition-colors relative cursor-pointer ${
-                activeTab === 'team' ? 'text-[#9A6B2F] font-semibold' : 'hover:text-[#18181B]'
+                activeTab === 'team' ? 'text-[#1F1C18] font-semibold' : 'hover:text-[#1F1C18]'
               }`}
             >
               Our Team
-              {activeTab === 'team' && <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-[#9A6B2F]" />}
+              {activeTab === 'team' && <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-[#967241]" />}
             </button>
             <button 
               type="button"
               onClick={() => handleNavigate('contact')}
               className={`py-2 transition-colors relative cursor-pointer ${
-                activeTab === 'contact' ? 'text-[#9A6B2F] font-semibold' : 'hover:text-[#18181B]'
+                activeTab === 'contact' ? 'text-[#1F1C18] font-semibold' : 'hover:text-[#1F1C18]'
               }`}
             >
               Contact
-              {activeTab === 'contact' && <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-[#9A6B2F]" />}
+              {activeTab === 'contact' && <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-[#967241]" />}
             </button>
           </nav>
 
-          {/* Action Trigger with previous phone number +1 (867) 988-1524 */}
-          <div className="flex items-center gap-3">
+          {/* Action Trigger */}
+          <div className="flex items-center gap-5">
             <a 
               href="tel:+18679881524" 
-              className="hidden xl:flex items-center gap-2 text-xs font-mono text-stone-600 hover:text-[#9A6B2F] transition-colors"
+              className="hidden xl:flex items-center gap-2 text-xs font-mono text-[#787168] hover:text-[#1F1C18] transition-colors"
             >
-              <Phone className="w-3.5 h-3.5 text-[#9A6B2F]" />
               <span>+1 (867) 988-1524</span>
             </a>
             <button 
               type="button"
               onClick={() => handleNavigate('contact')}
-              className="px-5 py-2.5 bg-[#18181B] hover:bg-[#27272A] text-white text-xs font-medium tracking-wide rounded-md transition-colors shadow-xs cursor-pointer"
+              className="px-5 py-2.5 bg-[#1F1C18] hover:bg-[#38332B] text-[#FAF8F5] text-xs font-medium tracking-wide rounded-sm transition-colors cursor-pointer"
             >
               Request a Consultation
             </button>
 
-            {/* Mobile menu hamburger toggle */}
+            {/* Mobile menu toggle */}
             <button
               type="button"
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className="lg:hidden p-2 text-stone-700 hover:text-stone-900 border border-stone-200 rounded-md"
+              className="lg:hidden p-2 text-[#1F1C18] hover:bg-[#EAE5DB] rounded-sm transition-colors"
               aria-label="Toggle Navigation Menu"
             >
               {mobileMenuOpen ? <X className="w-5 h-5" /> : <div className="space-y-1 w-5"><div className="h-0.5 bg-current w-full" /><div className="h-0.5 bg-current w-full" /><div className="h-0.5 bg-current w-full" /></div>}
@@ -578,326 +740,463 @@ export default function App() {
           </div>
         </div>
 
-        {/* Mobile Dropdown Menu */}
+        {/* Mobile Dropdown */}
         {mobileMenuOpen && (
-          <div className="lg:hidden bg-white border-b border-stone-200 px-6 py-4 space-y-3 animate-in slide-in-from-top-2 duration-150">
+          <div className="lg:hidden bg-[#FAF8F5] border-b border-[#EAE5DB] px-6 py-6 space-y-4 animate-in slide-in-from-top-2 duration-150">
             <button 
               type="button" 
               onClick={() => handleNavigate('home')} 
-              className={`block w-full text-left py-2 text-sm ${activeTab === 'home' ? 'text-[#9A6B2F] font-semibold' : 'text-stone-700'}`}
+              className={`block w-full text-left py-2 text-sm ${activeTab === 'home' ? 'text-[#967241] font-semibold' : 'text-[#1F1C18]'}`}
             >
               Home
             </button>
             <button 
               type="button" 
               onClick={() => handleNavigate('projects')} 
-              className={`block w-full text-left py-2 text-sm ${activeTab === 'projects' ? 'text-[#9A6B2F] font-semibold' : 'text-stone-700'}`}
+              className={`block w-full text-left py-2 text-sm ${activeTab === 'projects' ? 'text-[#967241] font-semibold' : 'text-[#1F1C18]'}`}
             >
               Projects
             </button>
             <button 
               type="button" 
               onClick={() => handleNavigate('services')} 
-              className={`block w-full text-left py-2 text-sm ${activeTab === 'services' ? 'text-[#9A6B2F] font-semibold' : 'text-stone-700'}`}
+              className={`block w-full text-left py-2 text-sm ${activeTab === 'services' ? 'text-[#967241] font-semibold' : 'text-[#1F1C18]'}`}
             >
               Services & Heritage Conservation
             </button>
             <button 
               type="button" 
               onClick={() => handleNavigate('materials')} 
-              className={`block w-full text-left py-2 text-sm ${activeTab === 'materials' ? 'text-[#9A6B2F] font-semibold' : 'text-stone-700'}`}
+              className={`block w-full text-left py-2 text-sm ${activeTab === 'materials' ? 'text-[#967241] font-semibold' : 'text-[#1F1C18]'}`}
             >
               Materials & Royal Craft
             </button>
             <button 
               type="button" 
               onClick={() => handleNavigate('team')} 
-              className={`block w-full text-left py-2 text-sm ${activeTab === 'team' ? 'text-[#9A6B2F] font-semibold' : 'text-stone-700'}`}
+              className={`block w-full text-left py-2 text-sm ${activeTab === 'team' ? 'text-[#967241] font-semibold' : 'text-[#1F1C18]'}`}
             >
               Our Team
             </button>
             <button 
               type="button" 
               onClick={() => handleNavigate('contact')} 
-              className={`block w-full text-left py-2 text-sm ${activeTab === 'contact' ? 'text-[#9A6B2F] font-semibold' : 'text-stone-700'}`}
+              className={`block w-full text-left py-2 text-sm ${activeTab === 'contact' ? 'text-[#967241] font-semibold' : 'text-[#1F1C18]'}`}
             >
               Contact & Inquiries
             </button>
-            <div className="pt-2 border-t border-stone-100 flex items-center justify-between text-xs text-stone-500">
-              <span className="flex items-center gap-1"><Globe className="w-3.5 h-3.5 text-[#9A6B2F]" /> Global Commissions</span>
-              <a href="tel:+18679881524" className="text-[#9A6B2F] font-medium">+1 (867) 988-1524</a>
+            <div className="pt-3 border-t border-[#EAE5DB] flex items-center justify-between text-xs text-[#787168]">
+              <span className="flex items-center gap-1.5"><Globe className="w-3.5 h-3.5 text-[#967241]" /> Worldwide Practice</span>
+              <a href="tel:+18679881524" className="text-[#1F1C18] font-mono font-medium">+1 (867) 988-1524</a>
             </div>
           </div>
         )}
       </header>
 
-      {/* Main Content Container */}
-      <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12">
+      {/* Main Content Area */}
+      <main className="flex-1 w-full flex flex-col">
         
         {/* ======================================================== */}
         {/* TAB: HOME PAGE */}
         {/* ======================================================== */}
         {activeTab === 'home' && (
-          <div className="space-y-16 sm:space-y-24">
+          <div className="w-full flex flex-col">
             
-            {/* 1. HERO SECTION (Global scope, no Canada restriction, no meet directorate button at top, no city at top) */}
-            <section className="bg-white border border-stone-200 rounded-xl p-8 sm:p-12 lg:p-16 shadow-xs">
-              <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-14 items-center">
-                
-                {/* Left Narrative */}
-                <div className="lg:col-span-6 space-y-6">
-                  <div className="inline-flex items-center gap-2 px-3 py-1 bg-stone-100 text-[#9A6B2F] rounded-full text-xs font-medium">
-                    <Crown className="w-3.5 h-3.5" />
-                    <span>Master Hardscaping, Royal Courtyards & Heritage Conservation</span>
-                  </div>
+            {/* 1. SEAMLESS FULL-BLEED CINEMATIC HERO (ENLARGED IMAGE, NO CARD BORDER, ONLY TITLE & 2 BUTTONS) */}
+            <section className="relative w-full h-[82vh] sm:h-[88vh] min-h-[560px] max-h-[920px] overflow-hidden">
+              
+              {/* Full Bleed Image Filling the Entire Width */}
+              <img 
+                src="/images/new_cliffside_villa_terrace_1794441906830.jpg"
+                alt="Architectural Hardscaping & Master Stonework"
+                className="absolute inset-0 w-full h-full object-cover object-center"
+              />
 
-                  <h1 className="text-3xl sm:text-5xl font-serif-luxury text-[#18181B] leading-[1.15] font-normal">
+              {/* Gentle Natural Film Gradient */}
+              <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/35 to-black/15" />
+              <div className="absolute inset-0 bg-gradient-to-r from-black/70 via-transparent to-black/30" />
+
+              {/* Foreground: ONLY Title and the Two Action Buttons */}
+              <div className="relative w-full max-w-[1720px] mx-auto h-full px-6 sm:px-12 lg:px-16 flex flex-col justify-end pb-16 sm:pb-20 max-w-5xl">
+                <div className="space-y-6">
+                  <h1 className="text-4xl sm:text-6xl lg:text-7xl font-serif-luxury text-white font-normal leading-[1.08] drop-shadow-[0_4px_24px_rgba(0,0,0,0.85)] max-w-4xl">
                     Architectural Hardscaping & Master Stonework
                   </h1>
 
-                  {/* General, global description as requested */}
-                  <p className="text-base text-stone-600 leading-relaxed max-w-lg">
-                    We design, engineer, and construct bespoke stone terraces, monumental courtyards, luxury pool surrounds, and heritage stonework for private estates and institutions worldwide.
-                  </p>
-
-                  {/* Action Buttons */}
-                  <div className="pt-2 flex flex-wrap items-center gap-4">
+                  <div className="flex flex-wrap items-center gap-4 pt-2">
                     <button
                       type="button"
                       onClick={() => handleNavigate('projects')}
-                      className="px-6 py-3.5 bg-[#9A6B2F] hover:bg-[#835923] text-white text-xs font-medium tracking-wide rounded-md transition-colors shadow-sm flex items-center gap-2 cursor-pointer"
+                      className="px-7 py-4 bg-[#FAF8F5] hover:bg-white text-[#1F1C18] text-xs sm:text-sm font-medium tracking-wide rounded-sm transition-all shadow-xl flex items-center gap-2 cursor-pointer"
                     >
                       <span>Explore Our Projects</span>
-                      <ArrowRight className="w-3.5 h-3.5" />
+                      <ArrowRight className="w-4 h-4 text-[#967241]" />
                     </button>
 
                     <button
                       type="button"
                       onClick={() => handleNavigate('contact')}
-                      className="px-6 py-3.5 bg-stone-100 hover:bg-stone-200 text-[#18181B] text-xs font-medium tracking-wide rounded-md transition-colors cursor-pointer"
+                      className="px-7 py-4 bg-black/40 hover:bg-black/60 text-white text-xs sm:text-sm font-medium tracking-wide rounded-sm transition-all border border-white/50 backdrop-blur-md cursor-pointer"
                     >
                       Request a Consultation
                     </button>
                   </div>
-
-                  {/* Trust Highlights */}
-                  <div className="pt-4 grid grid-cols-3 gap-4 border-t border-stone-100 text-stone-600">
-                    <div>
-                      <div className="text-xl sm:text-2xl font-serif-luxury font-medium text-[#18181B]">30+</div>
-                      <div className="text-xs text-stone-500">Years of Global Practice</div>
-                    </div>
-                    <div>
-                      <div className="text-xl sm:text-2xl font-serif-luxury font-medium text-[#18181B]">12</div>
-                      <div className="text-xs text-stone-500">Countries with Completed Works</div>
-                    </div>
-                    <div>
-                      <div className="text-xl sm:text-2xl font-serif-luxury font-medium text-[#18181B]">100%</div>
-                      <div className="text-xs text-stone-500">Quarried Natural Stone</div>
-                    </div>
-                  </div>
                 </div>
-
-                {/* Right Hero Visual Plate */}
-                <div 
-                  className="lg:col-span-6 relative aspect-4/3 rounded-lg overflow-hidden bg-stone-900 border border-stone-200 shadow-md group cursor-pointer"
-                  onClick={() => setModalProject(projects[0])}
-                >
-                  <img 
-                    src={projects[0].image} 
-                    alt={projects[0].title}
-                    className="w-full h-full object-cover group-hover:scale-103 transition-transform duration-700 ease-out"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent flex items-end p-6">
-                    <div className="text-white space-y-1">
-                      <span className="text-xs font-medium text-[#E5C38E]">Featured Sovereign Commission</span>
-                      <h3 className="text-xl font-serif-luxury font-normal">{projects[0].title}</h3>
-                      <p className="text-xs text-stone-300">{projects[0].location} · {projects[0].scope}</p>
-                    </div>
-                  </div>
-                </div>
-
               </div>
             </section>
 
-            {/* 2. SERVICES PREVIEW (Restored luxury, museum, and heritage services) */}
-            <section className="space-y-8">
-              <div className="text-center max-w-2xl mx-auto space-y-2">
-                <span className="text-xs font-medium text-[#9A6B2F]">Global Disciplines</span>
-                <h2 className="text-2xl sm:text-3xl font-serif-luxury text-[#18181B] font-normal">
-                  Comprehensive Architectural & Heritage Services
-                </h2>
-                <p className="text-sm text-stone-600">
-                  From multi-tier clifftop bastions to museum atrium modernizations and UNESCO-standard monument preservation, our expertise spans ancient stone craft and advanced geotechnical engineering.
-                </p>
-              </div>
-
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                {[
-                  {
-                    icon: Landmark,
-                    title: "Museum Atrium Modernization",
-                    desc: "Zero-vibration micro-trenching, climate-regulated structural stone, acoustic honey marble galleries, and flush museum flooring."
-                  },
-                  {
-                    icon: History,
-                    title: "Archaeological Monument Conservation",
-                    desc: "Non-invasive pozzolanic grouting, reversible stainless-steel tiebacks, ancient ashlar wall stabilization, and ruin parterre restoration."
-                  },
-                  {
-                    icon: Crown,
-                    title: "Monumental Sacred Courtyards",
-                    desc: "Hand-dressed Greek Thassos marble arcades, subterranean radiant sub-cooling, and precision water-jet lapis lazuli inlays."
-                  },
-                  {
-                    icon: Layers,
-                    title: "Clifftop & Private Island Terraces",
-                    desc: "Multi-tier dry-stack Istrian limestone retaining bastions, post-tensioned cantilevered platforms, and bedrock anchoring."
-                  },
-                  {
-                    icon: Droplets,
-                    title: "Palace Water Amphitheaters",
-                    desc: "Tiered travertine water stairways, closed-loop hydraulic cascades, parterres, and classical carved stone balustrades."
-                  },
-                  {
-                    icon: ShieldCheck,
-                    title: "Heritage Maintenance Charters",
-                    desc: "Microclimatic stone consolidation, non-destructive laser patina cleaning, biological biocide regimens, and cyclic inspection."
-                  },
-                  {
-                    icon: Flame,
-                    title: "Luxury Pool Surrounds & Thermal Decks",
-                    desc: "Bespoke bullnose pool coping, vein-cut Roman travertine decks, negative-edge overflow spillways, and sunken fire lounges."
-                  },
-                  {
-                    icon: Compass,
-                    title: "Driveway Courtyards & Permeable Pavers",
-                    desc: "Hand-set European porphyry cobblestone motor courts, monumental entry gate pillars, and vehicular stone paving."
-                  }
-                ].map((s, idx) => (
-                  <div key={idx} className="bg-white border border-stone-200 rounded-lg p-6 space-y-3 hover:border-[#9A6B2F]/60 transition-colors shadow-2xs">
-                    <div className="w-10 h-10 rounded-lg bg-[#FAF5EE] text-[#9A6B2F] flex items-center justify-center">
-                      <s.icon className="w-5 h-5" />
-                    </div>
-                    <h3 className="text-base font-serif-luxury font-medium text-[#18181B]">{s.title}</h3>
-                    <p className="text-xs text-stone-600 leading-relaxed">{s.desc}</p>
+            {/* 2. HUMAN EDITORIAL INTRO STRIP (SEAMLESSLY BLENDED, NO FLOATING BOXES) */}
+            <section className="w-full bg-[#FAF8F5] py-20 sm:py-28 border-b border-[#EAE5DB]">
+              <div className="w-full max-w-[1720px] mx-auto px-6 sm:px-12 lg:px-16">
+                <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-start">
+                  
+                  <div className="lg:col-span-4 space-y-3">
+                    <span className="text-xs uppercase tracking-widest text-[#8E795B] font-semibold">
+                      The Atelier Ethos
+                    </span>
+                    <h2 className="text-2xl sm:text-3xl font-serif-luxury font-normal text-[#1F1C18] leading-tight">
+                      Where geology meets classical proportion
+                    </h2>
                   </div>
-                ))}
+
+                  <div className="lg:col-span-8 space-y-6 text-[#5A5247] text-base sm:text-lg leading-relaxed font-light">
+                    <p>
+                      We work with raw, honest materials drawn from the earth: crystalline marbles, porous travertines, volcanic basalts, and glacial boulders. Every commission begins with the terrain itself—its natural contours, subterranean aquifers, and sun angles.
+                    </p>
+                    <p className="text-sm sm:text-base text-[#787168]">
+                      Our team pairs deep geotechnical engineering—micropiles, bedrock ties, concealed hydrostatic drainage—with the patience of master stonemasons who hand-dress each block to endure generations of weather and human life.
+                    </p>
+                  </div>
+
+                </div>
               </div>
             </section>
 
-            {/* 3. FEATURED PROJECTS PREVIEW */}
-            <section className="space-y-8">
-              <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 border-b border-stone-200 pb-4">
-                <div>
-                  <span className="text-xs font-medium text-[#9A6B2F]">Portfolio</span>
-                  <h2 className="text-2xl sm:text-3xl font-serif-luxury text-[#18181B] font-normal">
-                    Featured International Commissions
-                  </h2>
-                </div>
-                <button
-                  type="button"
-                  onClick={() => handleNavigate('projects')}
-                  className="text-xs font-medium text-[#9A6B2F] hover:text-[#835923] flex items-center gap-1.5 transition-colors cursor-pointer"
-                >
-                  <span>View All Projects ({projects.length})</span>
-                  <ChevronRight className="w-4 h-4" />
-                </button>
-              </div>
-
-              {/* 3 Curated Cards */}
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                {projects.slice(0, 3).map((p) => (
-                  <div
-                    key={p.id}
-                    onClick={() => setModalProject(p)}
-                    className="group bg-white border border-stone-200 rounded-lg overflow-hidden shadow-xs hover:border-[#9A6B2F] transition-all cursor-pointer flex flex-col justify-between"
-                  >
-                    <div className="relative aspect-16/10 overflow-hidden bg-stone-100">
-                      <img 
-                        src={p.image} 
-                        alt={p.title}
-                        className="w-full h-full object-cover group-hover:scale-104 transition-transform duration-500 ease-out"
-                      />
-                      <div className="absolute top-3 right-3 bg-white/90 backdrop-blur-xs px-2.5 py-1 rounded text-[11px] font-medium text-stone-700 shadow-xs">
-                        {p.scope}
-                      </div>
+            {/* 3. REFACTORED & HIGHLY ORGANIZED ARCHITECTURAL DISCIPLINES (SEAMLESS HAIRLINE GRID, NO FLOATING CARDS) */}
+            <section className="w-full bg-[#FAF8F5] py-20 sm:py-28 border-b border-[#EAE5DB]">
+              <div className="w-full max-w-[1720px] mx-auto px-6 sm:px-12 lg:px-16 space-y-12">
+                
+                {/* Header & Sector Navigation */}
+                <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-8 border-b border-[#EAE5DB] pb-8">
+                  <div className="max-w-3xl space-y-3">
+                    <div className="flex items-center gap-3">
+                      <span className="text-xs uppercase tracking-widest text-[#8E795B] font-semibold">
+                        Disciplines of Practice
+                      </span>
+                      <span className="h-px w-8 bg-[#DFD9CD]" />
+                      <span className="text-[11px] font-mono text-[#787168]">8 Global Specializations</span>
                     </div>
-                    <div className="p-5 space-y-2 flex-1 flex flex-col justify-between">
-                      <div>
-                        <span className="text-xs text-[#9A6B2F] font-medium">{p.categoryLabel}</span>
-                        <h3 className="text-base font-serif-luxury text-[#18181B] font-medium group-hover:text-[#9A6B2F] transition-colors">
-                          {p.title}
-                        </h3>
-                        <p className="text-xs text-stone-600 line-clamp-2 mt-1">
-                          {p.description}
+                    <h2 className="text-3xl sm:text-5xl font-serif-luxury text-[#1F1C18] font-normal leading-tight">
+                      Comprehensive Architectural & Heritage Services
+                    </h2>
+                    <p className="text-sm sm:text-base text-[#5A5247] font-light leading-relaxed">
+                      Structured across three foundational sectors: deep bedrock slope retention, museum climate galleries, and imperial white marble courtyards worldwide.
+                    </p>
+                  </div>
+
+                  {/* Clean Minimal Sector Filter Tabs */}
+                  <div className="flex flex-wrap items-center gap-2">
+                    {[
+                      { id: 'all', label: 'All Disciplines (8)' },
+                      { id: 'estates', label: 'Sovereign Estates & Terracing (3)' },
+                      { id: 'heritage', label: 'Museum & Heritage Sites (3)' },
+                      { id: 'courtyards', label: 'Royal Courtyards & Waters (2)' }
+                    ].map((tab) => (
+                      <button
+                        key={tab.id}
+                        type="button"
+                        onClick={() => setHomeServiceSector(tab.id as 'all' | 'estates' | 'heritage' | 'courtyards')}
+                        className={`px-3.5 py-2 text-xs font-medium rounded-sm transition-all cursor-pointer ${
+                          homeServiceSector === tab.id
+                            ? 'bg-[#1F1C18] text-[#FAF8F5] shadow-xs'
+                            : 'bg-[#F5F2EC] text-[#5A5247] hover:bg-[#EAE5DB] hover:text-[#1F1C18]'
+                        }`}
+                      >
+                        {tab.label}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Highly Organized Architectural Grid (Seamless Hairline Dividers, Zero Floating Box Syndrome) */}
+                <div className="border border-[#DFD9CD] bg-[#DFD9CD] gap-px grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4">
+                  {filteredHomeServices.map((service) => (
+                    <div 
+                      key={service.number}
+                      className="bg-[#FAF8F5] p-6 sm:p-7 flex flex-col justify-between hover:bg-[#F7F4EE] transition-colors group"
+                    >
+                      {/* Top Section */}
+                      <div className="space-y-4">
+                        
+                        {/* Architectural Photographic Plate */}
+                        <div className="relative aspect-16/10 overflow-hidden rounded-xs bg-stone-200">
+                          <img 
+                            src={service.image} 
+                            alt={service.title}
+                            className="w-full h-full object-cover group-hover:scale-104 transition-transform duration-700 ease-out"
+                          />
+                          <div className="absolute top-2.5 left-2.5 bg-[#FAF8F5]/95 backdrop-blur-xs px-2 py-0.5 text-[10px] font-mono text-[#1F1C18] tracking-wider uppercase">
+                            Discipline {service.number}
+                          </div>
+                          <div className="absolute bottom-2.5 right-2.5 bg-black/60 backdrop-blur-xs px-2 py-0.5 text-[10px] text-white/90 font-mono">
+                            {service.leadTime}
+                          </div>
+                        </div>
+
+                        {/* Metadata Tag */}
+                        <div className="flex items-center justify-between text-xs pt-1">
+                          <span className="text-[11px] uppercase tracking-wider text-[#8E795B] font-semibold">
+                            {service.categoryLabel}
+                          </span>
+                          <span className="text-[11px] text-[#787168] font-mono">
+                            Dir. {service.director.split(' ')[0]}
+                          </span>
+                        </div>
+
+                        {/* Title & Technical Subtitle */}
+                        <div className="space-y-1">
+                          <h3 className="text-xl font-serif-luxury text-[#1F1C18] group-hover:text-[#967241] transition-colors leading-snug font-medium">
+                            {service.title}
+                          </h3>
+                          <p className="text-xs text-[#8E795B] font-medium">
+                            {service.subtitle}
+                          </p>
+                        </div>
+
+                        {/* Technical Description */}
+                        <p className="text-xs sm:text-sm text-[#5A5247] leading-relaxed line-clamp-3 font-light">
+                          {service.description}
                         </p>
+
+                        {/* Quarried Stone Materials Provenance */}
+                        <div className="pt-2 border-t border-[#EAE5DB]/80 space-y-1">
+                          <span className="text-[10px] uppercase tracking-wider text-[#787168] block font-medium">
+                            Quarried Geology & Hardware:
+                          </span>
+                          <div className="flex flex-wrap gap-1.5 text-[11px] text-[#4A453E]">
+                            {service.materials.map((m, idx) => (
+                              <span 
+                                key={idx} 
+                                className="bg-[#EFECE5] px-2 py-0.5 rounded-xs"
+                              >
+                                {m}
+                              </span>
+                            ))}
+                          </div>
+                        </div>
+
                       </div>
-                      <div className="pt-3 border-t border-stone-100 flex items-center justify-between text-xs text-stone-500">
-                        <span>{p.location.split('·')[0].trim()}</span>
-                        <span className="text-[#9A6B2F] font-medium group-hover:translate-x-0.5 transition-transform">
-                          View Details →
-                        </span>
+
+                      {/* Bottom Action Links */}
+                      <div className="pt-5 mt-5 border-t border-[#DFD9CD] flex items-center justify-between text-xs">
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setSelectedCategory(service.scopeTarget);
+                            handleNavigate('projects');
+                          }}
+                          className="text-[#1F1C18] hover:text-[#967241] font-medium flex items-center gap-1 transition-colors cursor-pointer"
+                        >
+                          <span>View Works</span>
+                          <ArrowRight className="w-3.5 h-3.5" />
+                        </button>
+                        
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setFormData(prev => ({
+                              ...prev,
+                              projectType: service.title,
+                              message: `Inquiring regarding commission specifications for ${service.title} (${service.subtitle}).`
+                            }));
+                            handleNavigate('contact');
+                          }}
+                          className="text-[#787168] hover:text-[#1F1C18] text-[11px] underline underline-offset-2 transition-colors cursor-pointer"
+                        >
+                          Inquire Directly
+                        </button>
                       </div>
+
                     </div>
-                  </div>
-                ))}
-              </div>
-            </section>
+                  ))}
+                </div>
 
-            {/* 4. OUR TEAM / CRAFTSMEN (Fahad Al-Sabah & Gabriel Chen, small circular avatars) */}
-            <section className="bg-white border border-stone-200 rounded-xl p-8 sm:p-10 space-y-8 shadow-xs">
-              <div className="text-center max-w-2xl mx-auto space-y-2">
-                <span className="text-xs font-medium text-[#9A6B2F]">Global Leadership</span>
-                <h2 className="text-2xl sm:text-3xl font-serif-luxury text-[#18181B] font-normal">
-                  Our Team of Master Stonemasons & Directors
-                </h2>
-                <p className="text-sm text-stone-600">
-                  Every commission is governed directly by our four senior principals with decades of experience in structural retention, quarry provenance, and historic conservation.
-                </p>
-              </div>
-
-              {/* 4 Small Circular Thumbnails */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-                {team.map((member) => (
-                  <div key={member.id} className="bg-stone-50 border border-stone-200 rounded-lg p-5 text-center space-y-3 hover:border-stone-300 transition-colors">
-                    {/* Compact Circular Canvas Avatar */}
-                    <div className="w-20 h-20 rounded-full mx-auto overflow-hidden ring-3 ring-stone-200 shadow-xs bg-stone-200">
+                {/* Human Governance Assurance Banner */}
+                <div className="bg-[#F5F2EC] border border-[#DFD9CD] p-6 sm:p-8 flex flex-col md:flex-row items-center justify-between gap-6">
+                  
+                  <div className="flex items-center gap-5">
+                    {/* Director Avatars in Hierarchical Order */}
+                    <div className="flex -space-x-3 shrink-0">
                       <img 
-                        src={member.image} 
-                        alt={member.name}
-                        className="w-full h-full object-cover object-top"
+                        src="/images/portrait_arab_prince_director_1794441904418.jpg" 
+                        alt="Fahad Al-Sabah" 
+                        className="w-12 h-12 rounded-full object-cover ring-2 ring-[#FAF8F5] shadow-xs" 
+                      />
+                      <img 
+                        src="/images/portrait_chinese_director_1794441906290.jpg" 
+                        alt="Gabriel Chen" 
+                        className="w-12 h-12 rounded-full object-cover ring-2 ring-[#FAF8F5] shadow-xs" 
+                      />
+                      <img 
+                        src="/images/portrait_corinne_w_smith_passport_1794441905659.jpg" 
+                        alt="Corinne W. Smith" 
+                        className="w-12 h-12 rounded-full object-cover ring-2 ring-[#FAF8F5] shadow-xs" 
                       />
                     </div>
-                    <div className="space-y-1">
-                      <h4 className="font-serif-luxury text-lg text-[#18181B] font-medium">{member.name}</h4>
-                      <p className="text-xs text-[#9A6B2F] font-medium">{member.role}</p>
-                      <p className="text-[11px] text-stone-500 font-sans italic">{member.specialty}</p>
-                      <p className="text-xs text-stone-600 pt-1 line-clamp-3 leading-relaxed">
-                        {member.bio}
+                    
+                    <div className="space-y-0.5">
+                      <h4 className="text-sm font-serif-luxury font-medium text-[#1F1C18]">
+                        Technical Oversight & Direct Governance
+                      </h4>
+                      <p className="text-xs text-[#5A5247] max-w-xl font-light">
+                        Governed under the leadership of <strong className="font-medium text-[#1F1C18]">Fahad Al-Sabah</strong> (Principal & Managing Director), with on-site technical stewardship by <strong className="font-medium text-[#1F1C18]">Gabriel Chen</strong> (Structural & Geotechnical Director) and <strong className="font-medium text-[#1F1C18]">Corinne W. Smith</strong> (Master Stonemason).
                       </p>
                     </div>
                   </div>
-                ))}
+
+                  <div className="flex items-center gap-3 shrink-0">
+                    <button
+                      type="button"
+                      onClick={() => handleNavigate('services')}
+                      className="px-4 py-2.5 bg-white hover:bg-[#FAF8F5] border border-[#DFD9CD] text-[#1F1C18] text-xs font-medium rounded-sm transition-colors cursor-pointer"
+                    >
+                      Full Technical Dossier
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => handleNavigate('contact')}
+                      className="px-4 py-2.5 bg-[#1F1C18] hover:bg-[#38332B] text-[#FAF8F5] text-xs font-medium rounded-sm transition-colors cursor-pointer"
+                    >
+                      Request Consultation
+                    </button>
+                  </div>
+
+                </div>
+
               </div>
             </section>
 
-            {/* 5. CALL TO ACTION STRIP */}
-            <section className="bg-[#18181B] text-white rounded-xl p-8 sm:p-12 text-center space-y-4">
-              <span className="text-xs text-[#E5C38E] font-medium">Global Commissions & Consultations</span>
-              <h2 className="text-2xl sm:text-4xl font-serif-luxury font-normal max-w-2xl mx-auto">
-                Commission an enduring architectural masterwork
-              </h2>
-              <p className="text-sm text-stone-300 max-w-lg mx-auto">
-                Our principals evaluate site geology, structural load specifications, and quarry selections for distinguished estate and public commissions worldwide.
-              </p>
-              <div className="pt-2">
-                <button
-                  type="button"
-                  onClick={() => handleNavigate('contact')}
-                  className="px-6 py-3 bg-[#9A6B2F] hover:bg-[#B2803C] text-white text-xs font-medium rounded-md transition-colors shadow-sm cursor-pointer"
-                >
-                  Initiate Commission Brief
-                </button>
+            {/* 4. GALLERY SHOWCASE (FRAMLESS PHOTOGRAPHY, NATURAL MONOGRAPH RHYTHM) */}
+            <section className="w-full bg-[#FAF8F5] py-20 sm:py-28 border-b border-[#EAE5DB]">
+              <div className="w-full max-w-[1720px] mx-auto px-6 sm:px-12 lg:px-16 space-y-12">
+                
+                <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-6 border-b border-[#EAE5DB] pb-6">
+                  <div>
+                    <span className="text-xs uppercase tracking-widest text-[#8E795B] font-semibold">
+                      Selected Works
+                    </span>
+                    <h2 className="text-3xl sm:text-5xl font-serif-luxury text-[#1F1C18] font-normal mt-1">
+                      International Portfolio
+                    </h2>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => handleNavigate('projects')}
+                    className="text-xs font-semibold text-[#8E795B] hover:text-[#1F1C18] flex items-center gap-1.5 transition-colors cursor-pointer"
+                  >
+                    <span>View All Works ({projects.length})</span>
+                    <ChevronRight className="w-4 h-4" />
+                  </button>
+                </div>
+
+                {/* 3 Large Frameless Project Showcases */}
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-8 sm:gap-10">
+                  {projects.slice(0, 3).map((p) => (
+                    <article 
+                      key={p.id}
+                      onClick={() => setModalProject(p)}
+                      className="group cursor-pointer space-y-4"
+                    >
+                      <div className="relative aspect-16/11 overflow-hidden rounded-sm bg-stone-200">
+                        <img 
+                          src={p.image} 
+                          alt={p.title}
+                          className="w-full h-full object-cover group-hover:scale-103 transition-transform duration-700 ease-out"
+                        />
+                        <div className="absolute top-3 left-3 bg-[#FAF8F5]/90 backdrop-blur-xs px-2.5 py-1 text-[11px] font-mono text-[#1F1C18]">
+                          {p.year}
+                        </div>
+                      </div>
+
+                      <div className="space-y-1.5">
+                        <div className="text-xs text-[#8E795B] font-medium tracking-wide">
+                          {p.categoryLabel} · {p.location.split('·')[0].trim()}
+                        </div>
+                        <h3 className="text-xl sm:text-2xl font-serif-luxury text-[#1F1C18] group-hover:text-[#967241] transition-colors font-medium leading-snug">
+                          {p.title}
+                        </h3>
+                        <p className="text-xs sm:text-sm text-[#5A5247] line-clamp-2 leading-relaxed">
+                          {p.description}
+                        </p>
+                      </div>
+                    </article>
+                  ))}
+                </div>
+              </div>
+            </section>
+
+            {/* 5. HUMAN CRAFTSMEN SECTION (WARM, AUTHENTIC, REVERENT TO STONE) */}
+            <section className="w-full bg-[#F5F2EC] py-20 sm:py-28 border-b border-[#EAE5DB]">
+              <div className="w-full max-w-[1720px] mx-auto px-6 sm:px-12 lg:px-16 space-y-14">
+                
+                <div className="max-w-2xl space-y-2 border-b border-[#DFD9CD] pb-6">
+                  <span className="text-xs uppercase tracking-widest text-[#8E795B] font-semibold">
+                    The Directorate & Guild
+                  </span>
+                  <h2 className="text-3xl sm:text-5xl font-serif-luxury text-[#1F1C18] font-normal">
+                    Master Craftsmen & Engineers
+                  </h2>
+                  <p className="text-sm text-[#5A5247]">
+                    Governed by four senior principals who personally oversee bedrock analysis, quarry extraction, and stone jointing on-site.
+                  </p>
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+                  {team.map((member) => (
+                    <div key={member.id} className="space-y-4">
+                      {/* Human Circular Portrait */}
+                      <div className="w-24 h-24 rounded-full overflow-hidden shadow-xs ring-2 ring-[#DFD9CD] bg-stone-200">
+                        <img 
+                          src={member.image} 
+                          alt={member.name}
+                          className="w-full h-full object-cover object-top"
+                        />
+                      </div>
+                      <div className="space-y-1">
+                        <h3 className="text-xl font-serif-luxury text-[#1F1C18] font-medium">{member.name}</h3>
+                        <p className="text-xs font-semibold text-[#8E795B]">{member.role}</p>
+                        <p className="text-xs text-[#787168] italic">{member.specialty}</p>
+                        <p className="text-xs text-[#5A5247] pt-2 leading-relaxed">
+                          {member.bio}
+                        </p>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </section>
+
+            {/* 6. CONVERSATION STRIP (INVITING, CALM, UNRUSHED) */}
+            <section className="w-full bg-[#FAF8F5] py-20 sm:py-24">
+              <div className="w-full max-w-[1720px] mx-auto px-6 sm:px-12 lg:px-16 text-center space-y-6 max-w-3xl">
+                <span className="text-xs uppercase tracking-widest text-[#8E795B] font-semibold">
+                  Global Inquiries
+                </span>
+                <h2 className="text-3xl sm:text-5xl font-serif-luxury font-normal text-[#1F1C18]">
+                  Commission an architectural dialogue
+                </h2>
+                <p className="text-sm sm:text-base text-[#5A5247] leading-relaxed">
+                  Whether establishing a new clifftop terrace, revitalizing an imperial parterre, or preserving an archaeological landmark, our principals are available for initial site studies.
+                </p>
+                <div className="pt-2">
+                  <button
+                    type="button"
+                    onClick={() => handleNavigate('contact')}
+                    className="px-8 py-4 bg-[#1F1C18] hover:bg-[#38332B] text-[#FAF8F5] text-xs font-medium tracking-wide rounded-sm transition-colors cursor-pointer"
+                  >
+                    Initiate Private Commission Brief
+                  </button>
+                </div>
               </div>
             </section>
 
@@ -908,22 +1207,23 @@ export default function App() {
         {/* TAB: PROJECTS / PORTFOLIO */}
         {/* ======================================================== */}
         {activeTab === 'projects' && (
-          <div className="space-y-8 animate-in fade-in duration-200">
-            <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 border-b border-stone-200 pb-5">
+          <div className="w-full max-w-[1720px] mx-auto px-6 sm:px-12 lg:px-16 py-12 sm:py-16 space-y-12">
+            
+            <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-6 border-b border-[#EAE5DB] pb-6">
               <div>
-                <span className="text-xs font-medium text-[#9A6B2F]">Portfolio</span>
-                <h1 className="text-2xl sm:text-4xl font-serif-luxury text-[#18181B] font-normal">
+                <span className="text-xs uppercase tracking-widest text-[#8E795B] font-semibold">Archive</span>
+                <h1 className="text-3xl sm:text-5xl font-serif-luxury text-[#1F1C18] font-normal mt-1">
                   International Masterworks
                 </h1>
-                <p className="text-sm text-stone-600 mt-1">
+                <p className="text-sm text-[#5A5247] mt-1">
                   Explore completed clifftop terraces, royal courtyards, palace water amphitheatres, and archaeological conservations worldwide.
                 </p>
               </div>
 
-              {/* Category Filter Buttons */}
+              {/* Minimal Category Tabs */}
               <div className="flex flex-wrap items-center gap-2 text-xs">
                 {[
-                  { id: 'all', label: 'All Projects' },
+                  { id: 'all', label: 'All Works' },
                   { id: 'terraces', label: 'Clifftop & Terraces' },
                   { id: 'pools', label: 'Royal Water & Pools' },
                   { id: 'courtyards', label: 'Courtyards & Palaces' },
@@ -933,10 +1233,10 @@ export default function App() {
                     key={cat.id}
                     type="button"
                     onClick={() => setSelectedCategory(cat.id)}
-                    className={`px-3.5 py-1.5 rounded-md transition-all cursor-pointer ${
+                    className={`px-3.5 py-1.5 rounded-sm transition-all cursor-pointer ${
                       selectedCategory === cat.id
-                        ? 'bg-[#18181B] text-white font-medium'
-                        : 'bg-white text-stone-600 border border-stone-200 hover:bg-stone-50'
+                        ? 'bg-[#1F1C18] text-[#FAF8F5] font-medium'
+                        : 'bg-[#F5F2EC] text-[#5A5247] hover:bg-[#EAE5DB]'
                     }`}
                   >
                     {cat.label}
@@ -945,204 +1245,113 @@ export default function App() {
               </div>
             </div>
 
-            {/* Projects Grid */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {/* Frameless Projects Grid */}
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
               {filteredProjects.map((project) => (
-                <div
+                <article
                   key={project.id}
                   onClick={() => setModalProject(project)}
-                  className="group bg-white border border-stone-200 rounded-lg overflow-hidden shadow-xs hover:border-[#9A6B2F] transition-all cursor-pointer flex flex-col justify-between"
+                  className="group cursor-pointer space-y-3"
                 >
-                  <div className="relative aspect-16/10 overflow-hidden bg-stone-100">
+                  <div className="relative aspect-16/11 overflow-hidden rounded-sm bg-stone-200">
                     <img 
                       src={project.image} 
                       alt={project.title}
-                      className="w-full h-full object-cover group-hover:scale-104 transition-transform duration-500 ease-out"
+                      className="w-full h-full object-cover group-hover:scale-103 transition-transform duration-700 ease-out"
                     />
-                    <div className="absolute top-3 right-3 bg-white/90 backdrop-blur-xs px-2.5 py-1 rounded text-[11px] font-medium text-stone-700 shadow-xs">
+                    <div className="absolute top-3 left-3 bg-[#FAF8F5]/95 backdrop-blur-xs px-2.5 py-1 text-[11px] font-mono text-[#1F1C18]">
                       {project.scope}
                     </div>
                   </div>
 
-                  <div className="p-5 space-y-2 flex-1 flex flex-col justify-between">
-                    <div>
-                      <span className="text-xs text-[#9A6B2F] font-medium">{project.categoryLabel}</span>
-                      <h3 className="text-base font-serif-luxury text-[#18181B] font-medium group-hover:text-[#9A6B2F] transition-colors">
-                        {project.title}
-                      </h3>
-                      <p className="text-xs text-stone-600 line-clamp-2 mt-1">
-                        {project.description}
-                      </p>
-                    </div>
-
-                    <div className="pt-3 border-t border-stone-100 flex items-center justify-between text-xs text-stone-500">
+                  <div className="space-y-1">
+                    <span className="text-xs text-[#8E795B] font-medium">{project.categoryLabel}</span>
+                    <h3 className="text-xl font-serif-luxury text-[#1F1C18] group-hover:text-[#967241] transition-colors leading-snug">
+                      {project.title}
+                    </h3>
+                    <p className="text-xs text-[#5A5247] line-clamp-2 leading-relaxed">
+                      {project.description}
+                    </p>
+                    <div className="pt-2 text-xs text-[#787168] flex items-center justify-between">
                       <span>{project.location.split('·')[0].trim()}</span>
-                      <span className="text-[#9A6B2F] font-medium group-hover:translate-x-0.5 transition-transform">
-                        View Project →
-                      </span>
+                      <span className="text-[#1F1C18] font-medium group-hover:translate-x-0.5 transition-transform">View Dossier →</span>
                     </div>
                   </div>
-                </div>
+                </article>
               ))}
             </div>
+
           </div>
         )}
 
         {/* ======================================================== */}
-        {/* TAB: SERVICES (RESTORED MUSEUM, ARCHAEOLOGICAL, HERITAGE) */}
+        {/* TAB: SERVICES */}
         {/* ======================================================== */}
         {activeTab === 'services' && (
-          <div className="space-y-12 animate-in fade-in duration-200">
-            <div className="text-center max-w-2xl mx-auto space-y-2">
-              <span className="text-xs font-medium text-[#9A6B2F]">Global Disciplines</span>
-              <h1 className="text-2xl sm:text-4xl font-serif-luxury text-[#18181B] font-normal">
+          <div className="w-full max-w-[1720px] mx-auto px-6 sm:px-12 lg:px-16 py-12 sm:py-16 space-y-16">
+            
+            <div className="max-w-3xl space-y-2 border-b border-[#EAE5DB] pb-6">
+              <span className="text-xs uppercase tracking-widest text-[#8E795B] font-semibold">Disciplines</span>
+              <h1 className="text-3xl sm:text-5xl font-serif-luxury text-[#1F1C18] font-normal">
                 Master Hardscaping, Museum Modernization & Heritage Preservation
               </h1>
-              <p className="text-sm text-stone-600">
+              <p className="text-sm text-[#5A5247]">
                 A world-class suite of architectural stone disciplines serving royal trusts, cultural ministries, private family offices, and monumental estates worldwide.
               </p>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-              {[
-                {
-                  icon: Landmark,
-                  title: "Museum Atrium Modernization & Cultural Hardscaping",
-                  points: [
-                    "Zero-vibration micro-trenching for subterranean HVAC, climate conduits, and concealed fiber optics",
-                    "Non-percussive core extraction safeguarding priceless classical Hellenistic and Roman sculptures",
-                    "Polished honey marble and crystalline white flagstone galleries with seismic base isolation",
-                    "Structural glass lantern integration and hand-patinated architectural bronze expansion channels"
-                  ]
-                },
-                {
-                  icon: History,
-                  title: "Archaeological Monument & Heritage Site Conservation",
-                  points: [
-                    "Non-invasive structural grouting matching the chemical fingerprint of historical pozzolanic mortars",
-                    "Reversible marine-grade stainless steel 316L and titanium tension tiebacks for leaning ancient ashlar walls",
-                    "Seismic slope stabilization, deep bedrock anchoring, and photogrammetric sub-millimeter stone realignment",
-                    "Restoration of classical parterres, dry-stone ruin ramparts, and historic masonry defenses"
-                  ]
-                },
-                {
-                  icon: Crown,
-                  title: "Monumental Sacred Architecture & Grand Courtyards",
-                  points: [
-                    "Hand-dressed Greek Thassos crystalline white marble and Macedonian Sivec colonnades",
-                    "Subterranean radiant thermal sub-cooling systems for grand congregational plazas and walkways",
-                    "Expansive zero-edge reflective water basins with calibrated specular water tension",
-                    "Intricate water-jet floor inlays featuring Afghan lapis lazuli, desert rose travertine, and 24K gold tesserae"
-                  ]
-                },
-                {
-                  icon: Layers,
-                  title: "Clifftop & Private Island Estate Terracing",
-                  points: [
-                    "Multi-tier dry-stack Istrian limestone retaining bastions anchored into coastal dolomite cliffs",
-                    "Post-tensioned cantilevered stone slabs and infinity plunge pools overhanging ocean promontories",
-                    "Hydrostatic subsurface drainage relief channels and marine saline corrosion barriers",
-                    "Stepped stone amphitheaters, grand hillside transitions, and panoramic sea-terrace lounging platforms"
-                  ]
-                },
-                {
-                  icon: Droplets,
-                  title: "Royal Palaces & Baroque Water Amphitheaters",
-                  points: [
-                    "Tiered travertine water stairways, cascading stone spillways, and ornamental fountain balustrades",
-                    "Closed-loop subterranean hydraulic recirculation with variable-frequency water velocity controls",
-                    "Restoration of 18th-century royal parterres and hand-carved calcarenite stone coping",
-                    "Sunken geometric reflection courtyards and illuminated classical water features"
-                  ]
-                },
-                {
-                  icon: ShieldCheck,
-                  title: "Heritage Stone Maintenance & Preservation Charters",
-                  points: [
-                    "Periodic microclimatic stone consolidation and cyclic ultrasonic resonance structural audits",
-                    "Non-destructive pulsed laser stone cleaning restoring original quarry patina without surface abrasion",
-                    "Targeted biological biocide regimens removing lichen and cyanobacterial growth safely",
-                    "Annual inspection charters, joint re-pointing with air-lime CL-90, and breathable hydrophobic sealants"
-                  ]
-                },
-                {
-                  icon: Flame,
-                  title: "Luxury Pool Surrounds & Thermal Stone Decks",
-                  points: [
-                    "Bespoke bullnose and chiseled pool coping with zero-edge perimeter wet-deck transitions",
-                    "Vein-cut Roman travertine and flamed granite decks engineered to remain cool under direct sunlight",
-                    "Integrated stone fire features, Rumford fireplaces, and sunken outdoor conversation pavilions",
-                    "Freeze-thaw resistant sub-base matrix engineered for multi-climate thermal stability"
-                  ]
-                },
-                {
-                  icon: Compass,
-                  title: "Grand Entrance Courtyards & Cobblestone Promenades",
-                  points: [
-                    "Hand-set European porphyry and granite cobblestone motor courts for high-load vehicular traffic",
-                    "Monumental monolithic limestone entrance pillars, estate walls, and hand-forged bronze gates",
-                    "Permeable stone paving matrices with high-capacity underground stormwater retention",
-                    "Solid stone slab staircases, integrated step illumination channels, and architectural curbing"
-                  ]
-                }
-              ].map((svc, i) => (
-                <div key={i} className="bg-white border border-stone-200 rounded-xl p-8 space-y-4 shadow-xs">
-                  <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 rounded-lg bg-[#FAF5EE] text-[#9A6B2F] flex items-center justify-center shrink-0">
-                      <svc.icon className="w-5 h-5" />
-                    </div>
-                    <h3 className="text-xl font-serif-luxury font-medium text-[#18181B]">{svc.title}</h3>
+            <div className="divide-y divide-[#EAE5DB]">
+              {servicesList.map((svc) => (
+                <div key={svc.number} className="py-10 grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+                  <div className="lg:col-span-3 flex items-baseline gap-4">
+                    <span className="font-mono text-xl text-[#8E795B]">{svc.number}</span>
+                    <h3 className="text-2xl font-serif-luxury font-medium text-[#1F1C18] leading-tight">
+                      {svc.title}
+                    </h3>
                   </div>
-                  <ul className="space-y-2.5 text-xs sm:text-sm text-stone-600 pt-2">
-                    {svc.points.map((pt, j) => (
-                      <li key={j} className="flex items-start gap-2.5">
-                        <Check className="w-4 h-4 text-[#9A6B2F] shrink-0 mt-0.5" />
-                        <span>{pt}</span>
-                      </li>
-                    ))}
-                  </ul>
+
+                  <div className="lg:col-span-5 space-y-4">
+                    <p className="text-sm text-[#5A5247] leading-relaxed">
+                      {svc.description}
+                    </p>
+                    <div className="space-y-1 text-xs text-[#787168]">
+                      <span className="font-medium text-[#1F1C18] block">Primary Materials:</span>
+                      <p>{svc.materials.join(' · ')}</p>
+                    </div>
+                  </div>
+
+                  <div className="lg:col-span-4 aspect-16/10 rounded-sm overflow-hidden bg-stone-200">
+                    <img 
+                      src={svc.image} 
+                      alt={svc.title}
+                      className="w-full h-full object-cover"
+                    />
+                  </div>
                 </div>
               ))}
             </div>
 
-            <div className="bg-stone-100 rounded-xl p-8 text-center space-y-4">
-              <h3 className="text-xl font-serif-luxury text-[#18181B]">Commission an Architectural Feasibility Study</h3>
-              <p className="text-xs sm:text-sm text-stone-600 max-w-lg mx-auto">
-                Our directors personally review geotechnical terrain studies, structural loads, and historical preservation requirements for landmark commissions worldwide.
-              </p>
-              <button
-                type="button"
-                onClick={() => handleNavigate('contact')}
-                className="px-6 py-3 bg-[#18181B] hover:bg-stone-800 text-white text-xs font-medium rounded-md transition-colors cursor-pointer"
-              >
-                Discuss Your Scope with Our Directors
-              </button>
-            </div>
           </div>
         )}
 
         {/* ======================================================== */}
-        {/* TAB: MATERIALS & ROYAL CRAFT (DEDICATED LUXURY PAGE) */}
+        {/* TAB: MATERIALS & ROYAL CRAFT */}
         {/* ======================================================== */}
         {activeTab === 'materials' && (
-          <div className="space-y-12 animate-in fade-in duration-200">
+          <div className="w-full max-w-[1720px] mx-auto px-6 sm:px-12 lg:px-16 py-12 sm:py-16 space-y-14">
             
-            {/* Header */}
-            <div className="text-center max-w-3xl mx-auto space-y-2">
-              <span className="text-xs font-medium text-[#9A6B2F] flex items-center justify-center gap-1.5">
-                <Gem className="w-4 h-4" />
-                <span>Quarry Provenance & Imperial Artisanship</span>
-              </span>
-              <h1 className="text-2xl sm:text-4xl font-serif-luxury text-[#18181B] font-normal">
+            <div className="max-w-3xl space-y-2 border-b border-[#EAE5DB] pb-6">
+              <span className="text-xs uppercase tracking-widest text-[#8E795B] font-semibold">Provenance</span>
+              <h1 className="text-3xl sm:text-5xl font-serif-luxury text-[#1F1C18] font-normal">
                 Rare, Luxury & Royal Materials
               </h1>
-              <p className="text-sm text-stone-600">
-                A dedicated archive of certified quarried natural stones, crystalline marbles, historic travertines, and semiprecious inlays curated for royal palaces, museums, and clifftop estates.
+              <p className="text-sm text-[#5A5247]">
+                Certified quarried natural stones, crystalline marbles, historic travertines, and semiprecious inlays curated for royal palaces, museums, and clifftop estates.
               </p>
             </div>
 
-            {/* Category Filter */}
-            <div className="flex flex-wrap items-center justify-center gap-2 border-b border-stone-200 pb-5 text-xs">
+            {/* Filter Tabs */}
+            <div className="flex flex-wrap items-center gap-2 text-xs border-b border-[#EAE5DB] pb-5">
               {[
                 { id: 'all', label: `All Materials (${luxuryMaterials.length})` },
                 { id: 'marble', label: 'Imperial & Sacred Marbles' },
@@ -1154,10 +1363,10 @@ export default function App() {
                   key={c.id}
                   type="button"
                   onClick={() => setSelectedMaterialCategory(c.id)}
-                  className={`px-4 py-2 rounded-md transition-all cursor-pointer ${
+                  className={`px-3.5 py-1.5 rounded-sm transition-all cursor-pointer ${
                     selectedMaterialCategory === c.id
-                      ? 'bg-[#18181B] text-white font-medium shadow-xs'
-                      : 'bg-white text-stone-600 border border-stone-200 hover:bg-stone-50'
+                      ? 'bg-[#1F1C18] text-[#FAF8F5] font-medium'
+                      : 'bg-[#F5F2EC] text-[#5A5247] hover:bg-[#EAE5DB]'
                   }`}
                 >
                   {c.label}
@@ -1166,109 +1375,71 @@ export default function App() {
             </div>
 
             {/* Materials Grid */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
               {filteredMaterials.map((mat, idx) => (
-                <div key={idx} className="bg-white border border-stone-200 rounded-xl p-6 space-y-4 shadow-xs flex flex-col justify-between hover:border-[#9A6B2F] transition-colors">
-                  <div className="space-y-3">
-                    <div className="flex items-start justify-between gap-2">
-                      <span className="text-[11px] font-medium text-[#9A6B2F] bg-[#FAF5EE] px-2.5 py-1 rounded">
-                        {mat.provenance}
-                      </span>
-                    </div>
+                <div key={idx} className="border-t border-[#DFD9CD] pt-6 space-y-3">
+                  <span className="text-[11px] font-mono text-[#8E795B] uppercase tracking-wider block">
+                    {mat.provenance}
+                  </span>
 
-                    <h3 className="text-lg font-serif-luxury font-medium text-[#18181B]">
-                      {mat.name}
-                    </h3>
+                  <h3 className="text-xl font-serif-luxury font-medium text-[#1F1C18]">
+                    {mat.name}
+                  </h3>
 
-                    <p className="text-xs text-stone-600 leading-relaxed">
-                      {mat.description}
-                    </p>
+                  <p className="text-xs sm:text-sm text-[#5A5247] leading-relaxed">
+                    {mat.description}
+                  </p>
 
-                    {/* Characteristics */}
-                    <div className="pt-2 space-y-1.5 border-t border-stone-100">
-                      <span className="text-[10px] uppercase tracking-wider text-stone-400 font-semibold block">
-                        Structural & Aesthetic Traits
-                      </span>
-                      <div className="flex flex-wrap gap-1.5">
-                        {mat.characteristics.map((c, i) => (
-                          <span key={i} className="text-[11px] bg-stone-100 px-2 py-0.5 rounded text-stone-700">
-                            {c}
-                          </span>
-                        ))}
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className="pt-3 border-t border-stone-100">
-                    <span className="text-[10px] uppercase tracking-wider text-stone-400 font-semibold block mb-0.5">
-                      Primary Application
-                    </span>
-                    <p className="text-xs text-stone-700 font-medium">
-                      {mat.applications}
-                    </p>
+                  <div className="pt-2 text-xs space-y-1">
+                    <span className="text-[11px] font-medium text-[#1F1C18] block">Characteristics:</span>
+                    <p className="text-[#787168]">{mat.characteristics.join(' · ')}</p>
                   </div>
                 </div>
               ))}
             </div>
 
-            {/* Provenance Assurance Banner */}
-            <div className="bg-[#18181B] text-white rounded-xl p-8 sm:p-10 flex flex-col md:flex-row items-center justify-between gap-6">
-              <div className="space-y-2 text-center md:text-left">
-                <span className="text-xs text-[#E5C38E] font-medium flex items-center gap-1.5 justify-center md:justify-start">
-                  <Award className="w-4 h-4" />
-                  <span>Certified Quarry Provenance</span>
-                </span>
-                <h3 className="text-xl sm:text-2xl font-serif-luxury">Direct Sourcing from Historic Primary Quarries</h3>
-                <p className="text-xs sm:text-sm text-stone-300 max-w-xl">
-                  Every consignment of Thassos marble, Istrian limestone, Adnet calcarenite, and Roman travertine is personally inspected at the quarry source by Gabriel Chen to ensure geological purity and compressive density.
-                </p>
-              </div>
-              <button
-                type="button"
-                onClick={() => handleNavigate('contact')}
-                className="px-6 py-3 bg-[#9A6B2F] hover:bg-[#B2803C] text-white text-xs font-medium rounded-md whitespace-nowrap transition-colors cursor-pointer"
-              >
-                Inquire on Material Sourcing
-              </button>
+            {/* Provenance Banner */}
+            <div className="bg-[#F5F2EC] p-8 sm:p-12 border-l-2 border-[#967241] space-y-3">
+              <h3 className="text-2xl font-serif-luxury text-[#1F1C18]">Quarry Provenance Guarantee</h3>
+              <p className="text-sm text-[#5A5247] max-w-2xl leading-relaxed">
+                Every consignment of Thassos marble, Istrian limestone, Adnet calcarenite, and Roman travertine is personally verified at the quarry source by Corinne W. Smith to ensure geological purity and compressive density.
+              </p>
             </div>
 
           </div>
         )}
 
         {/* ======================================================== */}
-        {/* TAB: OUR TEAM (Fahad Al-Sabah & Gabriel Chen) */}
+        {/* TAB: OUR TEAM */}
         {/* ======================================================== */}
         {activeTab === 'team' && (
-          <div className="space-y-12 animate-in fade-in duration-200">
-            <div className="text-center max-w-2xl mx-auto space-y-2">
-              <span className="text-xs font-medium text-[#9A6B2F]">Global Leadership</span>
-              <h1 className="text-2xl sm:text-4xl font-serif-luxury text-[#18181B] font-normal">
+          <div className="w-full max-w-[1720px] mx-auto px-6 sm:px-12 lg:px-16 py-12 sm:py-16 space-y-14">
+            
+            <div className="max-w-2xl space-y-2 border-b border-[#EAE5DB] pb-6">
+              <span className="text-xs uppercase tracking-widest text-[#8E795B] font-semibold">Leadership</span>
+              <h1 className="text-3xl sm:text-5xl font-serif-luxury text-[#1F1C18] font-normal">
                 Master Craftsmen & Project Directors
               </h1>
-              <p className="text-sm text-stone-600">
-                Our leadership team unites licensed structural and geotechnical engineering with multi-generational royal stonemasonry artistry.
+              <p className="text-sm text-[#5A5247]">
+                Uniting licensed structural and geotechnical engineering with multi-generational royal stonemasonry artistry.
               </p>
             </div>
 
-            {/* 4 Cards with Compact Circular Avatars */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
               {team.map((member) => (
-                <div key={member.id} className="bg-white border border-stone-200 rounded-xl p-6 sm:p-8 flex flex-col sm:flex-row items-center sm:items-start gap-6 shadow-xs">
-                  {/* Circular Canvas Avatar */}
-                  <div className="w-24 h-24 rounded-full overflow-hidden shrink-0 ring-3 ring-stone-200 shadow-xs bg-stone-200">
+                <div key={member.id} className="flex flex-col sm:flex-row items-start gap-6 border-t border-[#DFD9CD] pt-8">
+                  <div className="w-24 h-24 rounded-full overflow-hidden shrink-0 ring-2 ring-[#DFD9CD] bg-stone-200">
                     <img 
                       src={member.image} 
                       alt={member.name}
                       className="w-full h-full object-cover object-top"
                     />
                   </div>
-                  <div className="space-y-2 text-center sm:text-left flex-1">
-                    <div>
-                      <h3 className="text-xl font-serif-luxury font-medium text-[#18181B]">{member.name}</h3>
-                      <p className="text-xs font-medium text-[#9A6B2F]">{member.role}</p>
-                      <p className="text-xs text-stone-500 italic mt-0.5">{member.specialty}</p>
-                    </div>
-                    <p className="text-xs sm:text-sm text-stone-600 leading-relaxed pt-1">
+                  <div className="space-y-1.5 flex-1">
+                    <h3 className="text-2xl font-serif-luxury font-medium text-[#1F1C18]">{member.name}</h3>
+                    <p className="text-xs font-semibold text-[#8E795B]">{member.role}</p>
+                    <p className="text-xs text-[#787168] italic">{member.specialty}</p>
+                    <p className="text-xs sm:text-sm text-[#5A5247] leading-relaxed pt-2">
                       {member.bio}
                     </p>
                   </div>
@@ -1276,99 +1447,93 @@ export default function App() {
               ))}
             </div>
 
-            <div className="bg-white border border-stone-200 rounded-xl p-8 text-center space-y-4">
-              <h3 className="text-xl font-serif-luxury text-[#18181B]">Direct Principal Oversight</h3>
-              <p className="text-sm text-stone-600 max-w-xl mx-auto">
-                Every project is supervised directly by our principals on-site, ensuring absolute quality control, accurate terrain grading, and meticulous stone jointing across all jurisdictions.
-              </p>
-            </div>
           </div>
         )}
 
         {/* ======================================================== */}
-        {/* TAB: CONTACT & INQUIRIES (PREVIOUS PHONE & EMAIL RESTORED) */}
+        {/* TAB: CONTACT */}
         {/* ======================================================== */}
         {activeTab === 'contact' && (
-          <div className="max-w-4xl mx-auto space-y-10 animate-in fade-in duration-200">
-            <div className="text-center space-y-2">
-              <span className="text-xs font-medium text-[#9A6B2F]">Global Inquiries</span>
-              <h1 className="text-2xl sm:text-4xl font-serif-luxury text-[#18181B] font-normal">
+          <div className="w-full max-w-[1720px] mx-auto px-6 sm:px-12 lg:px-16 py-12 sm:py-16 space-y-14">
+            
+            <div className="max-w-2xl space-y-2 border-b border-[#EAE5DB] pb-6">
+              <span className="text-xs uppercase tracking-widest text-[#8E795B] font-semibold">Dialogue</span>
+              <h1 className="text-3xl sm:text-5xl font-serif-luxury text-[#1F1C18] font-normal">
                 Consult With Our Atelier Principals
               </h1>
-              <p className="text-sm text-stone-600 max-w-xl mx-auto">
+              <p className="text-sm text-[#5A5247]">
                 Share details regarding your upcoming estate commission, museum project, or heritage site conservation. We review briefs across all continents.
               </p>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-12 gap-8">
-              {/* Global Studio Info */}
-              <div className="md:col-span-5 bg-white border border-stone-200 rounded-xl p-6 sm:p-8 space-y-6 shadow-xs">
+            <div className="grid grid-cols-1 md:grid-cols-12 gap-12">
+              
+              {/* Studio Info */}
+              <div className="md:col-span-5 space-y-6">
                 <div>
-                  <h3 className="text-lg font-serif-luxury font-medium text-[#18181B]">Global Headquarters</h3>
-                  <p className="text-xs text-stone-500 mt-1">Central Atelier & Project Directorate</p>
+                  <h3 className="text-xl font-serif-luxury text-[#1F1C18]">Global Headquarters</h3>
+                  <p className="text-xs text-[#787168] mt-0.5">Central Atelier & Directorate</p>
                 </div>
 
-                <div className="space-y-4 text-xs sm:text-sm text-stone-600">
+                <div className="space-y-4 text-xs sm:text-sm text-[#5A5247]">
                   <div className="flex items-start gap-3">
-                    <MapPin className="w-4 h-4 text-[#9A6B2F] shrink-0 mt-1" />
+                    <MapPin className="w-4 h-4 text-[#8E795B] shrink-0 mt-1" />
                     <div>
-                      <div className="font-medium text-[#18181B]">100 King Street West, Suite 5600</div>
+                      <div className="font-medium text-[#1F1C18]">100 King Street West, Suite 5600</div>
                       <div>Toronto, ON M5X 1C9, Canada</div>
                     </div>
                   </div>
 
-                  {/* Restored Phone Number: +1 (867) 988-1524 */}
                   <div className="flex items-center gap-3">
-                    <Phone className="w-4 h-4 text-[#9A6B2F] shrink-0" />
+                    <Phone className="w-4 h-4 text-[#8E795B] shrink-0" />
                     <div>
-                      <a href="tel:+18679881524" className="hover:text-[#9A6B2F] transition-colors font-mono">
+                      <a href="tel:+18679881524" className="hover:text-[#1F1C18] transition-colors font-mono font-medium">
                         +1 (867) 988-1524
                       </a>
                     </div>
                   </div>
 
-                  {/* Restored Email: aureusmonument@email.com */}
                   <div className="flex items-center gap-3">
-                    <Mail className="w-4 h-4 text-[#9A6B2F] shrink-0" />
+                    <Mail className="w-4 h-4 text-[#8E795B] shrink-0" />
                     <div>
-                      <a href="mailto:aureusmonument@email.com" className="hover:text-[#9A6B2F] transition-colors">
+                      <a href="mailto:aureusmonument@email.com" className="hover:text-[#1F1C18] transition-colors">
                         aureusmonument@email.com
                       </a>
                     </div>
                   </div>
 
                   <div className="flex items-start gap-3">
-                    <Clock className="w-4 h-4 text-[#9A6B2F] shrink-0 mt-1" />
+                    <Clock className="w-4 h-4 text-[#8E795B] shrink-0 mt-1" />
                     <div>
                       <div>Monday – Friday: 8:00 AM – 6:00 PM EST</div>
-                      <div className="text-stone-400">Private Consultations: By advance appointment</div>
+                      <div className="text-[#787168]">Private Consultations: By advance appointment</div>
                     </div>
                   </div>
                 </div>
 
-                <div className="pt-4 border-t border-stone-100">
-                  <span className="text-xs font-medium text-stone-700 block mb-1">Global Coverage:</span>
-                  <p className="text-xs text-stone-500 leading-relaxed">
+                <div className="pt-4 border-t border-[#EAE5DB]">
+                  <span className="text-xs font-semibold text-[#1F1C18] block mb-1">Global Commissions:</span>
+                  <p className="text-xs text-[#787168] leading-relaxed">
                     Commissions executed worldwide across North America, Europe, the Mediterranean, the Arabian Gulf, and East Asia.
                   </p>
                 </div>
               </div>
 
-              {/* Consultation Form */}
-              <div className="md:col-span-7 bg-white border border-stone-200 rounded-xl p-6 sm:p-8 shadow-xs">
+              {/* Seamless Form */}
+              <div className="md:col-span-7 bg-[#F5F2EC] p-8 sm:p-10 rounded-sm">
                 {formSubmitted ? (
                   <div className="text-center py-12 space-y-4">
-                    <div className="w-12 h-12 rounded-full bg-emerald-100 text-emerald-700 mx-auto flex items-center justify-center">
+                    <div className="w-12 h-12 rounded-full bg-[#EAE5DB] text-[#1F1C18] mx-auto flex items-center justify-center">
                       <Check className="w-6 h-6" />
                     </div>
-                    <h3 className="text-xl font-serif-luxury text-[#18181B]">Thank you for reaching out</h3>
-                    <p className="text-xs sm:text-sm text-stone-600 max-w-md mx-auto">
+                    <h3 className="text-2xl font-serif-luxury text-[#1F1C18]">Thank you for reaching out</h3>
+                    <p className="text-xs sm:text-sm text-[#5A5247] max-w-md mx-auto">
                       Your consultation brief has been transmitted to our principals. A director will review your project requirements and initiate contact within 24 business hours.
                     </p>
                     <button
                       type="button"
                       onClick={() => setFormSubmitted(false)}
-                      className="px-5 py-2 bg-stone-100 hover:bg-stone-200 text-stone-800 text-xs font-medium rounded-md transition-colors"
+                      className="px-5 py-2.5 bg-[#1F1C18] text-[#FAF8F5] text-xs font-medium rounded-sm transition-colors"
                     >
                       Submit Another Inquiry
                     </button>
@@ -1377,46 +1542,46 @@ export default function App() {
                   <form onSubmit={handleFormSubmit} className="space-y-4">
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                       <div className="space-y-1">
-                        <label className="text-xs font-medium text-stone-700">Your Full Name *</label>
+                        <label className="text-xs font-medium text-[#1F1C18]">Your Full Name *</label>
                         <input
                           type="text"
                           required
                           value={formData.name}
                           onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                           placeholder="e.g. Lord Harrington / Dr. Elena Rostova"
-                          className="w-full px-3.5 py-2 bg-stone-50 border border-stone-300 rounded-md text-xs sm:text-sm focus:outline-none focus:border-[#9A6B2F]"
+                          className="w-full px-3.5 py-2.5 bg-[#FAF8F5] border border-[#DFD9CD] rounded-sm text-xs sm:text-sm text-[#1F1C18] focus:outline-none focus:border-[#1F1C18]"
                         />
                       </div>
                       <div className="space-y-1">
-                        <label className="text-xs font-medium text-stone-700">Email Address *</label>
+                        <label className="text-xs font-medium text-[#1F1C18]">Email Address *</label>
                         <input
                           type="email"
                           required
                           value={formData.email}
                           onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                           placeholder="client@fiduciary.com"
-                          className="w-full px-3.5 py-2 bg-stone-50 border border-stone-300 rounded-md text-xs sm:text-sm focus:outline-none focus:border-[#9A6B2F]"
+                          className="w-full px-3.5 py-2.5 bg-[#FAF8F5] border border-[#DFD9CD] rounded-sm text-xs sm:text-sm text-[#1F1C18] focus:outline-none focus:border-[#1F1C18]"
                         />
                       </div>
                     </div>
 
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                       <div className="space-y-1">
-                        <label className="text-xs font-medium text-stone-700">Direct Phone Number</label>
+                        <label className="text-xs font-medium text-[#1F1C18]">Direct Phone Number</label>
                         <input
                           type="tel"
                           value={formData.phone}
                           onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
                           placeholder="+1 (867) 988-1524"
-                          className="w-full px-3.5 py-2 bg-stone-50 border border-stone-300 rounded-md text-xs sm:text-sm focus:outline-none focus:border-[#9A6B2F]"
+                          className="w-full px-3.5 py-2.5 bg-[#FAF8F5] border border-[#DFD9CD] rounded-sm text-xs sm:text-sm text-[#1F1C18] focus:outline-none focus:border-[#1F1C18]"
                         />
                       </div>
                       <div className="space-y-1">
-                        <label className="text-xs font-medium text-stone-700">Primary Commission Typology</label>
+                        <label className="text-xs font-medium text-[#1F1C18]">Primary Typology</label>
                         <select
                           value={formData.projectType}
                           onChange={(e) => setFormData({ ...formData, projectType: e.target.value })}
-                          className="w-full px-3.5 py-2 bg-stone-50 border border-stone-300 rounded-md text-xs sm:text-sm focus:outline-none focus:border-[#9A6B2F]"
+                          className="w-full px-3.5 py-2.5 bg-[#FAF8F5] border border-[#DFD9CD] rounded-sm text-xs sm:text-sm text-[#1F1C18] focus:outline-none focus:border-[#1F1C18]"
                         >
                           <option>Sovereign Estate Terracing & Retaining Bastions</option>
                           <option>Museum Atrium Modernization & Cultural Hardscaping</option>
@@ -1431,21 +1596,21 @@ export default function App() {
 
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                       <div className="space-y-1">
-                        <label className="text-xs font-medium text-stone-700">Project Geographic Location</label>
+                        <label className="text-xs font-medium text-[#1F1C18]">Project Geographic Location</label>
                         <input
                           type="text"
                           value={formData.location}
                           onChange={(e) => setFormData({ ...formData, location: e.target.value })}
                           placeholder="e.g. Monaco, Kyoto, London, Aspen, Dubai"
-                          className="w-full px-3.5 py-2 bg-stone-50 border border-stone-300 rounded-md text-xs sm:text-sm focus:outline-none focus:border-[#9A6B2F]"
+                          className="w-full px-3.5 py-2.5 bg-[#FAF8F5] border border-[#DFD9CD] rounded-sm text-xs sm:text-sm text-[#1F1C18] focus:outline-none focus:border-[#1F1C18]"
                         />
                       </div>
                       <div className="space-y-1">
-                        <label className="text-xs font-medium text-stone-700">Anticipated Timeframe</label>
+                        <label className="text-xs font-medium text-[#1F1C18]">Anticipated Timeframe</label>
                         <select
                           value={formData.timeline}
                           onChange={(e) => setFormData({ ...formData, timeline: e.target.value })}
-                          className="w-full px-3.5 py-2 bg-stone-50 border border-stone-300 rounded-md text-xs sm:text-sm focus:outline-none focus:border-[#9A6B2F]"
+                          className="w-full px-3.5 py-2.5 bg-[#FAF8F5] border border-[#DFD9CD] rounded-sm text-xs sm:text-sm text-[#1F1C18] focus:outline-none focus:border-[#1F1C18]"
                         >
                           <option>Immediate / Next Quarter</option>
                           <option>3 - 6 Months</option>
@@ -1456,26 +1621,28 @@ export default function App() {
                     </div>
 
                     <div className="space-y-1">
-                      <label className="text-xs font-medium text-stone-700">Commission Scope & Requirements</label>
+                      <label className="text-xs font-medium text-[#1F1C18]">Commission Scope & Requirements</label>
                       <textarea
                         rows={4}
                         value={formData.message}
                         onChange={(e) => setFormData({ ...formData, message: e.target.value })}
                         placeholder="Detail the site geology, historical context, preferred stone varieties (Thassos, travertine, limestone), and scope parameters..."
-                        className="w-full px-3.5 py-2 bg-stone-50 border border-stone-300 rounded-md text-xs sm:text-sm focus:outline-none focus:border-[#9A6B2F]"
+                        className="w-full px-3.5 py-2.5 bg-[#FAF8F5] border border-[#DFD9CD] rounded-sm text-xs sm:text-sm text-[#1F1C18] focus:outline-none focus:border-[#1F1C18]"
                       />
                     </div>
 
                     <button
                       type="submit"
-                      className="w-full py-3 bg-[#9A6B2F] hover:bg-[#835923] text-white text-xs sm:text-sm font-medium rounded-md transition-colors shadow-xs cursor-pointer"
+                      className="w-full py-3.5 bg-[#1F1C18] hover:bg-[#38332B] text-[#FAF8F5] text-xs sm:text-sm font-medium rounded-sm transition-colors cursor-pointer"
                     >
                       Transmit Consultation Brief
                     </button>
                   </form>
                 )}
               </div>
+
             </div>
+
           </div>
         )}
 
@@ -1486,30 +1653,27 @@ export default function App() {
       {/* ======================================================== */}
       {modalProject && (
         <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-center justify-center p-4 sm:p-6 overflow-y-auto">
-          <div className="bg-white border border-stone-300 rounded-xl max-w-3xl w-full overflow-hidden shadow-2xl animate-in zoom-in-95 duration-150 my-8">
+          <div className="bg-[#FAF8F5] border border-[#EAE5DB] rounded-sm max-w-3xl w-full overflow-hidden shadow-2xl animate-in zoom-in-95 duration-150 my-8">
             
-            {/* Modal Header */}
-            <div className="px-6 py-4 border-b border-stone-200 flex items-center justify-between">
+            <div className="px-6 py-5 border-b border-[#EAE5DB] flex items-center justify-between">
               <div>
-                <span className="text-xs font-medium text-[#9A6B2F]">{modalProject.categoryLabel}</span>
-                <h3 className="text-xl sm:text-2xl font-serif-luxury font-medium text-[#18181B]">
+                <span className="text-xs font-medium text-[#8E795B] uppercase tracking-wider">{modalProject.categoryLabel}</span>
+                <h3 className="text-xl sm:text-2xl font-serif-luxury font-medium text-[#1F1C18]">
                   {modalProject.title}
                 </h3>
               </div>
               <button
                 type="button"
                 onClick={() => setModalProject(null)}
-                className="p-1.5 text-stone-500 hover:text-stone-900 rounded-md hover:bg-stone-100 transition-colors"
+                className="p-1.5 text-[#787168] hover:text-[#1F1C18] rounded-sm hover:bg-[#EAE5DB] transition-colors"
                 aria-label="Close dialog"
               >
                 <X className="w-5 h-5" />
               </button>
             </div>
 
-            {/* Modal Body */}
             <div className="p-6 space-y-6 max-h-[75vh] overflow-y-auto">
-              {/* Project Image */}
-              <div className="relative aspect-16/10 rounded-lg overflow-hidden bg-stone-100 border border-stone-200">
+              <div className="relative aspect-16/10 rounded-sm overflow-hidden bg-stone-200">
                 <img 
                   src={modalProject.image} 
                   alt={modalProject.title} 
@@ -1517,51 +1681,47 @@ export default function App() {
                 />
               </div>
 
-              {/* Location & Details */}
               <div className="space-y-2">
-                <div className="flex items-center gap-1.5 text-xs text-[#9A6B2F] font-medium">
+                <div className="flex items-center gap-1.5 text-xs text-[#8E795B] font-medium">
                   <MapPin className="w-3.5 h-3.5" />
                   <span>{modalProject.location}</span>
                 </div>
-                <p className="text-sm text-stone-700 leading-relaxed">
+                <p className="text-sm text-[#5A5247] leading-relaxed">
                   {modalProject.description}
                 </p>
               </div>
 
-              {/* Stone Materials Specified */}
-              <div className="bg-stone-50 rounded-lg p-4 border border-stone-200 space-y-2">
-                <h5 className="text-xs font-medium text-stone-900">Quarried Natural Stone & Structural Matrix</h5>
+              <div className="bg-[#F5F2EC] rounded-sm p-4 space-y-2">
+                <h5 className="text-xs font-medium text-[#1F1C18]">Quarried Natural Stone & Structural Matrix</h5>
                 <div className="flex flex-wrap gap-2">
                   {modalProject.materials.map((mat, i) => (
-                    <span key={i} className="text-xs bg-white border border-stone-200 px-3 py-1 rounded text-stone-800">
+                    <span key={i} className="text-xs bg-[#FAF8F5] border border-[#DFD9CD] px-3 py-1 rounded-sm text-[#1F1C18]">
                       {mat}
                     </span>
                   ))}
                 </div>
               </div>
 
-              {/* Project Specs */}
               <div className="grid grid-cols-3 gap-3 text-center">
-                <div className="p-3 bg-stone-50 rounded border border-stone-200">
-                  <span className="text-[11px] text-stone-500 block">Commission Scope</span>
-                  <span className="text-sm font-medium text-stone-900">{modalProject.scope}</span>
+                <div className="p-3 bg-[#F5F2EC] rounded-sm">
+                  <span className="text-[11px] text-[#787168] block">Commission Scope</span>
+                  <span className="text-sm font-medium text-[#1F1C18]">{modalProject.scope}</span>
                 </div>
-                <div className="p-3 bg-stone-50 rounded border border-stone-200">
-                  <span className="text-[11px] text-stone-500 block">Execution Window</span>
-                  <span className="text-sm font-medium text-stone-900">{modalProject.timeline}</span>
+                <div className="p-3 bg-[#F5F2EC] rounded-sm">
+                  <span className="text-[11px] text-[#787168] block">Execution Window</span>
+                  <span className="text-sm font-medium text-[#1F1C18]">{modalProject.timeline}</span>
                 </div>
-                <div className="p-3 bg-stone-50 rounded border border-stone-200">
-                  <span className="text-[11px] text-stone-500 block">Year Completed</span>
-                  <span className="text-sm font-medium text-stone-900">{modalProject.year}</span>
+                <div className="p-3 bg-[#F5F2EC] rounded-sm">
+                  <span className="text-[11px] text-[#787168] block">Year Completed</span>
+                  <span className="text-sm font-medium text-[#1F1C18]">{modalProject.year}</span>
                 </div>
               </div>
 
-              {/* Modal Action CTA */}
-              <div className="pt-2 flex items-center justify-end gap-3 border-t border-stone-100">
+              <div className="pt-2 flex items-center justify-end gap-3 border-t border-[#EAE5DB]">
                 <button
                   type="button"
                   onClick={() => setModalProject(null)}
-                  className="px-4 py-2 border border-stone-200 text-stone-700 hover:bg-stone-50 text-xs font-medium rounded-md transition-colors"
+                  className="px-4 py-2 border border-[#DFD9CD] text-[#5A5247] hover:bg-[#F5F2EC] hover:text-[#1F1C18] text-xs font-medium rounded-sm transition-colors"
                 >
                   Close
                 </button>
@@ -1571,7 +1731,7 @@ export default function App() {
                     setModalProject(null);
                     handleNavigate('contact');
                   }}
-                  className="px-4 py-2 bg-[#9A6B2F] hover:bg-[#835923] text-white text-xs font-medium rounded-md transition-colors"
+                  className="px-5 py-2.5 bg-[#1F1C18] hover:bg-[#38332B] text-[#FAF8F5] text-xs font-medium rounded-sm transition-colors"
                 >
                   Inquire on Similar Commission
                 </button>
@@ -1583,45 +1743,42 @@ export default function App() {
       )}
 
       {/* ======================================================== */}
-      {/* FOOTER (GLOBAL HEADQUARTERS IN CANADA, RESTORED EMAIL & PHONE) */}
+      {/* SEAMLESS ARCHITECTURAL FOOTER */}
       {/* ======================================================== */}
-      <footer className="bg-white border-t border-stone-200 mt-20">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-16">
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
+      <footer className="bg-[#FAF8F5] border-t border-[#EAE5DB] py-16 w-full">
+        <div className="w-full max-w-[1720px] mx-auto px-6 sm:px-12 lg:px-16">
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-10">
             
-            {/* Brand Col */}
-            <div className="space-y-3 md:col-span-1">
+            <div className="space-y-3.5 md:col-span-1">
               <button
                 type="button"
                 onClick={handleLogoClick}
-                className="flex items-center gap-2.5 text-left cursor-pointer group focus:outline-none"
+                className="flex items-center gap-3 text-left cursor-pointer group focus:outline-none"
               >
-                <BrandMonogram className="w-6 h-6 text-[#9A6B2F]" />
-                <span className="font-serif-luxury text-lg font-medium text-[#18181B]">
+                <BespokeLogo className="w-8 h-8 shrink-0" />
+                <span className="font-serif-luxury text-lg font-medium text-[#1F1C18]">
                   AUREUS & MONUMENT
                 </span>
               </button>
-              <p className="text-xs text-stone-500 leading-relaxed">
+              <p className="text-xs text-[#787168] leading-relaxed">
                 Architectural hardscaping, monumental courtyards, palace water amphitheatres, and archaeological heritage preservation worldwide.
               </p>
             </div>
 
-            {/* Quick Links */}
             <div className="space-y-2">
-              <h4 className="text-xs font-semibold text-stone-900">Explore</h4>
-              <ul className="space-y-1.5 text-xs text-stone-600">
-                <li><button type="button" onClick={() => handleNavigate('home')} className="hover:text-[#9A6B2F] transition-colors cursor-pointer">Home</button></li>
-                <li><button type="button" onClick={() => handleNavigate('projects')} className="hover:text-[#9A6B2F] transition-colors cursor-pointer">International Projects</button></li>
-                <li><button type="button" onClick={() => handleNavigate('services')} className="hover:text-[#9A6B2F] transition-colors cursor-pointer">Services & Heritage</button></li>
-                <li><button type="button" onClick={() => handleNavigate('materials')} className="hover:text-[#9A6B2F] transition-colors cursor-pointer">Royal Materials & Craft</button></li>
-                <li><button type="button" onClick={() => handleNavigate('team')} className="hover:text-[#9A6B2F] transition-colors cursor-pointer">Our Team</button></li>
+              <h4 className="text-xs font-semibold text-[#1F1C18] uppercase tracking-wider">Explore</h4>
+              <ul className="space-y-1.5 text-xs text-[#5A5247]">
+                <li><button type="button" onClick={() => handleNavigate('home')} className="hover:text-[#1F1C18] transition-colors cursor-pointer">Home</button></li>
+                <li><button type="button" onClick={() => handleNavigate('projects')} className="hover:text-[#1F1C18] transition-colors cursor-pointer">International Projects</button></li>
+                <li><button type="button" onClick={() => handleNavigate('services')} className="hover:text-[#1F1C18] transition-colors cursor-pointer">Services & Heritage</button></li>
+                <li><button type="button" onClick={() => handleNavigate('materials')} className="hover:text-[#1F1C18] transition-colors cursor-pointer">Royal Materials & Craft</button></li>
+                <li><button type="button" onClick={() => handleNavigate('team')} className="hover:text-[#1F1C18] transition-colors cursor-pointer">Our Team</button></li>
               </ul>
             </div>
 
-            {/* Services */}
             <div className="space-y-2">
-              <h4 className="text-xs font-semibold text-stone-900">Disciplines</h4>
-              <ul className="space-y-1.5 text-xs text-stone-600">
+              <h4 className="text-xs font-semibold text-[#1F1C18] uppercase tracking-wider">Disciplines</h4>
+              <ul className="space-y-1.5 text-xs text-[#5A5247]">
                 <li>Museum Atrium Modernization</li>
                 <li>Archaeological Site Conservation</li>
                 <li>Monumental Sacred Courtyards</li>
@@ -1630,19 +1787,18 @@ export default function App() {
               </ul>
             </div>
 
-            {/* Studio Address in Canada with Restored Email and Phone */}
             <div className="space-y-2">
-              <h4 className="text-xs font-semibold text-stone-900">Global Headquarters</h4>
-              <div className="text-xs text-stone-600 space-y-1.5">
-                <div>100 King Street West, Suite 5600</div>
+              <h4 className="text-xs font-semibold text-[#1F1C18] uppercase tracking-wider">Global Headquarters</h4>
+              <div className="text-xs text-[#5A5247] space-y-1.5">
+                <div className="text-[#1F1C18] font-medium">100 King Street West, Suite 5600</div>
                 <div>Toronto, ON M5X 1C9, Canada</div>
                 <div className="pt-1">
-                  <a href="tel:+18679881524" className="text-[#9A6B2F] hover:underline font-mono">
+                  <a href="tel:+18679881524" className="text-[#1F1C18] hover:underline font-mono font-medium">
                     +1 (867) 988-1524
                   </a>
                 </div>
                 <div>
-                  <a href="mailto:aureusmonument@email.com" className="hover:text-[#9A6B2F] transition-colors">
+                  <a href="mailto:aureusmonument@email.com" className="hover:text-[#1F1C18] transition-colors">
                     aureusmonument@email.com
                   </a>
                 </div>
@@ -1651,16 +1807,16 @@ export default function App() {
 
           </div>
 
-          <div className="pt-8 mt-8 border-t border-stone-100 flex flex-col sm:flex-row items-center justify-between text-xs text-stone-400 gap-4">
+          <div className="pt-8 mt-12 border-t border-[#EAE5DB] flex flex-col sm:flex-row items-center justify-between text-xs text-[#787168] gap-4">
             <div>
               © 2026 Aureus & Monument Atelier. All rights reserved.
             </div>
-            <div className="flex items-center gap-4 text-stone-500">
-              <button type="button" onClick={() => handleNavigate('contact')} className="hover:text-stone-800">Global Charter</button>
+            <div className="flex items-center gap-4 text-[#787168]">
+              <button type="button" onClick={() => handleNavigate('contact')} className="hover:text-[#1F1C18]">Global Charter</button>
               <span>·</span>
-              <button type="button" onClick={() => handleNavigate('contact')} className="hover:text-stone-800">Privacy Policy</button>
+              <button type="button" onClick={() => handleNavigate('contact')} className="hover:text-[#1F1C18]">Privacy Policy</button>
               <span>·</span>
-              <button type="button" onClick={() => handleNavigate('contact')} className="hover:text-stone-800">Terms of Engagement</button>
+              <button type="button" onClick={() => handleNavigate('contact')} className="hover:text-[#1F1C18]">Terms of Engagement</button>
             </div>
           </div>
         </div>
