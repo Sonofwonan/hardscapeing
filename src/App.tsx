@@ -918,43 +918,40 @@ export default function App() {
                   </div>
                 </div>
 
-                {/* Highly Organized Architectural Grid (Seamless Hairline Dividers, Zero Floating Box Syndrome) */}
+                {/* Clean, Simple Architectural Grid (Clean Images, No Image Wordings, Few Words, No Floating Buttons) */}
                 <div className="border border-[#DFD9CD] bg-[#DFD9CD] gap-px grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4">
                   {filteredHomeServices.map((service) => (
                     <div 
                       key={service.number}
-                      className="bg-[#FAF8F5] p-6 sm:p-7 flex flex-col justify-between hover:bg-[#F7F4EE] transition-colors group"
+                      onClick={() => {
+                        setSelectedCategory(service.scopeTarget);
+                        handleNavigate('projects');
+                      }}
+                      className="bg-[#FAF8F5] p-6 sm:p-7 flex flex-col justify-between hover:bg-[#F7F4EE] transition-colors group cursor-pointer"
                     >
-                      {/* Top Section */}
-                      <div className="space-y-4">
+                      <div className="space-y-3.5">
                         
-                        {/* Architectural Photographic Plate */}
+                        {/* Pure Clean Photographic Plate (Zero Wordings on Image) */}
                         <div className="relative aspect-16/10 overflow-hidden rounded-xs bg-stone-200">
                           <img 
                             src={service.image} 
                             alt={service.title}
                             className="w-full h-full object-cover group-hover:scale-104 transition-transform duration-700 ease-out"
                           />
-                          <div className="absolute top-2.5 left-2.5 bg-[#FAF8F5]/95 backdrop-blur-xs px-2 py-0.5 text-[10px] font-mono text-[#1F1C18] tracking-wider uppercase">
-                            Discipline {service.number}
-                          </div>
-                          <div className="absolute bottom-2.5 right-2.5 bg-black/60 backdrop-blur-xs px-2 py-0.5 text-[10px] text-white/90 font-mono">
-                            {service.leadTime}
-                          </div>
                         </div>
 
-                        {/* Metadata Tag */}
-                        <div className="flex items-center justify-between text-xs pt-1">
+                        {/* Category Label */}
+                        <div className="flex items-center justify-between text-xs pt-0.5">
                           <span className="text-[11px] uppercase tracking-wider text-[#8E795B] font-semibold">
                             {service.categoryLabel}
                           </span>
-                          <span className="text-[11px] text-[#787168] font-mono">
-                            Dir. {service.director.split(' ')[0]}
+                          <span className="text-[11px] text-[#8E795B] font-mono">
+                            {service.number}
                           </span>
                         </div>
 
-                        {/* Title & Technical Subtitle */}
-                        <div className="space-y-1">
+                        {/* Title & Subtitle */}
+                        <div className="space-y-0.5">
                           <h3 className="text-xl font-serif-luxury text-[#1F1C18] group-hover:text-[#967241] transition-colors leading-snug font-medium">
                             {service.title}
                           </h3>
@@ -963,114 +960,19 @@ export default function App() {
                           </p>
                         </div>
 
-                        {/* Technical Description */}
-                        <p className="text-xs sm:text-sm text-[#5A5247] leading-relaxed line-clamp-3 font-light">
+                        {/* Concise Few Words Description */}
+                        <p className="text-xs text-[#5A5247] leading-relaxed line-clamp-2 font-light">
                           {service.description}
                         </p>
 
-                        {/* Quarried Stone Materials Provenance */}
-                        <div className="pt-2 border-t border-[#EAE5DB]/80 space-y-1">
-                          <span className="text-[10px] uppercase tracking-wider text-[#787168] block font-medium">
-                            Quarried Geology & Hardware:
-                          </span>
-                          <div className="flex flex-wrap gap-1.5 text-[11px] text-[#4A453E]">
-                            {service.materials.map((m, idx) => (
-                              <span 
-                                key={idx} 
-                                className="bg-[#EFECE5] px-2 py-0.5 rounded-xs"
-                              >
-                                {m}
-                              </span>
-                            ))}
-                          </div>
+                        {/* Clean Materials Label */}
+                        <div className="pt-1.5 text-[11px] text-[#787168] border-t border-[#EAE5DB]">
+                          <span>{service.materials.join(' · ')}</span>
                         </div>
 
                       </div>
-
-                      {/* Bottom Action Links */}
-                      <div className="pt-5 mt-5 border-t border-[#DFD9CD] flex items-center justify-between text-xs">
-                        <button
-                          type="button"
-                          onClick={() => {
-                            setSelectedCategory(service.scopeTarget);
-                            handleNavigate('projects');
-                          }}
-                          className="text-[#1F1C18] hover:text-[#967241] font-medium flex items-center gap-1 transition-colors cursor-pointer"
-                        >
-                          <span>View Works</span>
-                          <ArrowRight className="w-3.5 h-3.5" />
-                        </button>
-                        
-                        <button
-                          type="button"
-                          onClick={() => {
-                            setFormData(prev => ({
-                              ...prev,
-                              projectType: service.title,
-                              message: `Inquiring regarding commission specifications for ${service.title} (${service.subtitle}).`
-                            }));
-                            handleNavigate('contact');
-                          }}
-                          className="text-[#787168] hover:text-[#1F1C18] text-[11px] underline underline-offset-2 transition-colors cursor-pointer"
-                        >
-                          Inquire Directly
-                        </button>
-                      </div>
-
                     </div>
                   ))}
-                </div>
-
-                {/* Human Governance Assurance Banner */}
-                <div className="bg-[#F5F2EC] border border-[#DFD9CD] p-6 sm:p-8 flex flex-col md:flex-row items-center justify-between gap-6">
-                  
-                  <div className="flex items-center gap-5">
-                    {/* Director Avatars in Hierarchical Order */}
-                    <div className="flex -space-x-3 shrink-0">
-                      <img 
-                        src="/images/portrait_arab_prince_director_1794441904418.jpg" 
-                        alt="Fahad Al-Sabah" 
-                        className="w-12 h-12 rounded-full object-cover ring-2 ring-[#FAF8F5] shadow-xs" 
-                      />
-                      <img 
-                        src="/images/portrait_chinese_director_1794441906290.jpg" 
-                        alt="Gabriel Chen" 
-                        className="w-12 h-12 rounded-full object-cover ring-2 ring-[#FAF8F5] shadow-xs" 
-                      />
-                      <img 
-                        src="/images/portrait_corinne_w_smith_passport_1794441905659.jpg" 
-                        alt="Corinne W. Smith" 
-                        className="w-12 h-12 rounded-full object-cover ring-2 ring-[#FAF8F5] shadow-xs" 
-                      />
-                    </div>
-                    
-                    <div className="space-y-0.5">
-                      <h4 className="text-sm font-serif-luxury font-medium text-[#1F1C18]">
-                        Technical Oversight & Direct Governance
-                      </h4>
-                      <p className="text-xs text-[#5A5247] max-w-xl font-light">
-                        Governed under the leadership of <strong className="font-medium text-[#1F1C18]">Fahad Al-Sabah</strong> (Principal & Managing Director), with on-site technical stewardship by <strong className="font-medium text-[#1F1C18]">Gabriel Chen</strong> (Structural & Geotechnical Director) and <strong className="font-medium text-[#1F1C18]">Corinne W. Smith</strong> (Master Stonemason).
-                      </p>
-                    </div>
-                  </div>
-
-                  <div className="flex items-center gap-3 shrink-0">
-                    <button
-                      type="button"
-                      onClick={() => handleNavigate('services')}
-                      className="px-4 py-2.5 bg-white hover:bg-[#FAF8F5] border border-[#DFD9CD] text-[#1F1C18] text-xs font-medium rounded-sm transition-colors cursor-pointer"
-                    >
-                      Full Technical Dossier
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => handleNavigate('contact')}
-                      className="px-4 py-2.5 bg-[#1F1C18] hover:bg-[#38332B] text-[#FAF8F5] text-xs font-medium rounded-sm transition-colors cursor-pointer"
-                    >
-                      Request Consultation
-                    </button>
-                  </div>
-
                 </div>
 
               </div>
