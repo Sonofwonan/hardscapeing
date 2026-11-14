@@ -1,104 +1,99 @@
 import React, { useState, useMemo, useEffect } from 'react';
-import { 
-  Phone, 
-  Mail, 
-  MapPin, 
-  ArrowRight, 
-  Check, 
-  X, 
-  ChevronRight, 
-  Globe,
+import {
+  Phone,
+  Mail,
+  MapPin,
   Clock,
-  ArrowUpRight
+  Check,
+  X,
+  ChevronLeft,
+  ChevronRight,
+  ArrowLeft,
+  ArrowUp,
+  Menu,
+  ShieldCheck,
+  Users,
+  Layers,
+  Landmark,
+  History,
+  Crown,
+  Droplets,
+  Flame,
+  Compass,
+  Award,
+  Globe,
+  Building2,
+  Hammer,
+  Star,
+  Gem,
+  Maximize2
 } from 'lucide-react';
+import { BespokeLogo } from './components/BespokeLogo';
+import {
+  TabType,
+  Project,
+  ServiceItem,
+  ProcessGalleryItem,
+  LuxuryMaterial,
+  TeamMember,
+  GENERATED_ASSETS,
+  PROCESS_GALLERY,
+  HERO_SLIDES,
+  TEAM_MEMBERS,
+  PROJECTS,
+  SERVICES_LIST,
+  LUXURY_MATERIALS,
+  CLIENT_REVIEWS
+} from './data/atelierData';
 
-// ==========================================
-// BESPOKE ARCHITECTURAL MONOGRAM LOGO
-// ==========================================
+type DetailViewState =
+  | { kind: 'project'; item: Project }
+  | { kind: 'service'; item: ServiceItem }
+  | { kind: 'process'; item: ProcessGalleryItem }
+  | { kind: 'material'; item: LuxuryMaterial }
+  | { kind: 'team'; item: TeamMember }
+  | null;
 
-export function BespokeLogo({ className = "w-9 h-9" }: { className?: string }) {
-  return (
-    <svg viewBox="0 0 64 64" fill="none" className={className} xmlns="http://www.w3.org/2000/svg">
-      <defs>
-        <linearGradient id="goldGradientMain" x1="0%" y1="0%" x2="100%" y2="100%">
-          <stop offset="0%" stopColor="#D4A860" />
-          <stop offset="50%" stopColor="#A87A38" />
-          <stop offset="100%" stopColor="#75501C" />
-        </linearGradient>
-      </defs>
-      
-      {/* Outer Circle with Fine Tick Marks */}
-      <circle cx="32" cy="32" r="29" stroke="url(#goldGradientMain)" strokeWidth="1" strokeDasharray="1 3" opacity="0.6" />
-      <circle cx="32" cy="32" r="26" stroke="url(#goldGradientMain)" strokeWidth="1.2" />
-
-      {/* Upright Monogram Structure */}
-      <path d="M19 44V24L32 37L45 24V44" stroke="url(#goldGradientMain)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-      <path d="M23 44L32 18L41 44" stroke="url(#goldGradientMain)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-      <path d="M26 36H38" stroke="url(#goldGradientMain)" strokeWidth="1.5" strokeLinecap="round" />
-      
-      {/* Keystone Diamond Accent */}
-      <polygon points="32,15 34.5,19 32,23 29.5,19" fill="#A87A38" />
-      <path d="M16 46H48" stroke="url(#goldGradientMain)" strokeWidth="1.2" strokeLinecap="round" opacity="0.8" />
-    </svg>
-  );
-}
-
-// ==========================================
-// TYPES & DATA DEFINITIONS
-// ==========================================
-
-type TabType = 'home' | 'projects' | 'services' | 'materials' | 'team' | 'contact';
-
-interface TeamMember {
-  id: string;
-  name: string;
-  role: string;
-  specialty: string;
-  bio: string;
-  image: string;
-}
-
-interface Project {
-  id: number;
-  title: string;
-  category: 'terraces' | 'pools' | 'courtyards' | 'heritage';
-  categoryLabel: string;
-  location: string;
-  image: string;
-  description: string;
-  materials: string[];
-  scope: string;
-  timeline: string;
-  year: string;
-}
-
-interface LuxuryMaterial {
-  name: string;
-  category: 'marble' | 'travertine' | 'inlay' | 'granite';
-  provenance: string;
-  description: string;
-  characteristics: string[];
-  applications: string;
+function renderServiceIcon(iconKey: ServiceItem['iconKey'], className = 'w-7 h-7') {
+  switch (iconKey) {
+    case 'layers':
+      return <Layers className={className} />;
+    case 'landmark':
+      return <Landmark className={className} />;
+    case 'history':
+      return <History className={className} />;
+    case 'crown':
+      return <Crown className={className} />;
+    case 'droplets':
+      return <Droplets className={className} />;
+    case 'flame':
+      return <Flame className={className} />;
+    case 'shield':
+      return <ShieldCheck className={className} />;
+    case 'compass':
+    default:
+      return <Compass className={className} />;
+  }
 }
 
 export default function App() {
   const [activeTab, setActiveTab] = useState<TabType>('home');
+  const [detailView, setDetailView] = useState<DetailViewState>(null);
+  const [zoomImage, setZoomImage] = useState<{ src: string; title: string } | null>(null);
+
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
   const [selectedMaterialCategory, setSelectedMaterialCategory] = useState<string>('all');
-  const [modalProject, setModalProject] = useState<Project | null>(null);
+  const [processFilter, setProcessFilter] = useState<'all' | 'quarry' | 'studio' | 'plans' | 'macro'>('all');
+  const [homeServiceSector, setHomeServiceSector] = useState<'all' | 'estates' | 'heritage' | 'courtyards'>('all');
+
   const [toastMessage, setToastMessage] = useState<string | null>(null);
   const [mobileMenuOpen, setMobileMenuOpen] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState<boolean>(true);
-  const [activeServiceIndex, setActiveServiceIndex] = useState<number>(0);
-  const [homeServiceSector, setHomeServiceSector] = useState<'all' | 'estates' | 'heritage' | 'courtyards'>('all');
-
-  // Loading Screen Timer
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      setIsLoading(false);
-    }, 700);
-    return () => clearTimeout(timer);
-  }, []);
+  const [currentSlide, setCurrentSlide] = useState<number>(0);
+  const [isCarouselPaused, setIsCarouselPaused] = useState<boolean>(false);
+  const [reviewOffset, setReviewOffset] = useState<number>(0);
+  const [showBackToTop, setShowBackToTop] = useState<boolean>(false);
+  const [newsletterEmail, setNewsletterEmail] = useState<string>('');
 
   // Form State
   const [formSubmitted, setFormSubmitted] = useState<boolean>(false);
@@ -106,11 +101,34 @@ export default function App() {
     name: '',
     email: '',
     phone: '',
-    projectType: 'Sovereign Estate Terracing & Retaining Bastions',
+    projectType: 'Clifftop & Island Terraces',
     location: '',
-    timeline: '3 - 6 Months',
+    subject: '',
     message: ''
   });
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setIsLoading(false);
+    }, 500);
+    return () => clearTimeout(timer);
+  }, []);
+
+  useEffect(() => {
+    if (activeTab !== 'home' || detailView !== null || isCarouselPaused) return;
+    const interval = setInterval(() => {
+      setCurrentSlide((prev) => (prev + 1) % HERO_SLIDES.length);
+    }, 6500);
+    return () => clearInterval(interval);
+  }, [activeTab, detailView, isCarouselPaused]);
+
+  useEffect(() => {
+    const onScroll = () => {
+      setShowBackToTop(window.scrollY > 360);
+    };
+    window.addEventListener('scroll', onScroll, { passive: true });
+    return () => window.removeEventListener('scroll', onScroll);
+  }, []);
 
   const showToast = (msg: string) => {
     setToastMessage(msg);
@@ -119,1570 +137,2408 @@ export default function App() {
 
   const handleNavigate = (tab: TabType) => {
     setActiveTab(tab);
+    setDetailView(null);
     setMobileMenuOpen(false);
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
+  const openDetail = (nextDetail: Exclude<DetailViewState, null>, parentTab?: TabType) => {
+    if (parentTab) {
+      setActiveTab(parentTab);
+    }
+    setDetailView(nextDetail);
+    setMobileMenuOpen(false);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  const requestInquiryWithContext = (projectTypeLabel: string, notePrefix?: string) => {
+    setFormData((prev) => ({
+      ...prev,
+      projectType: projectTypeLabel,
+      message: notePrefix ? `${notePrefix}\n` : prev.message
+    }));
+    setFormSubmitted(false);
+    handleNavigate('contact');
+  };
+
   const handleLogoClick = () => {
     setActiveTab('home');
-    setModalProject(null);
+    setDetailView(null);
     setSelectedCategory('all');
     setMobileMenuOpen(false);
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
-  // TEAM MEMBERS ARRANGED STRICTLY BY HIERARCHY ACCORDING TO POSITION
-  // 1. Fahad Al-Sabah: Principal & Managing Director
-  // 2. Gabriel Chen: Structural & Geotechnical Director
-  // 3. Jefferey T. Montgomery: Director of Sovereign Commissions & Private Estates
-  // 4. Corinne W. Smith: Master Stonemason & Materials Director
-  const team: TeamMember[] = [
-    {
-      id: "fahad",
-      name: "Fahad Al-Sabah",
-      role: "Principal & Managing Director",
-      specialty: "Sovereign master planning, royal palace grounds & clifftop estates",
-      bio: "Over three decades directing monumental architectural commissions, royal courtyard masterworks, and private island sanctuaries across Europe, the Middle East, the Americas, and Asia.",
-      image: "/images/portrait_arab_prince_director_1794441904418.jpg"
-    },
-    {
-      id: "gabriel",
-      name: "Gabriel Chen",
-      role: "Structural & Geotechnical Director",
-      specialty: "Slope retention, bedrock micropiling & subterranean hydro-engineering",
-      bio: "Specializes in deep bedrock anchoring, seismic soil retention, and concealed hydrostatic drainage systems for monumental hillside estates, marine bluffs, and coastal ramparts globally.",
-      image: "/images/portrait_chinese_director_1794441906290.jpg"
-    },
-    {
-      id: "jefferey",
-      name: "Jefferey T. Montgomery",
-      role: "Director of Sovereign Commissions & Private Estates",
-      specialty: "Client liaison, estate development & fiduciary oversight",
-      bio: "Liaises with private family offices, sovereign trusts, and luxury estate developments worldwide, guaranteeing absolute discretion, rigorous timeline control, and bespoke execution.",
-      image: "/images/portrait_black_american_director_1794441904183.jpg"
-    },
-    {
-      id: "corinne",
-      name: "Corinne W. Smith",
-      role: "Master Stonemason & Materials Director",
-      specialty: "Quarry provenance, imperial stonecutting & heritage conservation",
-      bio: "Directs international quarry provenance verification, traditional lime mortar synthesis, and artisanal stone masonry for luxury private estates, museum atriums, and ancient archaeological monuments worldwide.",
-      image: "/images/portrait_corinne_w_smith_passport_1794441905659.jpg"
-    }
-  ];
-
-  // 12 Curated Hardscaping & Monument Projects Worldwide
-  const projects: Project[] = [
-    {
-      id: 1,
-      title: "Villa Medicea Clifftop Terraces",
-      category: "terraces",
-      categoryLabel: "Clifftop & Estate Terraces",
-      location: "Cap d'Ail · French Riviera",
-      image: "/images/new_cliffside_villa_terrace_1794441906830.jpg",
-      description: "Four-tier dry-stack natural limestone retaining terraces with cascading infinity reflection basins and integrated granite outdoor stairs anchored into steep coastal dolomite cliffs.",
-      materials: ["Natural Istrian Limestone", "Basalt Sub-base Matrix", "Titanium Bedrock Tiebacks", "Concealed Siphon Drains"],
-      scope: "14,500 sq.ft.",
-      timeline: "16 Weeks",
-      year: "2025"
-    },
-    {
-      id: 2,
-      title: "Sultan Qaboos Royal Colonnade Courtyard",
-      category: "courtyards",
-      categoryLabel: "Grand Courtyards & Palaces",
-      location: "Muscat Governorate · Sultanate of Oman",
-      image: "/images/mosque_courtyard_marble_1794058073956.jpg",
-      description: "Hand-dressed Thassos crystalline white marble colonnades, monumental minarets, multi-layered reflective courtyard pools, and intricate lapis and gold Islamic geometric inlays.",
-      materials: ["Greek Thassos Pure White Marble", "Omani Desert Rose Travertine", "Afghan Lapis Lazuli Inlays", "24-Karat Gold Mosaic Leaf"],
-      scope: "485,000 sq.ft.",
-      timeline: "28 Months",
-      year: "2026"
-    },
-    {
-      id: 3,
-      title: "Grand Belvedere Palace Water Amphitheater",
-      category: "pools",
-      categoryLabel: "Royal Water & Pool Decks",
-      location: "Vienna Royal Precinct · Austria",
-      image: "/images/grand_palace_hardscaping_1794058074270.jpg",
-      description: "Tiered travertine water stairways, cascading fountains, ornate stone balustrades, and restored imperial parterre gardens for a baroque royal residence.",
-      materials: ["Austrian St. Margarethen Calcarenite", "Adnet Limestone Flagstones", "Cast Bronze Fountain Nozzles", "Lead-Capped Coping Stones"],
-      scope: "64,000 sq.ft.",
-      timeline: "18 Months",
-      year: "2025"
-    },
-    {
-      id: 4,
-      title: "National Antiquities Museum Atrium Modernization",
-      category: "heritage",
-      categoryLabel: "Museum & Heritage Sites",
-      location: "Ringstraße · Vienna, Austria",
-      image: "/images/museum_atrium_marble_1794056502385.jpg",
-      description: "Zero-vibration micro-trenching, climate-regulated structural stone, fiber-optic antiquities illumination, and Adnet honey marble galleries safeguarding irreplaceable Hellenistic collections.",
-      materials: ["Austrian Adnet Honey Marble", "Ultra-Clear Low-Iron Structural Glass", "Patinated Architectural Bronze", "Seismic Base Isolators"],
-      scope: "26,000 sq.ft.",
-      timeline: "14 Months",
-      year: "2026"
-    },
-    {
-      id: 5,
-      title: "Aegina Acropolis Ashlar Wall Stabilization",
-      category: "heritage",
-      categoryLabel: "Museum & Heritage Sites",
-      location: "Saronic Gulf · Aegina, Greece",
-      image: "/images/acropolis_stone_wall_1794056512464.jpg",
-      description: "Non-invasive structural pozzolanic grouting, seismic isolation joints, and traditional mortar replication to secure 4th-century BCE ashlar fortifications against coastal erosion.",
-      materials: ["Santorini Volcanic Pozzolan", "Pure Air Lime CL-90", "Marine-Grade 316L Stainless Tendons", "Parian Marble Inlays"],
-      scope: "18,200 sq.ft.",
-      timeline: "24 Months",
-      year: "2025"
-    },
-    {
-      id: 6,
-      title: "Kyoto Daitoku-ji Imperial Sanctuary Hardscaping",
-      category: "courtyards",
-      categoryLabel: "Grand Courtyards & Palaces",
-      location: "Kita Ward · Kyoto, Japan",
-      image: "/images/kyoto_zen_garden_1794056511443.jpg",
-      description: "Restoration of a Muromachi-period sanctuary garden featuring raked Shirakawa granitic gravel, hand-positioned Kurama volcanic boulders, and cedar verandas with subterranean typhoon runoff control.",
-      materials: ["Kyoto Shirakawa Granitic Gravel", "Kurama Natural Volcanic Stone", "Hinoki Cypress Timbers", "Charcoal Filtration Base"],
-      scope: "16,000 sq.ft.",
-      timeline: "12 Months",
-      year: "2025"
-    },
-    {
-      id: 7,
-      title: "Sheikh Zayed Grand Pavilion Reflective Hardscaping",
-      category: "pools",
-      categoryLabel: "Royal Water & Pool Decks",
-      location: "Abu Dhabi Emirate · United Arab Emirates",
-      image: "/images/sheikh_zayed_courtyard_1794312369396.jpg",
-      description: "Expansion of monumental water basins, Macedonian Sivec white marble arcades, subterranean radiant cooling, and inlaid semiprecious lapis floral courtyards.",
-      materials: ["Macedonian Sivec White Marble", "Italian Lasa Bianco Floor Pavers", "Mother of Pearl Floral Inlays", "Titanium Expansion Joint Strips"],
-      scope: "115,000 sq.ft.",
-      timeline: "20 Months",
-      year: "2025"
-    },
-    {
-      id: 8,
-      title: "Promontory Belvedere Cliffside Estate",
-      category: "terraces",
-      categoryLabel: "Clifftop & Estate Terraces",
-      location: "Amalfi Coast · Campania, Italy",
-      image: "/images/amalfi_cliff_terrace_1794312370486.jpg",
-      description: "Three-tier cantilevered terraces anchored into volcanic tuff sea cliffs with integrated infinity plunge pools and bespoke Roman travertine lounge pavilions.",
-      materials: ["Tivoli Vein-Cut Roman Travertine", "Campanian Tuff Stone Core", "Post-Tensioned Carbon Fiber Tendons", "Hand-Forged Bronze Railings"],
-      scope: "18,500 sq.ft.",
-      timeline: "18 Weeks",
-      year: "2025"
-    },
-    {
-      id: 9,
-      title: "Alpine Stone Ramparts & Estate Bastion",
-      category: "terraces",
-      categoryLabel: "Clifftop & Estate Terraces",
-      location: "Engadin Valley · Swiss Alps",
-      image: "/images/alpine_stone_fortress_1794312371092.jpg",
-      description: "Heavy granite boulder retaining bastions engineered for high-altitude thermal cycling, extreme freeze-thaw resilience, and severe avalanche load dissipation.",
-      materials: ["Glacial Granite Boulders", "Crushed Basalt Drainage Backfill", "Chiseled Stone Lintels", "Stainless Tieback Rock Anchors"],
-      scope: "22,000 sq.ft.",
-      timeline: "20 Weeks",
-      year: "2024"
-    },
-    {
-      id: 10,
-      title: "Monemvasia Citadel Sea Cliff Ramparts",
-      category: "heritage",
-      categoryLabel: "Museum & Heritage Sites",
-      location: "Peloponnese Maritime Bluff · Greece",
-      image: "/images/monemvasia_citadel_cliff_1794312400083.jpg",
-      description: "Ancient sea-bluff pedestrian ramparts and stone parapet preservation utilizing non-destructive consolidation grouting against Mediterranean wave spray and salt aerosol.",
-      materials: ["Marine-Grade Limestone", "Dolomite Rubble Core", "Silicic Acid Consolidant", "Bronze Structural Clamps"],
-      scope: "31,000 sq.ft.",
-      timeline: "16 Months",
-      year: "2025"
-    },
-    {
-      id: 11,
-      title: "Florence Uffizi Historic Loggia Hardscaping",
-      category: "heritage",
-      categoryLabel: "Museum & Heritage Sites",
-      location: "Piazza degli Uffizi · Florence, Italy",
-      image: "/images/florence_uffizi_loggia_1794312385726.jpg",
-      description: "Subsurface drainage re-engineering, pietra serena stone arcade leveling, and non-invasive floor consolidation for high-traffic Renaissance public loggias.",
-      materials: ["Firenzuola Pietra Serena Sandstone", "Porphyry Cobblestones", "Natural Hydraulic Lime Grout"],
-      scope: "28,000 sq.ft.",
-      timeline: "12 Months",
-      year: "2025"
-    },
-    {
-      id: 12,
-      title: "Villa Balbianello Lakeside Terraces",
-      category: "terraces",
-      categoryLabel: "Clifftop & Estate Terraces",
-      location: "Lake Como Promontory · Italy",
-      image: "/images/lake_como_villa_terrace_1794312399785.jpg",
-      description: "Stepped lakeside retaining stonework, classical stone balustrades, and geometric flagstone pathways leading to private yacht moorings.",
-      materials: ["Lombard Grey Granite", "Hand-Hewn Coping Stone", "Permeable Sand Joints", "Dolomite Core"],
-      scope: "12,200 sq.ft.",
-      timeline: "14 Weeks",
-      year: "2025"
-    }
-  ];
-
-  // Comprehensive Catalog of Luxury & Royal Materials
-  const luxuryMaterials: LuxuryMaterial[] = [
-    {
-      name: "Greek Thassos Pure White Marble",
-      category: "marble",
-      provenance: "Island of Thassos, Greece",
-      description: "Renowned as the whitest stone on earth. A 99% pure crystalline dolomite matrix with virtually zero porosity and specular solar reflectivity. Remains cool under desert sun.",
-      characteristics: ["99% Calcite & Dolomite Purity", "Specular Solar Reflectance", "Zero Surface Micro-porosity", "Imperial Crystalline Luster"],
-      applications: "Monumental sacred courtyards, reflective basin copings, luxury grand atriums."
-    },
-    {
-      name: "Macedonian Sivec Imperial Marble",
-      category: "marble",
-      provenance: "Prilep Quarry, North Macedonia",
-      description: "Favored by emperors and classical architects for over two millennia. An extraordinarily fine-grained calcitic marble offering warm luminescence and flawless honed finishing.",
-      characteristics: ["Ultra-fine Microscopic Grain", "High Compressive Strength (145 MPa)", "Frost & Thermal Shock Resistant", "Uniform Crystalline White"],
-      applications: "Monumental peristyles, grand colonnade arcades, high-traffic palace courtyards."
-    },
-    {
-      name: "Austrian Adnet Honey Marble",
-      category: "marble",
-      provenance: "Salzburg Limestone Basin, Austria",
-      description: "Fossil-bearing limestone marble famous in central European palaces and cathedral atriums. Warm caramel and honey amber veins punctuated by prehistoric ammonite inclusions.",
-      characteristics: ["Dense Microcrystalline Limestone", "Rich Golden Amber Tones", "Exceptional Abrasion Resistance", "Historic Museum Provenance"],
-      applications: "Museum gallery flooring, interior-exterior loggia transitions, luxury wall veneers."
-    },
-    {
-      name: "Tivoli Vein-Cut Roman Travertine",
-      category: "travertine",
-      provenance: "Tivoli Basin, Rome, Italy",
-      description: "The definitive architectural stone of classical Rome. Sedimentary travertine with warm alabaster, ivory, and biscuit banding that stays naturally cool under direct summer sunlight.",
-      characteristics: ["Natural Heat Dissipation", "Non-Slip Honed Texture", "Vein-Cut Linear Stratification", "Centuries of Proven Longevity"],
-      applications: "Luxury pool surrounds, cantilevered estate terraces, outdoor dining loggias."
-    },
-    {
-      name: "Omani Desert Rose Travertine",
-      category: "travertine",
-      provenance: "Dhofar Mountains, Sultanate of Oman",
-      description: "Rare desert stone displaying sunset blush, terracotta, and golden dunes in deep sedimented strata. Engineered to withstand extreme desert heat cycles without surface flaking.",
-      characteristics: ["Extreme Thermal Cyclic Stability", "Warm Desert Rose Color Palette", "High Density (2,680 kg/m³)", "Radiant Sub-Cooling Compatible"],
-      applications: "Grand mosque plazas, estate driveway courtyards, private sanctuary water walls."
-    },
-    {
-      name: "Hand-Dressed Istrian Limestone",
-      category: "travertine",
-      provenance: "Istrian Peninsula, Adriatic Coast",
-      description: "Dense, marine-hardened calcarenite that has protected Venetian palaces from Adriatic waves for 800 years. Develops a self-healing protective patina upon exposure to sea spray.",
-      characteristics: ["Impermeable to Salt Aerosol", "Marine Hardening Matrix", "Hand-Dressed Chiseled Face", "Exceptional Tensile Cohesion"],
-      applications: "Clifftop sea-retaining bastions, shoreline terraces, coastal infinity plunge pools."
-    },
-    {
-      name: "French Pierre de Bourgogne",
-      category: "travertine",
-      provenance: "Burgundy, France",
-      description: "Historic noble limestone sourced from centuries-old French quarries. Exhibits subtle ochre, beige, and sea-fossil accents that lend aristocratic warmth to estate promenades.",
-      characteristics: ["Authentic French Chateau Provenance", "Velvety Sawn & Honed Texture", "Freeze-Thaw Certified", "Soft Natural Patina"],
-      applications: "Grand parterre walkways, pool terraces, formal courtyard gardens, classical steps."
-    },
-    {
-      name: "Afghan Lapis Lazuli Semiprecious Inlays",
-      category: "inlay",
-      provenance: "Badakhshan Province, Afghanistan",
-      description: "Genuine celestial-blue lapis lazuli stone speckled with golden pyrite veins. Precision water-jet sliced and hand-inlaid into crystalline white marble for royal emblems and sacred geometry.",
-      characteristics: ["Natural Ultramarine Pigment", "Golden Pyrite Crystal Inclusions", "Water-Jet Micron Precision", "Timeless Royal Prestige"],
-      applications: "Sacred courtyard floral mosaics, reflection basin medallions, VIP estate entries."
-    },
-    {
-      name: "24-Karat Gold Mosaic Tesserae",
-      category: "inlay",
-      provenance: "Venetian Artisanal Foundries, Italy",
-      description: "Hand-pulled glass smalti sandwiching genuine 24-karat gold leaf. Permanently sealed to resist chlorine, saltwater, and direct sunlight without tarnishing or delaminating.",
-      characteristics: ["24-Karat Pure Gold Leaf", "Impervious Double-Fused Glass", "Reflective Water Surface Sparkle", "Zero Chlorine Corrosion"],
-      applications: "Pool spillway weirs, water amphitheater fountains, mosaic accent bands."
-    },
-    {
-      name: "Natural Iridescent Mother-of-Pearl",
-      category: "inlay",
-      provenance: "Persian Gulf & Red Sea Pearlshell Grounds",
-      description: "Hand-harvested oceanic nacre polished to high iridescence. Inlaid into stone paving to catch ambient moonlight and submerged underwater LED illumination.",
-      characteristics: ["Natural Rainbow Iridescence", "Precision Hand-Fitted Nacre", "Specular Water Reflection", "Exquisite Royal Craftsmanship"],
-      applications: "Courtyard fountain rims, reflecting pool floor mosaics, bespoke entry threshold crests."
-    },
-    {
-      name: "Imperial Charcoal Basalt & Obsidian Fieldstone",
-      category: "granite",
-      provenance: "Volcanic Basalt Belts",
-      description: "Ultra-dense volcanic igneous rock with deep charcoal and obsidian coloration. Diamond-sawn to clean geometric lines for dramatic contrast against pure white marbles.",
-      characteristics: ["Zero Absorption (<0.2%)", "Deep Obsidian Charcoal Tone", "High Slip Resistance (R11)", "Extreme Compressive Strength (220 MPa)"],
-      applications: "Negative-edge water weir walls, contemporary stepping pads, reflection pool bases."
-    },
-    {
-      name: "European Porphyry & Belgian Blue Stone",
-      category: "granite",
-      provenance: "Trentino, Italy & Soignies, Belgium",
-      description: "Legendary European paving stones featuring fossilized crinoid matrix (Belgian Blue) and purple-red volcanic quartz (Porphyry). Unmatched resistance to heavy vehicular weight.",
-      characteristics: ["Immense Load Bearing Capacity", "Centuries of European Street Provenance", "Naturally Non-Slip", "Impervious to Road Salts & Ice"],
-      applications: "Monumental entrance motor courts, estate driveways, formal carriage courtyards."
-    },
-    {
-      name: "Glacial Granite Boulders & Megaliths",
-      category: "granite",
-      provenance: "Alpine & Nordic Glacial Moraines",
-      description: "Colossal multi-ton natural fieldstone boulders weathered over 10,000 years by glacial ice sheets. Each stone is individually selected and crane-positioned for massive slope retention.",
-      characteristics: ["Mass Retaining Capacity (5–25 Tons)", "Ancient Weathered Character", "Deep Iron & Lichen Patina", "Zero Maintenance Structural Barrier"],
-      applications: "Hillside estate retention bastions, alpine rockeries, natural waterfall cascades."
-    },
-    {
-      name: "Shirakawa Granitic Sands & Kurama Volcanic Boulders",
-      category: "granite",
-      provenance: "Kyoto Basin, Japan",
-      description: "Authentic Imperial temple stones. High-feldspar sparkling granitic gravels designed for crisp rake patterns, paired with iron-oxidized rust-red volcanic boulders.",
-      characteristics: ["Natural High-Silica Sparkle", "Rake Line Retention", "Warm Rust-Brown Oxidized Skin", "Centuries of Zen Mastercraft"],
-      applications: "Zen sanctuary courtyards, minimalist estate gardens, luxury wellness courtyards."
-    }
-  ];
-
-  // 8 Human Master Disciplines Categorized & Organized
-  const servicesList = [
-    {
-      number: "01",
-      category: "estates" as const,
-      categoryLabel: "Sovereign Estates",
-      title: "Clifftop & Private Island Terraces",
-      subtitle: "Bedrock Micropiling & Sea Bastions",
-      director: "Gabriel Chen",
-      directorRole: "Geotechnical Director",
-      description: "Multi-tier dry-stack Istrian limestone retaining bastions anchored into coastal dolomite cliffs. Integrated cantilevered stone platforms and infinity plunge pools overhanging ocean promontories.",
-      image: "/images/new_cliffside_villa_terrace_1794441906830.jpg",
-      materials: ["Istrian Limestone", "Titanium Tiebacks", "Dolomite Stone"],
-      leadTime: "14 – 24 Weeks",
-      scopeTarget: "terraces" as const
-    },
-    {
-      number: "02",
-      category: "heritage" as const,
-      categoryLabel: "Museum & Heritage",
-      title: "Museum Atrium Modernization",
-      subtitle: "Zero-Vibration Cultural Hardscaping",
-      director: "Corinne W. Smith",
-      directorRole: "Master Stonemason & Materials Director",
-      description: "Non-percussive micro-trenching for climate conduits and fiber optics safeguarding priceless Hellenistic antiquities. Honey marble and crystalline flagstone galleries with seismic base isolation.",
-      image: "/images/museum_atrium_marble_1794056502385.jpg",
-      materials: ["Adnet Honey Marble", "Architectural Bronze", "Base Isolators"],
-      leadTime: "12 – 18 Months",
-      scopeTarget: "heritage" as const
-    },
-    {
-      number: "03",
-      category: "heritage" as const,
-      categoryLabel: "Museum & Heritage",
-      title: "Archaeological Monument Conservation",
-      subtitle: "Reversible Pozzolanic Grouting",
-      director: "Corinne W. Smith",
-      directorRole: "Master Stonemason & Materials Director",
-      description: "Stabilization of ancient ashlar fortifications using custom pozzolanic mortars matching classical chemical fingerprints. Reversible marine-grade stainless tendons without piercing historic stone.",
-      image: "/images/acropolis_stone_wall_1794056512464.jpg",
-      materials: ["Volcanic Pozzolan", "Air Lime CL-90", "316L Stainless"],
-      leadTime: "18 – 36 Months",
-      scopeTarget: "heritage" as const
-    },
-    {
-      number: "04",
-      category: "courtyards" as const,
-      categoryLabel: "Sacred & Palaces",
-      title: "Monumental Sacred Courtyards",
-      subtitle: "Thermal Sub-cooling & Crystalline Marble",
-      director: "Fahad Al-Sabah",
-      directorRole: "Principal Director",
-      description: "Hand-dressed Greek Thassos and Macedonian Sivec white marble arcades framing expansive reflection basins. Subterranean radiant sub-cooling and intricate lapis lazuli floral inlays.",
-      image: "/images/sheikh_zayed_courtyard_1794312369396.jpg",
-      materials: ["Thassos White Marble", "Lapis Lazuli Inlays", "24K Gold Leaf"],
-      leadTime: "16 – 28 Months",
-      scopeTarget: "courtyards" as const
-    },
-    {
-      number: "05",
-      category: "courtyards" as const,
-      categoryLabel: "Sacred & Palaces",
-      title: "Palace Water Amphitheaters",
-      subtitle: "Closed-Loop Hydraulic Cascades",
-      director: "Gabriel Chen",
-      directorRole: "Geotechnical Director",
-      description: "Tiered travertine water stairways, cascading stone spillways, and restored royal parterre promenades. Concealed variable-velocity hydraulic pumps with classical carved stone balustrades.",
-      image: "/images/grand_palace_hardscaping_1794058074270.jpg",
-      materials: ["Roman Travertine", "Cast Bronze Spouts", "Austrian Calcarenite"],
-      leadTime: "16 – 24 Months",
-      scopeTarget: "pools" as const
-    },
-    {
-      number: "06",
-      category: "estates" as const,
-      categoryLabel: "Sovereign Estates",
-      title: "Luxury Pool Surrounds & Thermal Decks",
-      subtitle: "Bespoke Coping & Heated Stone",
-      director: "Corinne W. Smith",
-      directorRole: "Master Stonemason & Materials Director",
-      description: "Zero-edge travertine wet-decks that stay naturally cool under intense sunlight. Flush coping transitions, integrated stone fire features, and sunken outdoor conversation lounges.",
-      image: "/images/amalfi_cliff_terrace_1794312370486.jpg",
-      materials: ["Vein-Cut Travertine", "Flamed Granite", "Bronze Handrails"],
-      leadTime: "10 – 16 Weeks",
-      scopeTarget: "pools" as const
-    },
-    {
-      number: "07",
-      category: "heritage" as const,
-      categoryLabel: "Museum & Heritage",
-      title: "Heritage Maintenance Charters",
-      subtitle: "Laser Stone Cleaning & Preservation",
-      director: "Corinne W. Smith",
-      directorRole: "Master Stonemason & Materials Director",
-      description: "Cyclic microclimatic stone consolidation, non-destructive pulsed laser patina cleaning, and biological biocide regimens to protect irreplaceable historical masonry against weathering.",
-      image: "/images/monemvasia_citadel_cliff_1794312400083.jpg",
-      materials: ["Silicic Acid Consolidant", "Pure Lime Mortar", "Hydrophobic Seal"],
-      leadTime: "Annual / Multi-Year",
-      scopeTarget: "heritage" as const
-    },
-    {
-      number: "08",
-      category: "estates" as const,
-      categoryLabel: "Sovereign Estates",
-      title: "Driveway Courtyards & Permeable Pavers",
-      subtitle: "Hand-Set European Porphyry & Granite",
-      director: "Gabriel Chen",
-      directorRole: "Geotechnical Director",
-      description: "European porphyry and granite cobblestone motor courts engineered for high-load vehicular traffic. Monolithic limestone entrance pillars and subterranean stormwater retention chambers.",
-      image: "/images/florence_uffizi_loggia_1794312385726.jpg",
-      materials: ["Porphyry Pavers", "Belgian Blue Stone", "Limestone Pillars"],
-      leadTime: "8 – 14 Weeks",
-      scopeTarget: "courtyards" as const
-    }
-  ];
-
-  // Filtered home services by practice sector
   const filteredHomeServices = useMemo(() => {
-    if (homeServiceSector === 'all') return servicesList;
-    return servicesList.filter(s => s.category === homeServiceSector);
-  }, [homeServiceSector, servicesList]);
+    if (homeServiceSector === 'all') return SERVICES_LIST.slice(0, 6);
+    return SERVICES_LIST.filter((s) => s.category === homeServiceSector);
+  }, [homeServiceSector]);
 
-  // Filtered projects
+  const filteredAllServices = useMemo(() => {
+    if (homeServiceSector === 'all') return SERVICES_LIST;
+    return SERVICES_LIST.filter((s) => s.category === homeServiceSector);
+  }, [homeServiceSector]);
+
   const filteredProjects = useMemo(() => {
-    if (selectedCategory === 'all') return projects;
-    return projects.filter(p => p.category === selectedCategory);
-  }, [selectedCategory, projects]);
+    if (selectedCategory === 'all') return PROJECTS;
+    return PROJECTS.filter((p) => p.category === selectedCategory);
+  }, [selectedCategory]);
 
-  // Filtered materials
   const filteredMaterials = useMemo(() => {
-    if (selectedMaterialCategory === 'all') return luxuryMaterials;
-    return luxuryMaterials.filter(m => m.category === selectedMaterialCategory);
-  }, [selectedMaterialCategory, luxuryMaterials]);
+    if (selectedMaterialCategory === 'all') return LUXURY_MATERIALS;
+    return LUXURY_MATERIALS.filter((m) => m.category === selectedMaterialCategory);
+  }, [selectedMaterialCategory]);
+
+  const filteredProcesses = useMemo(() => {
+    if (processFilter === 'all') return PROCESS_GALLERY;
+    return PROCESS_GALLERY.filter((item) => item.category === processFilter);
+  }, [processFilter]);
+
+  const homeFeaturedProcesses = useMemo(() => {
+    if (processFilter === 'all') {
+      return [PROCESS_GALLERY[0], PROCESS_GALLERY[1], PROCESS_GALLERY[2], PROCESS_GALLERY[3], PROCESS_GALLERY[4], PROCESS_GALLERY[5]].slice(0, 3);
+    }
+    return PROCESS_GALLERY.filter((item) => item.category === processFilter);
+  }, [processFilter]);
 
   const handleFormSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!formData.name || !formData.email) {
+    if (!formData.name.trim() || !formData.email.trim()) {
       showToast('Please enter your name and email address.');
       return;
     }
     setFormSubmitted(true);
-    showToast('Consultation brief received! A director will initiate contact within 24 hours.');
+    showToast('Inquiry received. Our Toronto office will reply within one business day.');
+  };
+
+  const handleNewsletterSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!newsletterEmail.trim() || !newsletterEmail.includes('@')) {
+      showToast('Please enter a valid email address.');
+      return;
+    }
+    setNewsletterEmail('');
+    showToast('Subscribed to quarterly quarry and project dispatches.');
+  };
+
+  const visibleReviews = [
+    CLIENT_REVIEWS[reviewOffset % CLIENT_REVIEWS.length],
+    CLIENT_REVIEWS[(reviewOffset + 1) % CLIENT_REVIEWS.length],
+    CLIENT_REVIEWS[(reviewOffset + 2) % CLIENT_REVIEWS.length]
+  ];
+
+  const navLinks: { id: TabType; label: string }[] = [
+    { id: 'home', label: 'Home' },
+    { id: 'about', label: 'About' },
+    { id: 'services', label: 'Services' },
+    { id: 'projects', label: 'Projects' },
+    { id: 'materials', label: 'Materials' },
+    { id: 'team', label: 'Team' },
+    { id: 'contact', label: 'Contact' }
+  ];
+
+  const renderPageBanner = (title: string, breadcrumbLabel: string, parentLabel?: string, onParentClick?: () => void) => (
+    <section
+      className="relative w-full py-12 sm:py-16 bg-cover bg-center border-b-4 border-[#135D54]"
+      style={{
+        backgroundImage: `linear-gradient(rgba(14, 17, 21, 0.84), rgba(14, 17, 21, 0.88)), url('/images/grand_palace_hardscaping_1794058074270.jpg')`
+      }}
+    >
+      <div className="max-w-[1320px] mx-auto px-4 sm:px-8 text-center space-y-2.5">
+        <h1 className="text-3xl sm:text-5xl font-bold text-white font-display-constra tracking-tight">
+          {title}
+        </h1>
+        <nav className="flex flex-wrap items-center justify-center gap-2 text-xs sm:text-sm font-medium">
+          <button
+            type="button"
+            onClick={() => handleNavigate('home')}
+            className="text-white/90 hover:text-[#4DB6A8] transition-colors cursor-pointer"
+          >
+            Home
+          </button>
+          {parentLabel && onParentClick && (
+            <>
+              <span className="text-white/50">/</span>
+              <button
+                type="button"
+                onClick={onParentClick}
+                className="text-white/90 hover:text-[#4DB6A8] transition-colors cursor-pointer"
+              >
+                {parentLabel}
+              </button>
+            </>
+          )}
+          <span className="text-white/50">/</span>
+          <span className="text-[#4DB6A8] font-semibold">{breadcrumbLabel}</span>
+        </nav>
+      </div>
+    </section>
+  );
+
+  const renderDetailView = () => {
+    if (!detailView) return null;
+
+    if (detailView.kind === 'project') {
+      const project = detailView.item;
+      const director = TEAM_MEMBERS.find((m) => m.id === project.leadDirectorId) || TEAM_MEMBERS[0];
+      const relatedProjects = PROJECTS.filter((p) => p.id !== project.id && p.category === project.category).slice(0, 3);
+
+      return (
+        <div>
+          {renderPageBanner(project.title, project.title, 'Projects', () => handleNavigate('projects'))}
+
+          <section className="max-w-[1320px] mx-auto px-4 sm:px-8 py-10 sm:py-14 space-y-10">
+            <div className="flex flex-wrap items-center justify-between gap-4 border-b border-slate-200 pb-4">
+              <button
+                type="button"
+                onClick={() => handleNavigate('projects')}
+                className="inline-flex items-center gap-2 text-xs sm:text-sm font-semibold text-[#15181C] hover:text-[#135D54] transition-colors cursor-pointer"
+              >
+                <ArrowLeft className="w-4 h-4" />
+                <span>Back to Portfolio</span>
+              </button>
+              <span className="text-xs font-semibold uppercase tracking-wider text-[#135D54]">
+                {project.categoryLabel} · {project.year}
+              </span>
+            </div>
+
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+              <div className="lg:col-span-7 space-y-4">
+                <button
+                  type="button"
+                  onClick={() => setZoomImage({ src: project.image, title: project.title })}
+                  className="group relative w-full aspect-16/9 overflow-hidden bg-slate-200 border border-slate-200 cursor-zoom-in block"
+                >
+                  <img
+                    src={project.image}
+                    alt={project.title}
+                    referrerPolicy="no-referrer"
+                    className="w-full h-full object-cover group-hover:scale-102 transition-transform duration-500"
+                  />
+                  <span className="absolute bottom-3 right-3 px-3 py-1.5 bg-[#15181C]/90 text-white text-xs font-semibold flex items-center gap-1.5">
+                    <Maximize2 className="w-3.5 h-3.5 text-[#4DB6A8]" />
+                    Enlarge View
+                  </span>
+                </button>
+              </div>
+
+              <div className="lg:col-span-5 space-y-6">
+                <div className="space-y-2">
+                  <div className="flex items-center gap-1.5 text-xs font-semibold text-[#135D54]">
+                    <MapPin className="w-4 h-4" />
+                    <span>{project.location}</span>
+                  </div>
+                  <h2 className="text-2xl sm:text-3xl font-bold text-[#0E1115] font-display-constra">
+                    {project.title}
+                  </h2>
+                  <p className="text-sm text-[#4B5563] leading-relaxed">
+                    {project.description}
+                  </p>
+                </div>
+
+                <div className="bg-[#F4F6F7] p-4 sm:p-5 space-y-2 border border-slate-200">
+                  <h3 className="text-xs font-bold uppercase tracking-wider text-[#0E1115]">
+                    Site Engineering Notes
+                  </h3>
+                  <p className="text-xs sm:text-sm text-[#4B5563] leading-relaxed">
+                    {project.engineeringNote}
+                  </p>
+                </div>
+
+                <div className="grid grid-cols-3 gap-3 text-center">
+                  <div className="p-3 bg-[#15181C] text-white">
+                    <span className="text-[11px] text-white/75 block">Area</span>
+                    <span className="text-sm font-bold text-[#4DB6A8] tabular-nums">{project.scope}</span>
+                  </div>
+                  <div className="p-3 bg-[#15181C] text-white">
+                    <span className="text-[11px] text-white/75 block">Duration</span>
+                    <span className="text-sm font-bold text-[#4DB6A8] tabular-nums">{project.timeline}</span>
+                  </div>
+                  <div className="p-3 bg-[#15181C] text-white">
+                    <span className="text-[11px] text-white/75 block">Completed</span>
+                    <span className="text-sm font-bold text-[#4DB6A8] tabular-nums">{project.year}</span>
+                  </div>
+                </div>
+
+                <div className="space-y-2">
+                  <h4 className="text-xs font-bold uppercase tracking-wider text-[#0E1115]">
+                    Stone & Structural Matrix
+                  </h4>
+                  <p className="text-xs sm:text-sm text-[#4B5563]">
+                    {project.materials.join(' · ')}
+                  </p>
+                </div>
+
+                <button
+                  type="button"
+                  onClick={() => openDetail({ kind: 'team', item: director }, 'team')}
+                  className="w-full flex items-center gap-3.5 p-3.5 bg-[#F4F6F7] hover:bg-white border border-slate-200 hover:border-[#135D54] transition-colors text-left cursor-pointer"
+                >
+                  <img
+                    src={director.image}
+                    alt={director.name}
+                    referrerPolicy="no-referrer"
+                    className="w-12 h-12 rounded-full object-cover object-top border-2 border-[#135D54] shrink-0"
+                  />
+                  <div className="min-w-0">
+                    <span className="text-[11px] font-semibold text-[#135D54] block">Project Lead</span>
+                    <span className="text-sm font-bold text-[#0E1115] font-display-constra block truncate">{director.name}</span>
+                    <span className="text-xs text-[#4B5563] block truncate">{director.role}</span>
+                  </div>
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => requestInquiryWithContext(project.categoryLabel, `Regarding a commission similar to ${project.title}.`)}
+                  className="w-full py-3.5 bg-[#135D54] hover:bg-[#15181C] text-white text-xs sm:text-sm font-semibold transition-colors cursor-pointer"
+                >
+                  Request Consultation
+                </button>
+              </div>
+            </div>
+
+            {relatedProjects.length > 0 && (
+              <div className="pt-8 border-t border-slate-200 space-y-5">
+                <h3 className="text-xl sm:text-2xl font-bold text-[#0E1115] font-display-constra">
+                  Related Commissions
+                </h3>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                  {relatedProjects.map((rel) => (
+                    <article
+                      key={rel.id}
+                      onClick={() => openDetail({ kind: 'project', item: rel }, 'projects')}
+                      className="group bg-white border border-slate-200 hover:border-[#135D54] overflow-hidden cursor-pointer transition-colors"
+                    >
+                      <div className="aspect-16/10 overflow-hidden bg-slate-200">
+                        <img
+                          src={rel.image}
+                          alt={rel.title}
+                          referrerPolicy="no-referrer"
+                          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                        />
+                      </div>
+                      <div className="p-4 space-y-1">
+                        <span className="text-[11px] font-semibold text-[#135D54]">{rel.location.split('·')[0].trim()}</span>
+                        <h4 className="text-base font-bold text-[#0E1115] group-hover:text-[#135D54] font-display-constra">
+                          {rel.title}
+                        </h4>
+                      </div>
+                    </article>
+                  ))}
+                </div>
+              </div>
+            )}
+          </section>
+        </div>
+      );
+    }
+
+    if (detailView.kind === 'service') {
+      const svc = detailView.item;
+      const director = TEAM_MEMBERS.find((m) => m.id === svc.directorId) || TEAM_MEMBERS[0];
+      const relatedProjects = PROJECTS.filter((p) => p.category === svc.scopeTarget).slice(0, 3);
+
+      return (
+        <div>
+          {renderPageBanner(svc.title, svc.title, 'Services', () => handleNavigate('services'))}
+
+          <section className="max-w-[1320px] mx-auto px-4 sm:px-8 py-10 sm:py-14 space-y-10">
+            <div className="flex flex-wrap items-center justify-between gap-4 border-b border-slate-200 pb-4">
+              <button
+                type="button"
+                onClick={() => handleNavigate('services')}
+                className="inline-flex items-center gap-2 text-xs sm:text-sm font-semibold text-[#15181C] hover:text-[#135D54] transition-colors cursor-pointer"
+              >
+                <ArrowLeft className="w-4 h-4" />
+                <span>Back to Services</span>
+              </button>
+              <span className="text-xs font-semibold uppercase tracking-wider text-[#135D54]">
+                Discipline {svc.number} · {svc.categoryLabel}
+              </span>
+            </div>
+
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+              <div className="lg:col-span-7">
+                <button
+                  type="button"
+                  onClick={() => setZoomImage({ src: svc.image, title: svc.title })}
+                  className="group relative w-full aspect-16/9 overflow-hidden bg-slate-200 border border-slate-200 cursor-zoom-in block"
+                >
+                  <img
+                    src={svc.image}
+                    alt={svc.title}
+                    referrerPolicy="no-referrer"
+                    className="w-full h-full object-cover group-hover:scale-102 transition-transform duration-500"
+                  />
+                  <span className="absolute bottom-3 right-3 px-3 py-1.5 bg-[#15181C]/90 text-white text-xs font-semibold flex items-center gap-1.5">
+                    <Maximize2 className="w-3.5 h-3.5 text-[#4DB6A8]" />
+                    Enlarge View
+                  </span>
+                </button>
+              </div>
+
+              <div className="lg:col-span-5 space-y-6">
+                <div className="space-y-2">
+                  <span className="text-xs font-semibold uppercase tracking-wider text-[#135D54] block">
+                    {svc.subtitle}
+                  </span>
+                  <h2 className="text-2xl sm:text-3xl font-bold text-[#0E1115] font-display-constra">
+                    {svc.title}
+                  </h2>
+                  <p className="text-sm text-[#4B5563] leading-relaxed">
+                    {svc.description}
+                  </p>
+                </div>
+
+                <div className="bg-[#F4F6F7] p-5 border border-slate-200 space-y-3">
+                  <h3 className="text-xs font-bold uppercase tracking-wider text-[#0E1115]">
+                    Scope Deliverables
+                  </h3>
+                  <ul className="space-y-2">
+                    {svc.deliverables.map((item, idx) => (
+                      <li key={idx} className="flex items-start gap-2 text-xs sm:text-sm text-[#4B5563]">
+                        <Check className="w-4 h-4 text-[#135D54] shrink-0 mt-0.5" />
+                        <span>{item}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+
+                <div className="grid grid-cols-2 gap-3 text-center">
+                  <div className="p-3 bg-[#15181C] text-white">
+                    <span className="text-[11px] text-white/75 block">Typical Schedule</span>
+                    <span className="text-sm font-bold text-[#4DB6A8] tabular-nums">{svc.leadTime}</span>
+                  </div>
+                  <div className="p-3 bg-[#15181C] text-white">
+                    <span className="text-[11px] text-white/75 block">Primary Stone</span>
+                    <span className="text-sm font-bold text-[#4DB6A8] truncate block">{svc.materials[0]}</span>
+                  </div>
+                </div>
+
+                <button
+                  type="button"
+                  onClick={() => openDetail({ kind: 'team', item: director }, 'team')}
+                  className="w-full flex items-center gap-3.5 p-3.5 bg-[#F4F6F7] hover:bg-white border border-slate-200 hover:border-[#135D54] transition-colors text-left cursor-pointer"
+                >
+                  <img
+                    src={director.image}
+                    alt={director.name}
+                    referrerPolicy="no-referrer"
+                    className="w-12 h-12 rounded-full object-cover object-top border-2 border-[#135D54] shrink-0"
+                  />
+                  <div className="min-w-0">
+                    <span className="text-[11px] font-semibold text-[#135D54] block">Directing Lead</span>
+                    <span className="text-sm font-bold text-[#0E1115] font-display-constra block truncate">{director.name}</span>
+                    <span className="text-xs text-[#4B5563] block truncate">{director.role}</span>
+                  </div>
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => requestInquiryWithContext(svc.title)}
+                  className="w-full py-3.5 bg-[#135D54] hover:bg-[#15181C] text-white text-xs sm:text-sm font-semibold transition-colors cursor-pointer"
+                >
+                  Request Discipline Consultation
+                </button>
+              </div>
+            </div>
+
+            {relatedProjects.length > 0 && (
+              <div className="pt-8 border-t border-slate-200 space-y-5">
+                <h3 className="text-xl sm:text-2xl font-bold text-[#0E1115] font-display-constra">
+                  Built Examples
+                </h3>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                  {relatedProjects.map((rel) => (
+                    <article
+                      key={rel.id}
+                      onClick={() => openDetail({ kind: 'project', item: rel }, 'projects')}
+                      className="group bg-white border border-slate-200 hover:border-[#135D54] overflow-hidden cursor-pointer transition-colors"
+                    >
+                      <div className="aspect-16/10 overflow-hidden bg-slate-200">
+                        <img
+                          src={rel.image}
+                          alt={rel.title}
+                          referrerPolicy="no-referrer"
+                          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                        />
+                      </div>
+                      <div className="p-4 space-y-1">
+                        <span className="text-[11px] font-semibold text-[#135D54]">{rel.location.split('·')[0].trim()}</span>
+                        <h4 className="text-base font-bold text-[#0E1115] group-hover:text-[#135D54] font-display-constra">
+                          {rel.title}
+                        </h4>
+                      </div>
+                    </article>
+                  ))}
+                </div>
+              </div>
+            )}
+          </section>
+        </div>
+      );
+    }
+
+    if (detailView.kind === 'process') {
+      const item = detailView.item;
+      const otherItems = PROCESS_GALLERY.filter((p) => p.id !== item.id).slice(0, 3);
+
+      return (
+        <div>
+          {renderPageBanner(item.title, item.title, 'Materials & Craft', () => handleNavigate('materials'))}
+
+          <section className="max-w-[1320px] mx-auto px-4 sm:px-8 py-10 sm:py-14 space-y-10">
+            <div className="flex flex-wrap items-center justify-between gap-4 border-b border-slate-200 pb-4">
+              <button
+                type="button"
+                onClick={() => handleNavigate('materials')}
+                className="inline-flex items-center gap-2 text-xs sm:text-sm font-semibold text-[#15181C] hover:text-[#135D54] transition-colors cursor-pointer"
+              >
+                <ArrowLeft className="w-4 h-4" />
+                <span>Back to Samples & Materials</span>
+              </button>
+              <span className="text-xs font-semibold uppercase tracking-wider text-[#135D54]">
+                {item.stage} · {item.categoryLabel}
+              </span>
+            </div>
+
+            <div className="space-y-8">
+              <button
+                type="button"
+                onClick={() => setZoomImage({ src: item.image, title: item.title })}
+                className="group relative w-full overflow-hidden bg-[#0E1115] border border-slate-200 cursor-zoom-in block"
+              >
+                <img
+                  src={item.image}
+                  alt={item.title}
+                  referrerPolicy="no-referrer"
+                  className="w-full h-auto max-h-[72vh] object-contain mx-auto"
+                />
+                <span className="absolute bottom-4 right-4 px-3.5 py-2 bg-[#15181C]/90 text-white text-xs font-semibold flex items-center gap-2">
+                  <Maximize2 className="w-4 h-4 text-[#4DB6A8]" />
+                  View Full Scale Plate
+                </span>
+              </button>
+
+              <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+                <div className="lg:col-span-7 space-y-4">
+                  <span className="text-xs font-semibold uppercase tracking-wider text-[#135D54] block">
+                    {item.subtitle}
+                  </span>
+                  <h2 className="text-2xl sm:text-4xl font-bold text-[#0E1115] font-display-constra">
+                    {item.title}
+                  </h2>
+                  <p className="text-sm sm:text-base text-[#4B5563] leading-relaxed">
+                    {item.description}
+                  </p>
+                  <p className="text-sm text-[#4B5563] leading-relaxed">
+                    {item.technicalNotes}
+                  </p>
+                </div>
+
+                <div className="lg:col-span-5 space-y-4 bg-[#F4F6F7] p-6 border border-slate-200">
+                  <h3 className="text-xs font-bold uppercase tracking-wider text-[#0E1115]">
+                    Specification Summary
+                  </h3>
+                  <div className="space-y-2.5">
+                    {item.specs.map((spec, idx) => (
+                      <div key={idx} className="p-3 bg-white border border-slate-200 text-xs sm:text-sm font-medium text-[#0E1115] flex items-center gap-2.5">
+                        <Check className="w-4 h-4 text-[#135D54] shrink-0" />
+                        <span>{spec}</span>
+                      </div>
+                    ))}
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => requestInquiryWithContext('Stone Sample Box Request', `Requesting physical sample specifications for: ${item.title}.`)}
+                    className="w-full py-3.5 bg-[#135D54] hover:bg-[#15181C] text-white text-xs sm:text-sm font-semibold transition-colors cursor-pointer"
+                  >
+                    Request Physical Sample Kit
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <div className="pt-8 border-t border-slate-200 space-y-5">
+              <h3 className="text-xl sm:text-2xl font-bold text-[#0E1115] font-display-constra">
+                Additional Samples & Plans
+              </h3>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                {otherItems.map((rel) => (
+                  <article
+                    key={rel.id}
+                    onClick={() => openDetail({ kind: 'process', item: rel }, 'materials')}
+                    className="group bg-white border border-slate-200 hover:border-[#135D54] overflow-hidden cursor-pointer transition-colors"
+                  >
+                    <div className="aspect-16/10 overflow-hidden bg-slate-200">
+                      <img
+                        src={rel.image}
+                        alt={rel.title}
+                        referrerPolicy="no-referrer"
+                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                      />
+                    </div>
+                    <div className="p-4 space-y-1">
+                      <span className="text-[11px] font-semibold text-[#135D54]">{rel.stage}</span>
+                      <h4 className="text-base font-bold text-[#0E1115] group-hover:text-[#135D54] font-display-constra">
+                        {rel.title}
+                      </h4>
+                    </div>
+                  </article>
+                ))}
+              </div>
+            </div>
+          </section>
+        </div>
+      );
+    }
+
+    if (detailView.kind === 'material') {
+      const mat = detailView.item;
+      const relatedMaterials = LUXURY_MATERIALS.filter((m) => m.id !== mat.id && m.category === mat.category).slice(0, 3);
+
+      return (
+        <div>
+          {renderPageBanner(mat.name, mat.name, 'Materials & Craft', () => handleNavigate('materials'))}
+
+          <section className="max-w-[1320px] mx-auto px-4 sm:px-8 py-10 sm:py-14 space-y-10">
+            <div className="flex flex-wrap items-center justify-between gap-4 border-b border-slate-200 pb-4">
+              <button
+                type="button"
+                onClick={() => handleNavigate('materials')}
+                className="inline-flex items-center gap-2 text-xs sm:text-sm font-semibold text-[#15181C] hover:text-[#135D54] transition-colors cursor-pointer"
+              >
+                <ArrowLeft className="w-4 h-4" />
+                <span>Back to Material Catalog</span>
+              </button>
+              <span className="text-xs font-semibold uppercase tracking-wider text-[#135D54]">
+                {mat.provenance}
+              </span>
+            </div>
+
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+              <div className="lg:col-span-7">
+                <button
+                  type="button"
+                  onClick={() => setZoomImage({ src: mat.image, title: mat.name })}
+                  className="group relative w-full aspect-16/9 overflow-hidden bg-slate-200 border border-slate-200 cursor-zoom-in block"
+                >
+                  <img
+                    src={mat.image}
+                    alt={mat.name}
+                    referrerPolicy="no-referrer"
+                    className="w-full h-full object-cover group-hover:scale-102 transition-transform duration-500"
+                  />
+                  <span className="absolute bottom-3 right-3 px-3 py-1.5 bg-[#15181C]/90 text-white text-xs font-semibold flex items-center gap-1.5">
+                    <Maximize2 className="w-3.5 h-3.5 text-[#4DB6A8]" />
+                    Inspect Slab Detail
+                  </span>
+                </button>
+              </div>
+
+              <div className="lg:col-span-5 space-y-6">
+                <div className="space-y-2">
+                  <span className="text-xs font-semibold uppercase tracking-wider text-[#135D54] block">
+                    Quarry Provenance: {mat.provenance}
+                  </span>
+                  <h2 className="text-2xl sm:text-3xl font-bold text-[#0E1115] font-display-constra">
+                    {mat.name}
+                  </h2>
+                  <p className="text-sm text-[#4B5563] leading-relaxed">
+                    {mat.description}
+                  </p>
+                </div>
+
+                <div className="bg-[#F4F6F7] p-5 border border-slate-200 space-y-3">
+                  <h3 className="text-xs font-bold uppercase tracking-wider text-[#0E1115]">
+                    Physical Characteristics
+                  </h3>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+                    {mat.characteristics.map((char, idx) => (
+                      <div key={idx} className="flex items-center gap-2 text-xs text-[#0E1115] font-medium">
+                        <Check className="w-3.5 h-3.5 text-[#135D54] shrink-0" />
+                        <span>{char}</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                <div className="space-y-1.5">
+                  <h4 className="text-xs font-bold uppercase tracking-wider text-[#0E1115]">
+                    Primary Applications
+                  </h4>
+                  <p className="text-sm text-[#4B5563]">{mat.applications}</p>
+                </div>
+
+                <button
+                  type="button"
+                  onClick={() => requestInquiryWithContext('Stone Sample Box Request', `Requesting cut specimen and quarry lead time for ${mat.name}.`)}
+                  className="w-full py-3.5 bg-[#135D54] hover:bg-[#15181C] text-white text-xs sm:text-sm font-semibold transition-colors cursor-pointer"
+                >
+                  Order Quarry Specimen
+                </button>
+              </div>
+            </div>
+
+            {relatedMaterials.length > 0 && (
+              <div className="pt-8 border-t border-slate-200 space-y-5">
+                <h3 className="text-xl sm:text-2xl font-bold text-[#0E1115] font-display-constra">
+                  Related Quarry Stones
+                </h3>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                  {relatedMaterials.map((rel) => (
+                    <article
+                      key={rel.id}
+                      onClick={() => openDetail({ kind: 'material', item: rel }, 'materials')}
+                      className="group bg-white border border-slate-200 hover:border-[#135D54] overflow-hidden cursor-pointer transition-colors"
+                    >
+                      <div className="aspect-16/9 overflow-hidden bg-slate-200">
+                        <img
+                          src={rel.image}
+                          alt={rel.name}
+                          referrerPolicy="no-referrer"
+                          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                        />
+                      </div>
+                      <div className="p-4 space-y-1">
+                        <span className="text-[11px] font-semibold text-[#135D54]">{rel.provenance}</span>
+                        <h4 className="text-base font-bold text-[#0E1115] group-hover:text-[#135D54] font-display-constra">
+                          {rel.name}
+                        </h4>
+                      </div>
+                    </article>
+                  ))}
+                </div>
+              </div>
+            )}
+          </section>
+        </div>
+      );
+    }
+
+    // Team Member Dedicated Detail Page
+    const member = detailView.item;
+    const memberIndex = TEAM_MEMBERS.findIndex((m) => m.id === member.id);
+    const overseenServices = SERVICES_LIST.filter((s) => s.directorId === member.id);
+    const overseenProjects = PROJECTS.filter((p) => p.leadDirectorId === member.id);
+
+    return (
+      <div>
+        {renderPageBanner(member.name, member.name, 'Team', () => handleNavigate('team'))}
+
+        <section className="max-w-[1140px] mx-auto px-4 sm:px-8 py-10 sm:py-14 space-y-10">
+          <div className="flex flex-wrap items-center justify-between gap-4 border-b border-slate-200 pb-4">
+            <button
+              type="button"
+              onClick={() => handleNavigate('team')}
+              className="inline-flex items-center gap-2 text-xs sm:text-sm font-semibold text-[#15181C] hover:text-[#135D54] transition-colors cursor-pointer"
+            >
+              <ArrowLeft className="w-4 h-4" />
+              <span>Back to Leadership</span>
+            </button>
+            <span className="text-xs font-semibold uppercase tracking-wider text-[#135D54]">
+              0{memberIndex + 1} · {member.role}
+            </span>
+          </div>
+
+          <div className="bg-[#F4F6F7] border border-slate-200 p-6 sm:p-8 flex flex-col md:flex-row items-center md:items-start gap-8">
+            <div className="w-36 h-36 sm:w-44 sm:h-44 rounded-full overflow-hidden border-4 border-[#135D54] ring-4 ring-white shrink-0 bg-slate-200 shadow-md">
+              <img
+                src={member.image}
+                alt={member.name}
+                referrerPolicy="no-referrer"
+                className="w-full h-full object-cover object-top"
+              />
+            </div>
+
+            <div className="space-y-4 flex-1 text-center md:text-left">
+              <div>
+                <span className="text-xs font-semibold uppercase tracking-wider text-[#135D54] block">
+                  {member.role}
+                </span>
+                <h2 className="text-2xl sm:text-4xl font-bold text-[#0E1115] font-display-constra mt-1">
+                  {member.name}
+                </h2>
+                <p className="text-sm font-medium text-[#15181C] italic mt-1">
+                  {member.specialty}
+                </p>
+              </div>
+
+              <p className="text-sm text-[#4B5563] leading-relaxed">
+                {member.bio}
+              </p>
+
+              <div className="flex flex-wrap justify-center md:justify-start gap-4 pt-1">
+                {member.credentials.map((cred, i) => (
+                  <span key={i} className="inline-flex items-center gap-1.5 text-xs font-semibold text-[#0E1115]">
+                    <Check className="w-3.5 h-3.5 text-[#135D54]" />
+                    <span>{cred}</span>
+                  </span>
+                ))}
+              </div>
+
+              <div className="pt-2">
+                <button
+                  type="button"
+                  onClick={() => requestInquiryWithContext('Clifftop & Island Terraces', `Attention: ${member.name}`)}
+                  className="px-6 py-3 bg-[#135D54] hover:bg-[#15181C] text-white text-xs sm:text-sm font-semibold transition-colors cursor-pointer"
+                >
+                  Schedule Briefing with {member.name.split(' ')[0]}
+                </button>
+              </div>
+            </div>
+          </div>
+
+          {overseenServices.length > 0 && (
+            <div className="space-y-4">
+              <h3 className="text-xl font-bold text-[#0E1115] font-display-constra">
+                Directed Disciplines
+              </h3>
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+                {overseenServices.map((svc) => (
+                  <article
+                    key={svc.number}
+                    onClick={() => openDetail({ kind: 'service', item: svc }, 'services')}
+                    className="group bg-white border border-slate-200 hover:border-[#135D54] overflow-hidden cursor-pointer transition-colors"
+                  >
+                    <div className="aspect-16/10 overflow-hidden bg-slate-200">
+                      <img
+                        src={svc.image}
+                        alt={svc.title}
+                        referrerPolicy="no-referrer"
+                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                      />
+                    </div>
+                    <div className="p-4 space-y-1">
+                      <span className="text-[11px] font-semibold text-[#135D54]">{svc.categoryLabel}</span>
+                      <h4 className="text-base font-bold text-[#0E1115] group-hover:text-[#135D54] font-display-constra">
+                        {svc.title}
+                      </h4>
+                    </div>
+                  </article>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {overseenProjects.length > 0 && (
+            <div className="space-y-4 pt-4 border-t border-slate-200">
+              <h3 className="text-xl font-bold text-[#0E1115] font-display-constra">
+                Signature Commissions
+              </h3>
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+                {overseenProjects.map((proj) => (
+                  <article
+                    key={proj.id}
+                    onClick={() => openDetail({ kind: 'project', item: proj }, 'projects')}
+                    className="group bg-white border border-slate-200 hover:border-[#135D54] overflow-hidden cursor-pointer transition-colors"
+                  >
+                    <div className="aspect-16/10 overflow-hidden bg-slate-200">
+                      <img
+                        src={proj.image}
+                        alt={proj.title}
+                        referrerPolicy="no-referrer"
+                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                      />
+                    </div>
+                    <div className="p-4 space-y-1">
+                      <span className="text-[11px] font-semibold text-[#135D54]">{proj.location.split('·')[0].trim()}</span>
+                      <h4 className="text-base font-bold text-[#0E1115] group-hover:text-[#135D54] font-display-constra">
+                        {proj.title}
+                      </h4>
+                    </div>
+                  </article>
+                ))}
+              </div>
+            </div>
+          )}
+        </section>
+      </div>
+    );
   };
 
   return (
-    <div className="min-h-screen bg-[#FAF8F5] text-[#1F1C18] flex flex-col selection:bg-[#967241]/20 selection:text-[#1F1C18]">
-      
-      {/* ======================================================== */}
-      {/* SERENE GALLERY LOADING SCREEN */}
-      {/* ======================================================== */}
-      <div 
-        className={`fixed inset-0 z-50 bg-[#FAF8F5] flex flex-col items-center justify-center transition-opacity duration-700 ${
+    <div className="min-h-screen bg-white text-[#4B5563] flex flex-col font-sans-constra selection:bg-[#135D54]/20 selection:text-[#0E1115]">
+      {/* LOADING SCREEN */}
+      <div
+        className={`fixed inset-0 z-50 bg-white flex flex-col items-center justify-center transition-opacity duration-500 ${
           isLoading ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'
         }`}
         onClick={() => setIsLoading(false)}
       >
-        <div className="flex flex-col items-center space-y-4 text-center px-6 animate-in fade-in duration-500">
-          <BespokeLogo className="w-16 h-16 drop-shadow-sm" />
-          <div className="space-y-1">
-            <h2 className="text-xl sm:text-2xl font-serif-luxury tracking-widest text-[#1F1C18]">
-              AUREUS & MONUMENT
-            </h2>
-            <p className="text-xs text-[#8E795B] tracking-wider uppercase font-medium">
-              Architectural Hardscaping & Monument Preservation
-            </p>
-          </div>
+        <div className="flex flex-col items-center space-y-3 text-center px-6">
+          <BespokeLogo className="w-14 h-14" variant="default" />
+          <h2 className="text-2xl font-bold text-[#15181C] font-display-constra tracking-wide">
+            AUREUS & MONUMENT
+          </h2>
+          <div className="w-7 h-7 border-2 border-[#15181C] border-t-[#135D54] rounded-full animate-spin mt-1" />
         </div>
       </div>
 
-      {/* Toast Notification */}
+      {/* TOAST NOTIFICATION */}
       {toastMessage && (
-        <div className="fixed bottom-6 right-6 z-50 bg-[#1F1C18] text-[#FAF8F5] px-5 py-3 rounded-md shadow-2xl text-sm flex items-center gap-3 animate-in fade-in slide-in-from-bottom-2 duration-200">
-          <Check className="w-4 h-4 text-[#D4A860]" />
+        <div className="fixed bottom-6 left-4 right-4 sm:left-auto sm:right-6 z-50 bg-[#15181C] text-white border border-[#135D54] px-5 py-3.5 shadow-xl text-xs sm:text-sm flex items-center gap-3 max-w-md">
+          <Check className="w-4 h-4 text-[#4DB6A8] shrink-0" />
           <span>{toastMessage}</span>
         </div>
       )}
 
-      {/* ======================================================== */}
-      {/* EDITORIAL HEADER (SEAMLESS, BORDERLESS LUXURY) */}
-      {/* ======================================================== */}
-      <header className="sticky top-0 z-40 bg-[#FAF8F5]/90 backdrop-blur-md border-b border-[#EAE5DB] transition-all">
-        <div className="w-full max-w-[1720px] mx-auto px-4 sm:px-12 lg:px-16 h-16 sm:h-22 flex items-center justify-between gap-3 sm:gap-6">
-          
-          {/* Brand Wordmark & Bespoke Logo */}
-          <button 
+      {/* TOPBAR */}
+      <div className="hidden xl:block w-full bg-[#15181C] text-white/85 border-b border-white/10">
+        <div className="max-w-[1320px] mx-auto px-6 h-[42px] flex items-center justify-between text-xs">
+          <div className="flex items-center gap-6">
+            <button
+              type="button"
+              onClick={() => handleNavigate('contact')}
+              className="flex items-center gap-2 hover:text-white transition-colors cursor-pointer whitespace-nowrap"
+            >
+              <Globe className="w-3.5 h-3.5 text-[#4DB6A8]" />
+              <span>Worldwide Commissions</span>
+            </button>
+            <a
+              href="tel:+18679881524"
+              className="flex items-center gap-2 hover:text-white transition-colors whitespace-nowrap"
+            >
+              <Phone className="w-3.5 h-3.5 text-[#4DB6A8]" />
+              <span>+1 (867) 988 1524</span>
+            </a>
+            <a
+              href="mailto:aureusmonument@email.com"
+              className="flex items-center gap-2 hover:text-white transition-colors whitespace-nowrap"
+            >
+              <Mail className="w-3.5 h-3.5 text-[#4DB6A8]" />
+              <span>aureusmonument@email.com</span>
+            </a>
+          </div>
+
+          <div className="flex items-center gap-3 text-white/80 whitespace-nowrap">
+            <Clock className="w-3.5 h-3.5 text-[#4DB6A8]" />
+            <span>Mon to Fri, 8:00 to 18:00 EST</span>
+          </div>
+        </div>
+      </div>
+
+      {/* STICKY NAVBAR */}
+      <header className="sticky top-0 z-40 w-full bg-[#F4F6F7] border-b border-slate-200/80 shadow-xs">
+        <div className="max-w-[1320px] mx-auto px-4 sm:px-6 h-16 lg:h-[74px] flex items-center justify-between gap-4">
+          <button
             type="button"
             onClick={handleLogoClick}
             className="flex items-center gap-2.5 sm:gap-3 text-left group cursor-pointer focus:outline-none shrink-0"
             aria-label="Aureus & Monument Home"
           >
-            <BespokeLogo className="w-8 h-8 sm:w-10 sm:h-10 group-hover:scale-105 transition-transform duration-300 shrink-0" />
-            <div className="min-w-0">
-              <span className="text-base sm:text-2xl font-serif-luxury font-medium tracking-wide text-[#1F1C18] block leading-tight">
-                AUREUS & MONUMENT
-              </span>
-              <span className="text-[9px] sm:text-[11px] text-[#787168] font-sans tracking-normal block truncate max-w-[185px] sm:max-w-none">
-                Architectural Hardscaping & Monument Preservation
-              </span>
-            </div>
+            <BespokeLogo className="w-8 h-8 sm:w-9 sm:h-9 shrink-0 group-hover:scale-105 transition-transform" variant="default" />
+            <span className="text-lg sm:text-2xl font-bold font-display-constra text-[#135D54] tracking-tight whitespace-nowrap">
+              AUREUS & MONUMENT
+            </span>
           </button>
 
-          {/* Desktop Navigation */}
-          <nav className="hidden lg:flex items-center gap-8 xl:gap-10 text-sm font-medium text-[#5A5247]">
-            <button 
-              type="button"
-              onClick={() => handleNavigate('home')}
-              className={`py-2 transition-colors relative cursor-pointer ${
-                activeTab === 'home' ? 'text-[#1F1C18] font-semibold' : 'hover:text-[#1F1C18]'
-              }`}
-            >
-              Home
-              {activeTab === 'home' && <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-[#967241]" />}
-            </button>
-            <button 
-              type="button"
-              onClick={() => handleNavigate('projects')}
-              className={`py-2 transition-colors relative cursor-pointer ${
-                activeTab === 'projects' ? 'text-[#1F1C18] font-semibold' : 'hover:text-[#1F1C18]'
-              }`}
-            >
-              Projects
-              {activeTab === 'projects' && <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-[#967241]" />}
-            </button>
-            <button 
-              type="button"
-              onClick={() => handleNavigate('services')}
-              className={`py-2 transition-colors relative cursor-pointer ${
-                activeTab === 'services' ? 'text-[#1F1C18] font-semibold' : 'hover:text-[#1F1C18]'
-              }`}
-            >
-              Services
-              {activeTab === 'services' && <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-[#967241]" />}
-            </button>
-            <button 
-              type="button"
-              onClick={() => handleNavigate('materials')}
-              className={`py-2 transition-colors relative cursor-pointer ${
-                activeTab === 'materials' ? 'text-[#1F1C18] font-semibold' : 'hover:text-[#1F1C18]'
-              }`}
-            >
-              Materials & Craft
-              {activeTab === 'materials' && <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-[#967241]" />}
-            </button>
-            <button 
-              type="button"
-              onClick={() => handleNavigate('team')}
-              className={`py-2 transition-colors relative cursor-pointer ${
-                activeTab === 'team' ? 'text-[#1F1C18] font-semibold' : 'hover:text-[#1F1C18]'
-              }`}
-            >
-              Our Team
-              {activeTab === 'team' && <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-[#967241]" />}
-            </button>
-            <button 
-              type="button"
-              onClick={() => handleNavigate('contact')}
-              className={`py-2 transition-colors relative cursor-pointer ${
-                activeTab === 'contact' ? 'text-[#1F1C18] font-semibold' : 'hover:text-[#1F1C18]'
-              }`}
-            >
-              Contact
-              {activeTab === 'contact' && <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-[#967241]" />}
-            </button>
+          <nav className="hidden lg:flex items-center gap-1 xl:gap-2">
+            {navLinks.map((link) => {
+              const isActive = activeTab === link.id;
+              return (
+                <button
+                  key={link.id}
+                  type="button"
+                  onClick={() => handleNavigate(link.id)}
+                  className={`constra-nav-item px-3 py-2 font-display-constra text-[16px] font-medium transition-colors whitespace-nowrap shrink-0 cursor-pointer ${
+                    isActive ? 'active text-[#135D54]' : 'text-[#0E1115] hover:text-[#135D54]'
+                  }`}
+                >
+                  {link.label}
+                </button>
+              );
+            })}
           </nav>
 
-          {/* Action Trigger */}
-          <div className="flex items-center gap-2 sm:gap-5">
-            <a 
-              href="tel:+18679881524" 
-              className="hidden xl:flex items-center gap-2 text-xs font-mono text-[#787168] hover:text-[#1F1C18] transition-colors"
-            >
-              <span>+1 (867) 988-1524</span>
-            </a>
-            <button 
-              type="button" 
-              onClick={() => handleNavigate('contact')} 
-              className="hidden sm:inline-flex px-4 sm:px-5 py-2 sm:py-2.5 bg-[#1F1C18] hover:bg-[#38332B] text-[#FAF8F5] text-xs font-medium tracking-wide rounded-sm transition-colors cursor-pointer"
-            >
-              Request a Consultation
-            </button>
-
-            {/* Mobile menu toggle */}
+          <div className="flex items-center gap-2.5 shrink-0">
             <button
               type="button"
-              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className="lg:hidden p-2 text-[#1F1C18] hover:bg-[#EAE5DB] rounded-sm transition-colors cursor-pointer"
-              aria-label="Toggle Navigation Menu"
+              onClick={() => handleNavigate('contact')}
+              className="hidden sm:inline-flex items-center justify-center px-5 py-2.5 bg-[#135D54] hover:bg-[#15181C] text-white text-xs sm:text-sm font-semibold transition-colors whitespace-nowrap cursor-pointer"
             >
-              {mobileMenuOpen ? <X className="w-5 h-5" /> : (
-                <div className="space-y-1 w-5">
-                  <div className="h-0.5 bg-current w-full" />
-                  <div className="h-0.5 bg-current w-full" />
-                  <div className="h-0.5 bg-current w-full" />
-                </div>
-              )}
+              Consultation
+            </button>
+
+            <button
+              type="button"
+              onClick={() => setMobileMenuOpen((prev) => !prev)}
+              className="lg:hidden px-3 py-2 bg-[#135D54] text-white hover:bg-[#15181C] transition-colors cursor-pointer"
+              aria-label="Toggle Menu"
+            >
+              {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
             </button>
           </div>
         </div>
 
-        {/* Compact Organized Mobile Dropdown */}
+        {/* Mobile Drawer Menu */}
         {mobileMenuOpen && (
-          <div className="lg:hidden bg-[#FAF8F5] border-b border-[#EAE5DB] px-4 py-3 space-y-1 animate-in slide-in-from-top-2 duration-150 shadow-lg">
-            <button 
-              type="button" 
-              onClick={() => handleNavigate('home')} 
-              className={`block w-full text-left py-2 px-2 text-sm rounded-sm ${activeTab === 'home' ? 'bg-[#EAE5DB]/60 text-[#1F1C18] font-semibold' : 'text-[#4A453E]'}`}
-            >
-              Home
-            </button>
-            <button 
-              type="button" 
-              onClick={() => handleNavigate('projects')} 
-              className={`block w-full text-left py-2 px-2 text-sm rounded-sm ${activeTab === 'projects' ? 'bg-[#EAE5DB]/60 text-[#1F1C18] font-semibold' : 'text-[#4A453E]'}`}
-            >
-              Projects
-            </button>
-            <button 
-              type="button" 
-              onClick={() => handleNavigate('services')} 
-              className={`block w-full text-left py-2 px-2 text-sm rounded-sm ${activeTab === 'services' ? 'bg-[#EAE5DB]/60 text-[#1F1C18] font-semibold' : 'text-[#4A453E]'}`}
-            >
-              Services & Heritage
-            </button>
-            <button 
-              type="button" 
-              onClick={() => handleNavigate('materials')} 
-              className={`block w-full text-left py-2 px-2 text-sm rounded-sm ${activeTab === 'materials' ? 'bg-[#EAE5DB]/60 text-[#1F1C18] font-semibold' : 'text-[#4A453E]'}`}
-            >
-              Materials & Craft
-            </button>
-            <button 
-              type="button" 
-              onClick={() => handleNavigate('team')} 
-              className={`block w-full text-left py-2 px-2 text-sm rounded-sm ${activeTab === 'team' ? 'bg-[#EAE5DB]/60 text-[#1F1C18] font-semibold' : 'text-[#4A453E]'}`}
-            >
-              Our Team
-            </button>
-            <button 
-              type="button" 
-              onClick={() => handleNavigate('contact')} 
-              className={`block w-full text-left py-2 px-2 text-sm rounded-sm ${activeTab === 'contact' ? 'bg-[#EAE5DB]/60 text-[#1F1C18] font-semibold' : 'text-[#4A453E]'}`}
-            >
-              Contact
-            </button>
-            <div className="pt-2 mt-1 border-t border-[#EAE5DB] space-y-2">
-              <button 
-                type="button" 
-                onClick={() => handleNavigate('contact')} 
-                className="w-full py-2.5 bg-[#1F1C18] text-[#FAF8F5] text-xs font-medium rounded-sm text-center cursor-pointer"
-              >
-                Request a Consultation
-              </button>
-              <div className="flex items-center justify-between text-xs text-[#787168] px-1 pt-1">
-                <span className="flex items-center gap-1"><Globe className="w-3.5 h-3.5 text-[#967241]" /> Worldwide Practice</span>
-                <a href="tel:+18679881524" className="text-[#1F1C18] font-mono font-medium">+1 (867) 988-1524</a>
-              </div>
+          <div className="lg:hidden bg-[#F4F6F7] border-t border-slate-200 px-4 py-4 space-y-2 shadow-md">
+            <div className="grid grid-cols-2 gap-1.5">
+              {navLinks.map((link) => (
+                <button
+                  key={link.id}
+                  type="button"
+                  onClick={() => handleNavigate(link.id)}
+                  className={`text-left px-3 py-2.5 font-display-constra text-sm font-semibold transition-colors border ${
+                    activeTab === link.id
+                      ? 'border-[#135D54] bg-white text-[#135D54]'
+                      : 'border-transparent text-[#0E1115] hover:bg-white hover:text-[#135D54]'
+                  }`}
+                >
+                  {link.label}
+                </button>
+              ))}
+            </div>
+            <div className="pt-2 border-t border-slate-200 flex items-center justify-between text-[11px] text-[#0E1115] px-1">
+              <a href="tel:+18679881524" className="font-semibold flex items-center gap-1">
+                <Phone className="w-3 h-3 text-[#135D54]" /> +1 (867) 988 1524
+              </a>
+              <a href="mailto:aureusmonument@email.com" className="truncate">
+                aureusmonument@email.com
+              </a>
             </div>
           </div>
         )}
       </header>
 
-      {/* Main Content Area */}
-      <main className="flex-1 w-full flex flex-col">
-        
-        {/* ======================================================== */}
-        {/* TAB: HOME PAGE */}
-        {/* ======================================================== */}
-        {activeTab === 'home' && (
-          <div className="w-full flex flex-col">
-            
-            {/* 1. SEAMLESS FULL-BLEED CINEMATIC HERO (COMPACT & RESPONSIVE FOR MOBILE) */}
-            <section className="relative w-full h-[70vh] sm:h-[88vh] min-h-[460px] max-h-[920px] overflow-hidden">
-              
-              {/* Full Bleed Image Filling the Entire Width */}
-              <img 
-                src="/images/new_cliffside_villa_terrace_1794441906830.jpg"
-                alt="Architectural Hardscaping & Master Stonework"
-                className="absolute inset-0 w-full h-full object-cover object-center"
-              />
-
-              {/* Gentle Natural Film Gradient */}
-              <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/40 to-black/20" />
-              <div className="absolute inset-0 bg-gradient-to-r from-black/75 via-transparent to-black/30" />
-
-              {/* Foreground: ONLY Title and the Two Action Buttons */}
-              <div className="relative w-full max-w-[1720px] mx-auto h-full px-4 sm:px-12 lg:px-16 flex flex-col justify-end pb-8 sm:pb-20 max-w-5xl">
-                <div className="space-y-4 sm:space-y-6">
-                  <h1 className="text-3xl sm:text-6xl lg:text-7xl font-serif-luxury text-white font-normal leading-[1.12] sm:leading-[1.08] drop-shadow-[0_4px_24px_rgba(0,0,0,0.85)] max-w-4xl">
-                    Architectural Hardscaping & Master Stonework
-                  </h1>
-
-                  <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2.5 sm:gap-4 pt-1 sm:pt-2">
-                    <button
-                      type="button"
-                      onClick={() => handleNavigate('projects')}
-                      className="w-full sm:w-auto px-5 sm:px-7 py-3 sm:py-4 bg-[#FAF8F5] hover:bg-white text-[#1F1C18] text-xs sm:text-sm font-medium tracking-wide rounded-sm transition-all shadow-xl flex items-center justify-center gap-2 cursor-pointer"
+      {/* MAIN CONTENT */}
+      <main className="flex-1 w-full">
+        {detailView ? (
+          renderDetailView()
+        ) : (
+          <>
+            {/* ======================================================== */}
+            {/* HOME PAGE */}
+            {/* ======================================================== */}
+            {activeTab === 'home' && (
+              <div>
+                {/* 1. HERO CAROUSEL */}
+                <section
+                  className="relative w-full h-[460px] sm:h-[560px] lg:h-[calc(100vh-120px)] min-h-[450px] max-h-[760px] overflow-hidden bg-[#0E1115]"
+                  onMouseEnter={() => setIsCarouselPaused(true)}
+                  onMouseLeave={() => setIsCarouselPaused(false)}
+                >
+                  {HERO_SLIDES.map((slide, idx) => (
+                    <div
+                      key={idx}
+                      className={`absolute inset-0 transition-opacity duration-700 ${
+                        currentSlide === idx ? 'opacity-100 z-10' : 'opacity-0 z-0 pointer-events-none'
+                      }`}
                     >
-                      <span>Explore Our Projects</span>
-                      <ArrowRight className="w-4 h-4 text-[#967241]" />
-                    </button>
+                      <img
+                        src={slide.image}
+                        alt={slide.title}
+                        referrerPolicy="no-referrer"
+                        className="w-full h-full object-cover"
+                      />
+                      <div className="absolute inset-0 bg-black/55" />
 
-                    <button
-                      type="button"
-                      onClick={() => handleNavigate('contact')}
-                      className="w-full sm:w-auto px-5 sm:px-7 py-3 sm:py-4 bg-black/40 hover:bg-black/60 text-white text-xs sm:text-sm font-medium tracking-wide rounded-sm transition-all border border-white/50 backdrop-blur-md cursor-pointer text-center justify-center"
-                    >
-                      Request a Consultation
-                    </button>
-                  </div>
-                </div>
-              </div>
-            </section>
-
-            {/* 2. HUMAN EDITORIAL INTRO STRIP (COMPACT PADDING ON MOBILE) */}
-            <section className="w-full bg-[#FAF8F5] py-10 sm:py-24 border-b border-[#EAE5DB]">
-              <div className="w-full max-w-[1720px] mx-auto px-4 sm:px-12 lg:px-16">
-                <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 lg:gap-16 items-start">
-                  
-                  <div className="lg:col-span-4 space-y-2 sm:space-y-3">
-                    <span className="text-[11px] sm:text-xs uppercase tracking-widest text-[#8E795B] font-semibold">
-                      The Atelier Ethos
-                    </span>
-                    <h2 className="text-2xl sm:text-3xl font-serif-luxury font-normal text-[#1F1C18] leading-tight">
-                      Where geology meets classical proportion
-                    </h2>
-                  </div>
-
-                  <div className="lg:col-span-8 space-y-3 sm:space-y-6 text-[#5A5247] text-sm sm:text-lg leading-relaxed font-light">
-                    <p>
-                      We work with raw, honest materials drawn from the earth: crystalline marbles, porous travertines, volcanic basalts, and glacial boulders. Every commission begins with the terrain itself—its natural contours, subterranean aquifers, and sun angles.
-                    </p>
-                    <p className="text-xs sm:text-base text-[#787168]">
-                      Our team pairs deep geotechnical engineering—micropiles, bedrock ties, concealed hydrostatic drainage—with the patience of master stonemasons who hand-dress each block to endure generations of weather and human life.
-                    </p>
-                  </div>
-
-                </div>
-              </div>
-            </section>
-
-            {/* 3. REFACTORED & HIGHLY ORGANIZED ARCHITECTURAL DISCIPLINES */}
-            <section className="w-full bg-[#FAF8F5] py-10 sm:py-24 border-b border-[#EAE5DB]">
-              <div className="w-full max-w-[1720px] mx-auto px-4 sm:px-12 lg:px-16 space-y-6 sm:space-y-12">
-                
-                {/* Header & Sector Navigation */}
-                <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-4 sm:gap-8 border-b border-[#EAE5DB] pb-4 sm:pb-8">
-                  <div className="max-w-3xl space-y-2 sm:space-y-3">
-                    <div className="flex items-center gap-2 sm:gap-3">
-                      <span className="text-[11px] sm:text-xs uppercase tracking-widest text-[#8E795B] font-semibold">
-                        Disciplines of Practice
-                      </span>
-                      <span className="h-px w-6 sm:w-8 bg-[#DFD9CD]" />
-                      <span className="text-[10px] sm:text-[11px] font-mono text-[#787168]">8 Global Specializations</span>
+                      <div className="absolute inset-0 flex items-center justify-center px-6 sm:px-16">
+                        <div className="max-w-3xl mx-auto text-center space-y-4">
+                          <p className="text-xs sm:text-sm font-semibold uppercase tracking-[0.16em] text-[#4DB6A8]">
+                            {slide.kicker}
+                          </p>
+                          <h1 className="text-3xl sm:text-5xl lg:text-6xl font-bold text-white font-display-constra leading-[1.12] text-balance">
+                            {slide.title}
+                          </h1>
+                          <p className="text-xs sm:text-base text-white/90 max-w-xl mx-auto leading-relaxed">
+                            {slide.subtitle}
+                          </p>
+                          <div className="pt-1">
+                            <button
+                              type="button"
+                              onClick={() => handleNavigate(slide.cta.target)}
+                              className="px-7 py-3.5 bg-[#135D54] hover:bg-[#15181C] text-white text-xs sm:text-sm font-semibold transition-colors cursor-pointer"
+                            >
+                              {slide.cta.label}
+                            </button>
+                          </div>
+                        </div>
+                      </div>
                     </div>
-                    <h2 className="text-2xl sm:text-5xl font-serif-luxury text-[#1F1C18] font-normal leading-tight">
-                      Comprehensive Architectural & Heritage Services
-                    </h2>
-                    <p className="text-xs sm:text-base text-[#5A5247] font-light leading-relaxed">
-                      Structured across three foundational sectors: deep bedrock slope retention, museum climate galleries, and imperial white marble courtyards worldwide.
-                    </p>
-                  </div>
+                  ))}
 
-                  {/* Clean Minimal Sector Filter Tabs (Horizontal Scrollable on Mobile) */}
-                  <div className="flex items-center gap-1.5 sm:gap-2 overflow-x-auto no-scrollbar pb-1 sm:pb-0 -mx-4 px-4 sm:mx-0 sm:px-0">
-                    {[
-                      { id: 'all', label: 'All Disciplines (8)' },
-                      { id: 'estates', label: 'Sovereign Estates (3)' },
-                      { id: 'heritage', label: 'Heritage Sites (3)' },
-                      { id: 'courtyards', label: 'Royal Courtyards (2)' }
-                    ].map((tab) => (
+                  <button
+                    type="button"
+                    onClick={() => setCurrentSlide((prev) => (prev - 1 + HERO_SLIDES.length) % HERO_SLIDES.length)}
+                    aria-label="Previous Slide"
+                    className="hidden sm:flex items-center justify-center absolute left-0 top-1/2 -translate-y-1/2 z-20 w-11 h-13 bg-[#15181C] hover:bg-[#135D54] text-white transition-colors cursor-pointer"
+                  >
+                    <ChevronLeft className="w-6 h-6" />
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setCurrentSlide((prev) => (prev + 1) % HERO_SLIDES.length)}
+                    aria-label="Next Slide"
+                    className="hidden sm:flex items-center justify-center absolute right-0 top-1/2 -translate-y-1/2 z-20 w-11 h-13 bg-[#15181C] hover:bg-[#135D54] text-white transition-colors cursor-pointer"
+                  >
+                    <ChevronRight className="w-6 h-6" />
+                  </button>
+
+                  <div className="absolute bottom-5 left-1/2 -translate-x-1/2 z-20 flex items-center gap-3.5">
+                    {HERO_SLIDES.map((_, idx) => (
                       <button
-                        key={tab.id}
+                        key={idx}
                         type="button"
-                        onClick={() => setHomeServiceSector(tab.id as 'all' | 'estates' | 'heritage' | 'courtyards')}
-                        className={`whitespace-nowrap shrink-0 px-3 py-1.5 sm:px-3.5 sm:py-2 text-[11px] sm:text-xs font-medium rounded-sm transition-all cursor-pointer ${
-                          homeServiceSector === tab.id
-                            ? 'bg-[#1F1C18] text-[#FAF8F5] shadow-xs'
-                            : 'bg-[#F5F2EC] text-[#5A5247] hover:bg-[#EAE5DB] hover:text-[#1F1C18]'
+                        onClick={() => setCurrentSlide(idx)}
+                        aria-label={`Slide ${idx + 1}`}
+                        className={`transition-all cursor-pointer bg-white ${
+                          currentSlide === idx
+                            ? 'w-4 h-4 border-[4px] border-[#15181C]'
+                            : 'w-3.5 h-3.5 border-[3px] border-[#135D54] hover:scale-110'
                         }`}
-                      >
-                        {tab.label}
-                      </button>
+                      />
                     ))}
                   </div>
-                </div>
+                </section>
 
-                {/* Clean, Simple Architectural Grid */}
-                <div className="border border-[#DFD9CD] bg-[#DFD9CD] gap-px grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4">
-                  {filteredHomeServices.map((service) => (
-                    <div 
-                      key={service.number}
-                      onClick={() => {
-                        setSelectedCategory(service.scopeTarget);
-                        handleNavigate('projects');
-                      }}
-                      className="bg-[#FAF8F5] p-4 sm:p-7 flex flex-col justify-between hover:bg-[#F7F4EE] transition-colors group cursor-pointer"
-                    >
-                      <div className="space-y-2.5 sm:space-y-3.5">
-                        
-                        {/* Pure Clean Photographic Plate */}
-                        <div className="relative aspect-16/10 overflow-hidden rounded-xs bg-stone-200">
-                          <img 
-                            src={service.image} 
-                            alt={service.title}
-                            className="w-full h-full object-cover group-hover:scale-104 transition-transform duration-700 ease-out"
-                          />
+                {/* 2. ABOUT SECTION */}
+                <section className="w-full bg-white py-12 sm:py-16">
+                  <div className="max-w-[1320px] mx-auto px-4 sm:px-8">
+                    <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center">
+                      <div className="lg:col-span-6">
+                        <div className="constra-about-collage relative bg-[#F4F6F7] p-4 sm:p-6 flex items-stretch gap-3 sm:gap-4 min-h-[320px] sm:min-h-[420px]">
+                          <div className="w-1/2 pb-16 sm:pb-28 relative z-10">
+                            <div className="h-full border-4 border-t-[#135D54] border-l-[#135D54] border-r-[#F4F6F7] border-b-[#F4F6F7] overflow-hidden bg-slate-200">
+                              <img
+                                src="/assets/aistudio/image_86ba6c3e.png"
+                                alt="Mason setting stone tread"
+                                referrerPolicy="no-referrer"
+                                className="w-full h-full object-cover min-h-[180px] sm:min-h-[240px]"
+                              />
+                            </div>
+                          </div>
+
+                          <div className="w-1/2 pt-16 sm:pt-28 relative z-10">
+                            <div className="h-full border-4 border-r-[#135D54] border-b-[#135D54] border-t-[#F4F6F7] border-l-[#F4F6F7] overflow-hidden bg-slate-200">
+                              <img
+                                src="/assets/aistudio/image_c68744d5.png"
+                                alt="Leveling charcoal stone wall courses"
+                                referrerPolicy="no-referrer"
+                                className="w-full h-full object-cover min-h-[180px] sm:min-h-[240px]"
+                              />
+                            </div>
+                          </div>
+
+                          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[54%] h-[54%] z-20 bg-[#135D54] border-4 border-[#15181C] p-1 shadow-xl">
+                            <img
+                              src="/assets/aistudio/image_cbcf01ad.png"
+                              alt="Rigging retaining stone boulders"
+                              referrerPolicy="no-referrer"
+                              className="w-full h-full object-cover"
+                            />
+                          </div>
+                        </div>
+                      </div>
+
+                      <div className="lg:col-span-6 space-y-5">
+                        <div>
+                          <p className="text-xs sm:text-sm font-semibold uppercase tracking-[0.14em] text-[#135D54]">
+                            Global Stone Craft
+                          </p>
+                          <h2 className="text-3xl sm:text-4xl font-bold text-[#0E1115] font-display-constra leading-tight mt-1">
+                            Built On Bedrock Foundations Worldwide.
+                          </h2>
                         </div>
 
-                        {/* Category Label */}
-                        <div className="flex items-center justify-between text-xs pt-0.5">
-                          <span className="text-[10px] sm:text-[11px] uppercase tracking-wider text-[#8E795B] font-semibold">
-                            {service.categoryLabel}
-                          </span>
-                          <span className="text-[10px] sm:text-[11px] text-[#8E795B] font-mono">
-                            {service.number}
-                          </span>
+                        <p className="text-sm sm:text-base text-[#4B5563] leading-relaxed">
+                          We pair structural rock engineering with traditional quarried stone craft for coastal estates, royal courtyards, and museum landmarks.
+                        </p>
+
+                        <div className="py-4 border-y border-slate-200 grid grid-cols-1 sm:grid-cols-12 gap-5 items-center">
+                          <div className="sm:col-span-4">
+                            <button
+                              type="button"
+                              onClick={() => openDetail({ kind: 'process', item: PROCESS_GALLERY[1] }, 'materials')}
+                              className="w-full block border-4 border-t-[#135D54] border-l-[#135D54] border-r-[#15181C] border-b-[#15181C] overflow-hidden aspect-4/3 cursor-pointer group"
+                              title="Open Preservation Plan Details"
+                            >
+                              <img
+                                src={GENERATED_ASSETS.monumentPlanImg}
+                                alt="Monument Preservation Plan"
+                                referrerPolicy="no-referrer"
+                                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                              />
+                            </button>
+                          </div>
+                          <div className="sm:col-span-8 space-y-3.5">
+                            <div className="flex items-start gap-3">
+                              <ShieldCheck className="w-7 h-7 text-[#135D54] shrink-0" />
+                              <div>
+                                <h4 className="text-base font-bold text-[#0E1115] font-display-constra">
+                                  Quarry Tested Stone
+                                </h4>
+                                <p className="text-xs text-[#4B5563]">
+                                  Every marble block and limestone slab is vetted at source.
+                                </p>
+                              </div>
+                            </div>
+                            <div className="flex items-start gap-3">
+                              <Users className="w-7 h-7 text-[#135D54] shrink-0" />
+                              <div>
+                                <h4 className="text-base font-bold text-[#0E1115] font-display-constra">
+                                  Direct Site Supervision
+                                </h4>
+                                <p className="text-xs text-[#4B5563]">
+                                  Licensed geotechnical engineers and master masons on site.
+                                </p>
+                              </div>
+                            </div>
+                          </div>
                         </div>
 
-                        {/* Title & Subtitle */}
-                        <div className="space-y-0.5">
-                          <h3 className="text-lg sm:text-xl font-serif-luxury text-[#1F1C18] group-hover:text-[#967241] transition-colors leading-snug font-medium">
-                            {service.title}
+                        <div className="grid grid-cols-2 gap-y-2 gap-x-4 text-xs sm:text-sm font-medium text-[#0E1115]">
+                          <div className="flex items-center gap-2">
+                            <Check className="w-4 h-4 text-[#135D54] shrink-0" />
+                            <span>Natural Quarried Stone</span>
+                          </div>
+                          <div className="flex items-center gap-2">
+                            <Check className="w-4 h-4 text-[#135D54] shrink-0" />
+                            <span>Heritage Charters</span>
+                          </div>
+                          <div className="flex items-center gap-2">
+                            <Check className="w-4 h-4 text-[#135D54] shrink-0" />
+                            <span>Master Stonemasons</span>
+                          </div>
+                          <div className="flex items-center gap-2">
+                            <Check className="w-4 h-4 text-[#135D54] shrink-0" />
+                            <span>Global Site Delivery</span>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </section>
+
+                {/* 3. WHY CHOOSE US */}
+                <section className="w-full bg-[#F4F6F7] py-12 sm:py-16">
+                  <div className="max-w-[1320px] mx-auto px-4 sm:px-8 space-y-8">
+                    <div className="text-center max-w-xl mx-auto space-y-1.5">
+                      <p className="text-xs sm:text-sm font-semibold uppercase tracking-[0.14em] text-[#135D54]">
+                        Standards
+                      </p>
+                      <h2 className="text-3xl sm:text-4xl font-bold text-[#0E1115] font-display-constra">
+                        Engineering & Stone Permanence
+                      </h2>
+                    </div>
+
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                      {[
+                        {
+                          icon: <Building2 className="w-9 h-9 text-white" />,
+                          title: 'Geotechnical Command',
+                          desc: 'Bedrock micropiling, retaining walls, and concealed site drainage for steep terrain.'
+                        },
+                        {
+                          icon: <Award className="w-9 h-9 text-white" />,
+                          title: 'Premier Quarries',
+                          desc: 'Direct blocks from Thassos, Tivoli, Istria, and Burgundy with gold and lapis inlay.'
+                        },
+                        {
+                          icon: <Hammer className="w-9 h-9 text-white" />,
+                          title: 'Museum Precision',
+                          desc: 'Silent channeling and pozzolanic lime grouting built for protected historic structures.'
+                        }
+                      ].map((item, i) => (
+                        <div
+                          key={i}
+                          className="group bg-[#F4F6F7] hover:bg-white border border-slate-300/80 hover:border-transparent hover:shadow-xl p-7 sm:p-8 text-center transition-all duration-300 space-y-4"
+                        >
+                          <div className="inline-flex items-center justify-center w-16 h-16 bg-[#135D54]">
+                            {item.icon}
+                          </div>
+                          <h3 className="text-xl font-bold text-[#0E1115] group-hover:text-[#135D54] font-display-constra transition-colors">
+                            {item.title}
                           </h3>
-                          <p className="text-[11px] sm:text-xs text-[#8E795B] font-medium">
-                            {service.subtitle}
+                          <p className="text-xs sm:text-sm text-[#4B5563] leading-relaxed">
+                            {item.desc}
                           </p>
                         </div>
+                      ))}
+                    </div>
+                  </div>
+                </section>
 
-                        {/* Concise Description */}
-                        <p className="text-xs sm:text-sm text-[#5A5247] leading-relaxed line-clamp-2 font-light">
-                          {service.description}
+                {/* 4. SERVICES SECTION */}
+                <section className="w-full bg-white py-12 sm:py-16">
+                  <div className="max-w-[1320px] mx-auto px-4 sm:px-8 space-y-8">
+                    <div className="text-center max-w-2xl mx-auto space-y-1.5">
+                      <p className="text-xs sm:text-sm font-semibold uppercase tracking-[0.14em] text-[#135D54]">
+                        Disciplines
+                      </p>
+                      <h2 className="text-3xl sm:text-4xl font-bold text-[#0E1115] font-display-constra">
+                        Architectural & Heritage Services
+                      </h2>
+                    </div>
+
+                    <div className="flex items-center justify-start sm:justify-center gap-2 overflow-x-auto no-scrollbar pb-1 whitespace-nowrap">
+                      {[
+                        { id: 'all', label: 'All Disciplines' },
+                        { id: 'estates', label: 'Private Estates' },
+                        { id: 'heritage', label: 'Museum & Heritage' },
+                        { id: 'courtyards', label: 'Palaces & Sacred' }
+                      ].map((tab) => (
+                        <button
+                          key={tab.id}
+                          type="button"
+                          onClick={() => setHomeServiceSector(tab.id as typeof homeServiceSector)}
+                          className={`px-4 py-2 text-xs sm:text-sm font-semibold shrink-0 transition-colors cursor-pointer ${
+                            homeServiceSector === tab.id
+                              ? 'bg-[#15181C] text-white'
+                              : 'bg-[#F4F6F7] text-[#0E1115] hover:bg-[#135D54] hover:text-white'
+                          }`}
+                        >
+                          {tab.label}
+                        </button>
+                      ))}
+                    </div>
+
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                      {filteredHomeServices.map((svc) => (
+                        <div
+                          key={svc.number}
+                          onClick={() => openDetail({ kind: 'service', item: svc }, 'services')}
+                          className="group relative h-[280px] sm:h-[300px] overflow-hidden bg-[#0E1115] cursor-pointer"
+                        >
+                          <img
+                            src={svc.image}
+                            alt={svc.title}
+                            referrerPolicy="no-referrer"
+                            className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+                          />
+                          <div className="absolute inset-0 bg-black/0 group-hover:bg-black/65 transition-colors duration-300 z-10" />
+
+                          <div className="absolute inset-0 z-20 flex flex-col items-center justify-center text-center p-6 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                            <div className="w-14 h-14 bg-[#135D54] flex items-center justify-center mb-3">
+                              {renderServiceIcon(svc.iconKey, 'w-7 h-7 text-white')}
+                            </div>
+                            <h3 className="text-xl font-bold text-white font-display-constra mb-1.5">
+                              {svc.title}
+                            </h3>
+                            <p className="text-xs text-white/90 line-clamp-2 max-w-xs">
+                              {svc.description}
+                            </p>
+                          </div>
+
+                          <div className="absolute bottom-0 left-0 right-0 h-[68px] bg-[#F4F6F7] flex items-center justify-between z-20 transition-transform duration-300 group-hover:translate-x-full">
+                            <div className="pl-5 pr-3 min-w-0">
+                              <h4 className="text-base sm:text-lg font-bold text-[#0E1115] font-display-constra truncate">
+                                {svc.title}
+                              </h4>
+                              <span className="text-[11px] font-medium text-[#135D54] block truncate">
+                                {svc.categoryLabel}
+                              </span>
+                            </div>
+                            <div className="w-[68px] h-[68px] shrink-0 bg-[#135D54] flex items-center justify-center">
+                              {renderServiceIcon(svc.iconKey, 'w-6 h-6 text-white')}
+                            </div>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+
+                    <div className="text-center pt-1">
+                      <button
+                        type="button"
+                        onClick={() => handleNavigate('services')}
+                        className="px-7 py-3 bg-[#15181C] hover:bg-[#135D54] text-white text-xs sm:text-sm font-semibold transition-colors cursor-pointer"
+                      >
+                        All 8 Disciplines
+                      </button>
+                    </div>
+                  </div>
+                </section>
+
+                {/* 5. FACTS BAND */}
+                <section className="w-full bg-[#15181C] py-10 sm:py-14">
+                  <div className="max-w-[1320px] mx-auto px-4 sm:px-8">
+                    <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
+                      {[
+                        { icon: <Clock className="w-7 h-7 text-[#135D54]" />, label: 'Years Experience', value: '30+' },
+                        { icon: <Building2 className="w-7 h-7 text-[#135D54]" />, label: 'Completed Works', value: '180+' },
+                        { icon: <Users className="w-7 h-7 text-[#135D54]" />, label: 'Master Craftsmen', value: '64+' },
+                        { icon: <Globe className="w-7 h-7 text-[#135D54]" />, label: 'Countries Served', value: '12+' }
+                      ].map((stat, idx) => (
+                        <div key={idx} className="bg-[#135D54] p-1.5">
+                          <div className="bg-white p-5 text-center space-y-3">
+                            <div className="flex justify-center">{stat.icon}</div>
+                            <h3 className="text-sm sm:text-base font-bold text-[#0E1115] font-display-constra">
+                              {stat.label}
+                            </h3>
+                            <div className="bg-[#15181C] py-2 px-3">
+                              <span className="text-2xl sm:text-3xl font-bold text-[#4DB6A8] tabular-nums font-display-constra">
+                                {stat.value}
+                              </span>
+                            </div>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </section>
+
+                {/* 6. RECENT COMPLETED PROJECTS */}
+                <section className="w-full bg-white py-12 sm:py-16">
+                  <div className="max-w-[1320px] mx-auto px-4 sm:px-8 space-y-8">
+                    <div className="text-center max-w-2xl mx-auto space-y-1.5">
+                      <p className="text-xs sm:text-sm font-semibold uppercase tracking-[0.14em] text-[#135D54]">
+                        Portfolio
+                      </p>
+                      <h2 className="text-3xl sm:text-4xl font-bold text-[#0E1115] font-display-constra">
+                        Recent Completed Projects
+                      </h2>
+                    </div>
+
+                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                      {PROJECTS.slice(0, 4).map((project) => (
+                        <article
+                          key={project.id}
+                          onClick={() => openDetail({ kind: 'project', item: project }, 'projects')}
+                          className="group bg-white border border-slate-200 hover:border-[#135D54] hover:shadow-lg transition-all grid grid-cols-1 sm:grid-cols-12 overflow-hidden cursor-pointer"
+                        >
+                          <div className="sm:col-span-5 aspect-16/10 sm:aspect-auto sm:h-full overflow-hidden bg-slate-200">
+                            <img
+                              src={project.image}
+                              alt={project.title}
+                              referrerPolicy="no-referrer"
+                              className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                            />
+                          </div>
+                          <div className="sm:col-span-7 p-5 flex flex-col justify-between space-y-3">
+                            <div className="space-y-1.5">
+                              <span className="text-[11px] font-semibold uppercase tracking-wider text-[#135D54] block">
+                                {project.categoryLabel} · {project.year}
+                              </span>
+                              <h3 className="text-lg sm:text-xl font-bold text-[#0E1115] group-hover:text-[#135D54] transition-colors font-display-constra">
+                                {project.title}
+                              </h3>
+                              <p className="text-xs text-[#4B5563] line-clamp-2 leading-relaxed">
+                                {project.description}
+                              </p>
+                            </div>
+                            <div className="flex items-center justify-between pt-2 border-t border-slate-100 text-[11px] font-medium text-[#4B5563]">
+                              <span>{project.location.split('·')[0].trim()}</span>
+                              <span className="text-[#135D54] font-semibold">{project.scope}</span>
+                            </div>
+                          </div>
+                        </article>
+                      ))}
+                    </div>
+
+                    <div className="text-center">
+                      <button
+                        type="button"
+                        onClick={() => handleNavigate('projects')}
+                        className="px-7 py-3 bg-[#15181C] hover:bg-[#135D54] text-white text-xs sm:text-sm font-semibold transition-colors cursor-pointer"
+                      >
+                        Full Portfolio
+                      </button>
+                    </div>
+                  </div>
+                </section>
+
+                {/* 7. MOVED UP BEFORE TEAM: STONE SAMPLES, SITE PLANS & MACRO DETAIL */}
+                <section className="w-full bg-[#F4F6F7] py-12 sm:py-16">
+                  <div className="max-w-[1320px] mx-auto px-4 sm:px-8 space-y-8">
+                    <div className="text-center max-w-2xl mx-auto space-y-1.5">
+                      <p className="text-xs sm:text-sm font-semibold uppercase tracking-[0.14em] text-[#135D54]">
+                        Stone Library & Plans
+                      </p>
+                      <h2 className="text-3xl sm:text-4xl font-bold text-[#0E1115] font-display-constra">
+                        Quarrying, Site Plans & Specimen Detail
+                      </h2>
+                    </div>
+
+                    <div className="flex items-center justify-start sm:justify-center gap-2 overflow-x-auto no-scrollbar pb-1 whitespace-nowrap">
+                      {[
+                        { id: 'all', label: 'Highlights' },
+                        { id: 'studio', label: 'Studio Samples' },
+                        { id: 'plans', label: 'Monument Plans' },
+                        { id: 'macro', label: 'Macro Detail' },
+                        { id: 'quarry', label: 'Quarry & Sawing' }
+                      ].map((tab) => (
+                        <button
+                          key={tab.id}
+                          type="button"
+                          onClick={() => setProcessFilter(tab.id as typeof processFilter)}
+                          className={`px-4 py-2 text-xs sm:text-sm font-semibold shrink-0 transition-colors cursor-pointer ${
+                            processFilter === tab.id
+                              ? 'bg-[#15181C] text-white'
+                              : 'bg-white text-[#0E1115] hover:bg-[#135D54] hover:text-white'
+                          }`}
+                        >
+                          {tab.label}
+                        </button>
+                      ))}
+                    </div>
+
+                    <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                      {homeFeaturedProcesses.map((item) => (
+                        <article
+                          key={item.id}
+                          onClick={() => openDetail({ kind: 'process', item }, 'materials')}
+                          className="group bg-white shadow-sm hover:shadow-xl border border-slate-200 hover:border-[#135D54] transition-all flex flex-col overflow-hidden cursor-pointer"
+                        >
+                          <div className="relative aspect-16/10 overflow-hidden bg-slate-200">
+                            <img
+                              src={item.image}
+                              alt={item.title}
+                              referrerPolicy="no-referrer"
+                              className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                            />
+                            <div className="absolute top-3 right-3 w-8 h-8 bg-[#15181C]/90 text-white flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                              <Maximize2 className="w-4 h-4" />
+                            </div>
+                          </div>
+                          <div className="p-5 flex-1 flex flex-col justify-between space-y-3">
+                            <div className="space-y-1.5">
+                              <div className="flex items-center justify-between text-[11px] font-semibold">
+                                <span className="text-[#135D54]">{item.stage}</span>
+                                <span className="uppercase text-[#15181C]">{item.categoryLabel}</span>
+                              </div>
+                              <h3 className="text-lg sm:text-xl font-bold text-[#0E1115] group-hover:text-[#135D54] transition-colors font-display-constra">
+                                {item.title}
+                              </h3>
+                              <p className="text-xs text-[#4B5563] line-clamp-2 leading-relaxed">
+                                {item.description}
+                              </p>
+                            </div>
+                            <div className="pt-2.5 border-t border-slate-100 text-[11px] font-medium text-[#0E1115] flex items-center justify-between">
+                              <span>{item.specs[0]}</span>
+                              <span className="text-[#135D54] font-semibold">Inspect Plate</span>
+                            </div>
+                          </div>
+                        </article>
+                      ))}
+                    </div>
+
+                    <div className="text-center pt-1">
+                      <button
+                        type="button"
+                        onClick={() => handleNavigate('materials')}
+                        className="px-7 py-3 bg-[#15181C] hover:bg-[#135D54] text-white text-xs sm:text-sm font-semibold transition-colors cursor-pointer"
+                      >
+                        All Samples & Materials
+                      </button>
+                    </div>
+                  </div>
+                </section>
+
+                {/* 8. OUR TEAM (COMPACT + ROUND PORTRAITS + STRICT HIERARCHY ORDER) */}
+                <section className="w-full bg-white py-8 sm:py-11">
+                  <div className="max-w-[1140px] mx-auto px-4 sm:px-8 space-y-6">
+                    <div className="text-center max-w-xl mx-auto space-y-1">
+                      <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[#135D54]">
+                        Leadership
+                      </p>
+                      <h2 className="text-2xl sm:text-3xl font-bold text-[#0E1115] font-display-constra">
+                        Our Team
+                      </h2>
+                    </div>
+
+                    <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-5">
+                      {TEAM_MEMBERS.map((member) => (
+                        <div
+                          key={member.id}
+                          onClick={() => openDetail({ kind: 'team', item: member }, 'team')}
+                          className="group bg-[#F4F6F7] border border-slate-200 hover:border-[#135D54] hover:bg-white transition-all cursor-pointer p-4 text-center shadow-xs hover:shadow-md flex flex-col items-center"
+                        >
+                          <div className="w-20 h-20 sm:w-24 sm:h-24 rounded-full overflow-hidden border-[3px] border-[#135D54] ring-4 ring-white bg-slate-200 shrink-0 shadow-xs">
+                            <img
+                              src={member.image}
+                              alt={member.name}
+                              referrerPolicy="no-referrer"
+                              className="w-full h-full object-cover object-top group-hover:scale-105 transition-transform duration-500"
+                            />
+                          </div>
+                          <div className="mt-3 space-y-0.5">
+                            <h3 className="text-sm sm:text-base font-bold text-[#0E1115] font-display-constra group-hover:text-[#135D54] transition-colors">
+                              {member.name}
+                            </h3>
+                            <p className="text-[11px] font-semibold text-[#135D54] leading-snug">
+                              {member.role}
+                            </p>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </section>
+
+                {/* 9. COMPACT TESTIMONIALS (6 REVIEWS TOTAL, 3 VISIBLE PER PAGE) */}
+                <section className="w-full bg-[#F4F6F7] py-7 sm:py-9 border-t border-slate-200/70">
+                  <div className="max-w-[1320px] mx-auto px-4 sm:px-8 space-y-5">
+                    <div className="flex items-end justify-between gap-4">
+                      <div>
+                        <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-[#135D54]">
+                          Client Endorsements
                         </p>
+                        <h2 className="text-2xl sm:text-3xl font-bold text-[#0E1115] font-display-constra">
+                          Testimonials
+                        </h2>
+                      </div>
 
-                        {/* Clean Materials Label */}
-                        <div className="pt-1.5 text-[10px] sm:text-[11px] text-[#787168] border-t border-[#EAE5DB]">
-                          <span>{service.materials.join(' · ')}</span>
+                      <div className="flex items-center gap-2">
+                        <span className="text-xs text-[#4B5563] mr-1 tabular-nums">
+                          {Math.floor(reviewOffset / 3) + 1} / {Math.ceil(CLIENT_REVIEWS.length / 3)}
+                        </span>
+                        <button
+                          type="button"
+                          onClick={() =>
+                            setReviewOffset((prev) => (prev - 3 + CLIENT_REVIEWS.length) % CLIENT_REVIEWS.length)
+                          }
+                          aria-label="Previous Testimonials"
+                          className="w-8 h-8 bg-white border border-slate-300 hover:bg-[#135D54] hover:border-[#135D54] text-[#15181C] hover:text-white flex items-center justify-center transition-colors cursor-pointer"
+                        >
+                          <ChevronLeft className="w-4 h-4" />
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => setReviewOffset((prev) => (prev + 3) % CLIENT_REVIEWS.length)}
+                          aria-label="Next Testimonials"
+                          className="w-8 h-8 bg-white border border-slate-300 hover:bg-[#135D54] hover:border-[#135D54] text-[#15181C] hover:text-white flex items-center justify-center transition-colors cursor-pointer"
+                        >
+                          <ChevronRight className="w-4 h-4" />
+                        </button>
+                      </div>
+                    </div>
+
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                      {visibleReviews.map((rev, idx) => (
+                        <div key={`${reviewOffset}-${idx}`} className="bg-white p-4 sm:p-5 border border-slate-200 flex flex-col justify-between space-y-3 shadow-xs">
+                          <p className="text-xs sm:text-sm text-[#4B5563] leading-relaxed italic line-clamp-3">
+                            "{rev.quote}"
+                          </p>
+                          <div className="flex items-center justify-between gap-2 pt-2.5 border-t border-slate-100">
+                            <div className="flex items-center gap-2.5 min-w-0">
+                              <img
+                                src={rev.image}
+                                alt={rev.organization}
+                                referrerPolicy="no-referrer"
+                                className="w-9 h-9 rounded-full object-cover border border-[#135D54] shrink-0"
+                              />
+                              <div className="min-w-0">
+                                <h4 className="text-xs sm:text-sm font-bold text-[#0E1115] font-display-constra truncate">
+                                  {rev.author}
+                                </h4>
+                                <p className="text-[11px] text-[#4B5563] truncate">
+                                  {rev.organization}
+                                </p>
+                              </div>
+                            </div>
+                            <div className="flex items-center gap-0.5 text-[#135D54] shrink-0">
+                              {Array.from({ length: 5 }).map((_, starIdx) => (
+                                <Star key={starIdx} className="w-3 h-3 fill-current" />
+                              ))}
+                            </div>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </section>
+              </div>
+            )}
+
+            {/* ======================================================== */}
+            {/* SUBPAGE: ABOUT */}
+            {/* ======================================================== */}
+            {activeTab === 'about' && (
+              <div>
+                {renderPageBanner('About Our Practice', 'About')}
+
+                <section className="max-w-[1320px] mx-auto px-4 sm:px-8 py-12 sm:py-16">
+                  <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 items-center">
+                    <div className="lg:col-span-6">
+                      <div className="constra-about-collage relative bg-[#F4F6F7] p-6 flex items-stretch gap-4 min-h-[360px] sm:min-h-[440px]">
+                        <div className="w-1/2 pb-20 sm:pb-28 relative z-10">
+                          <div className="h-full border-4 border-t-[#135D54] border-l-[#135D54] border-r-[#F4F6F7] border-b-[#F4F6F7] overflow-hidden">
+                            <img
+                              src="/assets/aistudio/image_7b5ac5d9.png"
+                              alt="Natural quarry slabs yard"
+                              referrerPolicy="no-referrer"
+                              className="w-full h-full object-cover min-h-[200px]"
+                            />
+                          </div>
+                        </div>
+                        <div className="w-1/2 pt-20 sm:pt-28 relative z-10">
+                          <div className="h-full border-4 border-r-[#135D54] border-b-[#135D54] border-t-[#F4F6F7] border-l-[#F4F6F7] overflow-hidden">
+                            <img
+                              src="/assets/aistudio/image_fa96adeb.png"
+                              alt="Estate pool surround and stone wall"
+                              referrerPolicy="no-referrer"
+                              className="w-full h-full object-cover min-h-[200px]"
+                            />
+                          </div>
+                        </div>
+                        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[54%] h-[54%] z-20 bg-[#135D54] border-4 border-[#15181C] p-1 shadow-xl">
+                          <img
+                            src={GENERATED_ASSETS.monumentPlanImg}
+                            alt="Monument Preservation Plan"
+                            referrerPolicy="no-referrer"
+                            className="w-full h-full object-cover"
+                          />
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="lg:col-span-6 space-y-5">
+                      <p className="text-xs sm:text-sm font-semibold uppercase tracking-[0.14em] text-[#135D54]">
+                        Heritage & Engineering
+                      </p>
+                      <h2 className="text-3xl sm:text-4xl font-bold text-[#0E1115] font-display-constra leading-tight">
+                        Monumental Stonework Across Continents
+                      </h2>
+                      <p className="text-sm sm:text-base text-[#4B5563] leading-relaxed">
+                        From coastal dolomite cliffs and historic European loggias to museum galleries and sacred courtyards, we partner with estates and cultural boards worldwide.
+                      </p>
+                      <p className="text-sm sm:text-base text-[#4B5563] leading-relaxed">
+                        Licensed structural engineers work alongside master stonemasons on every project, vetting quarry consignments and bedrock foundations personally.
+                      </p>
+                      <div className="pt-2">
+                        <button
+                          type="button"
+                          onClick={() => handleNavigate('projects')}
+                          className="px-6 py-3 bg-[#135D54] hover:bg-[#15181C] text-white text-xs sm:text-sm font-semibold transition-colors cursor-pointer"
+                        >
+                          View Selected Works
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </section>
+              </div>
+            )}
+
+            {/* ======================================================== */}
+            {/* SUBPAGE: SERVICES */}
+            {/* ======================================================== */}
+            {activeTab === 'services' && (
+              <div>
+                {renderPageBanner('Architectural & Heritage Services', 'Services')}
+
+                <section className="max-w-[1320px] mx-auto px-4 sm:px-8 py-12 sm:py-14 space-y-8">
+                  <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 border-b border-slate-200 pb-5">
+                    <div className="max-w-2xl space-y-1">
+                      <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[#135D54]">
+                        8 Core Disciplines
+                      </p>
+                      <h2 className="text-2xl sm:text-4xl font-bold text-[#0E1115] font-display-constra">
+                        Hardscaping, Museums & Conservation
+                      </h2>
+                    </div>
+
+                    <div className="flex items-center gap-2 overflow-x-auto no-scrollbar whitespace-nowrap pb-1">
+                      {[
+                        { id: 'all', label: 'All (8)' },
+                        { id: 'estates', label: 'Private Estates' },
+                        { id: 'heritage', label: 'Museum & Heritage' },
+                        { id: 'courtyards', label: 'Palaces & Sacred' }
+                      ].map((tab) => (
+                        <button
+                          key={tab.id}
+                          type="button"
+                          onClick={() => setHomeServiceSector(tab.id as typeof homeServiceSector)}
+                          className={`px-4 py-2 text-xs font-semibold shrink-0 transition-colors cursor-pointer ${
+                            homeServiceSector === tab.id
+                              ? 'bg-[#15181C] text-white'
+                              : 'bg-[#F4F6F7] text-[#0E1115] hover:bg-[#135D54] hover:text-white'
+                          }`}
+                        >
+                          {tab.label}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    {filteredAllServices.map((svc) => (
+                      <article
+                        key={svc.number}
+                        onClick={() => openDetail({ kind: 'service', item: svc }, 'services')}
+                        className="group bg-white border border-slate-200 hover:border-[#135D54] hover:shadow-md transition-all grid grid-cols-1 sm:grid-cols-12 overflow-hidden cursor-pointer"
+                      >
+                        <div className="sm:col-span-5 relative aspect-16/10 sm:aspect-auto bg-slate-200">
+                          <img
+                            src={svc.image}
+                            alt={svc.title}
+                            referrerPolicy="no-referrer"
+                            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                          />
+                          <div className="absolute top-0 left-0 w-10 h-10 bg-[#135D54] flex items-center justify-center">
+                            {renderServiceIcon(svc.iconKey, 'w-5 h-5 text-white')}
+                          </div>
                         </div>
 
+                        <div className="sm:col-span-7 p-5 flex flex-col justify-between space-y-3">
+                          <div className="space-y-1.5">
+                            <div className="flex items-center justify-between text-[11px] font-semibold uppercase tracking-wider">
+                              <span className="text-[#135D54]">{svc.categoryLabel}</span>
+                              <span className="text-[#15181C] tabular-nums">{svc.number}</span>
+                            </div>
+                            <h3 className="text-xl font-bold text-[#0E1115] group-hover:text-[#135D54] font-display-constra transition-colors">
+                              {svc.title}
+                            </h3>
+                            <p className="text-xs text-[#4B5563] line-clamp-2 leading-relaxed">
+                              {svc.description}
+                            </p>
+                          </div>
+
+                          <div className="pt-2.5 border-t border-slate-100 flex items-center justify-between text-xs">
+                            <span className="text-[#4B5563]">
+                              Lead: <strong className="text-[#0E1115]">{svc.director}</strong>
+                            </span>
+                            <span className="text-[#135D54] font-semibold">{svc.leadTime}</span>
+                          </div>
+                        </div>
+                      </article>
+                    ))}
+                  </div>
+                </section>
+              </div>
+            )}
+
+            {/* ======================================================== */}
+            {/* SUBPAGE: PROJECTS */}
+            {/* ======================================================== */}
+            {activeTab === 'projects' && (
+              <div>
+                {renderPageBanner('International Commissions', 'Projects')}
+
+                <section className="max-w-[1320px] mx-auto px-4 sm:px-8 py-12 sm:py-14 space-y-8">
+                  <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 border-b border-slate-200 pb-5">
+                    <div>
+                      <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[#135D54]">
+                        Portfolio
+                      </p>
+                      <h2 className="text-2xl sm:text-4xl font-bold text-[#0E1115] font-display-constra">
+                        Selected Global Stonework
+                      </h2>
+                    </div>
+
+                    <div className="flex items-center gap-2 overflow-x-auto no-scrollbar whitespace-nowrap pb-1">
+                      {[
+                        { id: 'all', label: 'All Works' },
+                        { id: 'terraces', label: 'Clifftop & Terraces' },
+                        { id: 'pools', label: 'Water & Pools' },
+                        { id: 'courtyards', label: 'Courtyards' },
+                        { id: 'heritage', label: 'Museum & Heritage' }
+                      ].map((cat) => (
+                        <button
+                          key={cat.id}
+                          type="button"
+                          onClick={() => setSelectedCategory(cat.id)}
+                          className={`px-4 py-2 text-xs font-semibold shrink-0 transition-colors cursor-pointer ${
+                            selectedCategory === cat.id
+                              ? 'bg-[#15181C] text-white'
+                              : 'bg-[#F4F6F7] text-[#0E1115] hover:bg-[#135D54] hover:text-white'
+                          }`}
+                        >
+                          {cat.label}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    {filteredProjects.map((project) => (
+                      <article
+                        key={project.id}
+                        onClick={() => openDetail({ kind: 'project', item: project }, 'projects')}
+                        className="group bg-white border border-slate-200 hover:border-[#135D54] hover:shadow-lg transition-all flex flex-col overflow-hidden cursor-pointer"
+                      >
+                        <div className="relative aspect-16/10 overflow-hidden bg-slate-200">
+                          <img
+                            src={project.image}
+                            alt={project.title}
+                            referrerPolicy="no-referrer"
+                            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                          />
+                          <div className="absolute top-3 left-3 bg-[#15181C] text-white px-2.5 py-1 text-[11px] font-semibold tabular-nums">
+                            {project.scope}
+                          </div>
+                        </div>
+
+                        <div className="p-5 flex-1 flex flex-col justify-between space-y-3">
+                          <div className="space-y-1.5">
+                            <span className="text-[11px] font-semibold uppercase tracking-wider text-[#135D54] block">
+                              {project.categoryLabel}
+                            </span>
+                            <h3 className="text-xl font-bold text-[#0E1115] group-hover:text-[#135D54] transition-colors font-display-constra">
+                              {project.title}
+                            </h3>
+                            <p className="text-xs text-[#4B5563] line-clamp-2 leading-relaxed">
+                              {project.description}
+                            </p>
+                          </div>
+
+                          <div className="pt-2.5 border-t border-slate-100 flex items-center justify-between text-xs">
+                            <span className="text-[#4B5563]">{project.location.split('·')[0].trim()}</span>
+                            <span className="text-[#135D54] font-semibold">{project.year}</span>
+                          </div>
+                        </div>
+                      </article>
+                    ))}
+                  </div>
+                </section>
+              </div>
+            )}
+
+            {/* ======================================================== */}
+            {/* SUBPAGE: MATERIALS, QUARRY PROCESSES & PLANS */}
+            {/* ======================================================== */}
+            {activeTab === 'materials' && (
+              <div>
+                {renderPageBanner('Materials, Stone Samples & Plans', 'Materials & Craft')}
+
+                <section className="w-full bg-[#F4F6F7] py-12 sm:py-14 border-b border-slate-200">
+                  <div className="max-w-[1320px] mx-auto px-4 sm:px-8 space-y-8">
+                    <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 border-b border-slate-300/70 pb-5">
+                      <div className="max-w-2xl space-y-1">
+                        <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[#135D54]">
+                          Sample Plates & Drawings
+                        </p>
+                        <h2 className="text-2xl sm:text-4xl font-bold text-[#0E1115] font-display-constra">
+                          Specimens, Site Plans & Craft Detail
+                        </h2>
+                      </div>
+
+                      <div className="flex items-center gap-2 overflow-x-auto no-scrollbar whitespace-nowrap pb-1">
+                        {[
+                          { id: 'all', label: `All (${PROCESS_GALLERY.length})` },
+                          { id: 'studio', label: 'Studio Samples' },
+                          { id: 'plans', label: 'Site Plans' },
+                          { id: 'macro', label: 'Macro Detail' },
+                          { id: 'quarry', label: 'Quarry & Sawing' }
+                        ].map((f) => (
+                          <button
+                            key={f.id}
+                            type="button"
+                            onClick={() => setProcessFilter(f.id as typeof processFilter)}
+                            className={`px-4 py-2 text-xs font-semibold shrink-0 transition-colors cursor-pointer ${
+                              processFilter === f.id
+                                ? 'bg-[#15181C] text-white'
+                                : 'bg-white text-[#0E1115] hover:bg-[#135D54] hover:text-white'
+                            }`}
+                          >
+                            {f.label}
+                          </button>
+                        ))}
                       </div>
                     </div>
-                  ))}
-                </div>
 
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                      {filteredProcesses.map((item) => (
+                        <article
+                          key={item.id}
+                          onClick={() => openDetail({ kind: 'process', item }, 'materials')}
+                          className="group bg-white border border-slate-200 hover:border-[#135D54] hover:shadow-xl transition-all flex flex-col overflow-hidden cursor-pointer"
+                        >
+                          <div className="relative aspect-16/10 overflow-hidden bg-slate-200">
+                            <img
+                              src={item.image}
+                              alt={item.title}
+                              referrerPolicy="no-referrer"
+                              className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                            />
+                            <div className="absolute top-3 left-3 bg-[#15181C] text-white px-2.5 py-1 text-[11px] font-semibold">
+                              {item.stage}
+                            </div>
+                          </div>
+                          <div className="p-5 flex-1 flex flex-col justify-between space-y-3">
+                            <div className="space-y-1.5">
+                              <span className="text-[11px] font-semibold uppercase tracking-wider text-[#135D54] block">
+                                {item.subtitle}
+                              </span>
+                              <h3 className="text-xl font-bold text-[#0E1115] group-hover:text-[#135D54] transition-colors font-display-constra">
+                                {item.title}
+                              </h3>
+                              <p className="text-xs text-[#4B5563] line-clamp-2 leading-relaxed">
+                                {item.description}
+                              </p>
+                            </div>
+                            <div className="pt-2.5 border-t border-slate-100 flex items-center justify-between text-xs">
+                              <span className="text-[#0E1115] font-medium truncate max-w-[190px]">
+                                {item.specs[0]}
+                              </span>
+                              <span className="text-[#135D54] font-semibold">Inspect Plate</span>
+                            </div>
+                          </div>
+                        </article>
+                      ))}
+                    </div>
+                  </div>
+                </section>
+
+                <section className="max-w-[1320px] mx-auto px-4 sm:px-8 py-12 sm:py-14 space-y-8">
+                  <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 border-b border-slate-200 pb-5">
+                    <div className="max-w-2xl space-y-1">
+                      <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[#135D54]">
+                        Certified Quarries
+                      </p>
+                      <h2 className="text-2xl sm:text-4xl font-bold text-[#0E1115] font-display-constra">
+                        Imperial Stone & Inlay Catalog
+                      </h2>
+                    </div>
+
+                    <div className="flex items-center gap-2 overflow-x-auto no-scrollbar whitespace-nowrap pb-1">
+                      {[
+                        { id: 'all', label: `All (${LUXURY_MATERIALS.length})` },
+                        { id: 'marble', label: 'Marbles' },
+                        { id: 'travertine', label: 'Travertines & Limestone' },
+                        { id: 'inlay', label: 'Inlays & Gold' },
+                        { id: 'granite', label: 'Basalt & Granite' }
+                      ].map((c) => (
+                        <button
+                          key={c.id}
+                          type="button"
+                          onClick={() => setSelectedMaterialCategory(c.id)}
+                          className={`px-4 py-2 text-xs font-semibold shrink-0 transition-colors cursor-pointer ${
+                            selectedMaterialCategory === c.id
+                              ? 'bg-[#15181C] text-white'
+                              : 'bg-[#F4F6F7] text-[#0E1115] hover:bg-[#135D54] hover:text-white'
+                          }`}
+                        >
+                          {c.label}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    {filteredMaterials.map((mat) => (
+                      <article
+                        key={mat.id}
+                        onClick={() => openDetail({ kind: 'material', item: mat }, 'materials')}
+                        className="group bg-white border border-slate-200 hover:border-[#135D54] hover:shadow-lg transition-all flex flex-col overflow-hidden cursor-pointer"
+                      >
+                        <div className="aspect-16/9 overflow-hidden bg-slate-200">
+                          <img
+                            src={mat.image}
+                            alt={mat.name}
+                            referrerPolicy="no-referrer"
+                            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                          />
+                        </div>
+                        <div className="p-5 space-y-2.5 flex-1 flex flex-col justify-between">
+                          <div className="space-y-1.5">
+                            <div className="flex items-center justify-between text-[11px] font-semibold">
+                              <span className="text-[#135D54] uppercase tracking-wider">{mat.provenance}</span>
+                              <span className="text-[#15181C] uppercase">{mat.category}</span>
+                            </div>
+                            <h3 className="text-xl font-bold text-[#0E1115] group-hover:text-[#135D54] font-display-constra transition-colors">
+                              {mat.name}
+                            </h3>
+                            <p className="text-xs text-[#4B5563] line-clamp-2 leading-relaxed">
+                              {mat.description}
+                            </p>
+                          </div>
+                          <div className="pt-2 border-t border-slate-100 text-[11px] text-[#4B5563] truncate">
+                            {mat.characteristics.slice(0, 3).join(' · ')}
+                          </div>
+                        </div>
+                      </article>
+                    ))}
+                  </div>
+                </section>
               </div>
-            </section>
+            )}
 
-            {/* 4. HUMAN CRAFTSMEN & DIRECTORATE (COMPACT & CLEAN ON MOBILE) */}
-            <section className="w-full bg-[#F5F2EC] py-10 sm:py-24 border-b border-[#EAE5DB]">
-              <div className="w-full max-w-[1720px] mx-auto px-4 sm:px-12 lg:px-16 space-y-6 sm:space-y-14">
-                
-                <div className="max-w-2xl space-y-1.5 sm:space-y-2 border-b border-[#DFD9CD] pb-4 sm:pb-6">
-                  <span className="text-[11px] sm:text-xs uppercase tracking-widest text-[#8E795B] font-semibold">
-                    The Directorate & Guild
-                  </span>
-                  <h2 className="text-2xl sm:text-5xl font-serif-luxury text-[#1F1C18] font-normal">
-                    Master Craftsmen & Engineers
-                  </h2>
-                  <p className="text-xs sm:text-sm text-[#5A5247]">
-                    Governed by four senior principals who personally oversee bedrock analysis, quarry extraction, and stone jointing on-site.
-                  </p>
-                </div>
+            {/* ======================================================== */}
+            {/* SUBPAGE: TEAM */}
+            {/* ======================================================== */}
+            {activeTab === 'team' && (
+              <div>
+                {renderPageBanner('Directorate & Master Craftsmen', 'Our Team')}
 
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-8">
-                  {team.map((member) => (
-                    <div 
-                      key={member.id} 
-                      className="p-3.5 sm:p-0 bg-white/70 sm:bg-transparent rounded-sm sm:rounded-none border border-[#EAE5DB] sm:border-0 flex items-start sm:block gap-3.5 sm:space-y-4"
-                    >
-                      {/* Circular Portrait */}
-                      <div className="w-14 h-14 sm:w-24 sm:h-24 rounded-full overflow-hidden shrink-0 shadow-xs ring-2 ring-[#DFD9CD] bg-stone-200">
-                        <img 
-                          src={member.image} 
-                          alt={member.name}
-                          className="w-full h-full object-cover object-top"
-                        />
-                      </div>
-                      <div className="space-y-0.5 sm:space-y-1 flex-1 min-w-0">
-                        <h3 className="text-base sm:text-xl font-serif-luxury text-[#1F1C18] font-medium leading-snug">{member.name}</h3>
-                        <p className="text-[11px] sm:text-xs font-semibold text-[#8E795B] leading-tight">{member.role}</p>
-                        <p className="text-[10px] sm:text-xs text-[#787168] italic line-clamp-1">{member.specialty}</p>
-                        <p className="text-xs sm:text-sm text-[#5A5247] pt-1 leading-relaxed line-clamp-2 sm:line-clamp-none font-light">
-                          {member.bio}
+                <section className="max-w-[1140px] mx-auto px-4 sm:px-8 py-10 sm:py-14 space-y-6">
+                  <div className="max-w-2xl space-y-1 border-b border-slate-200 pb-4">
+                    <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[#135D54]">
+                      Executive Leadership
+                    </p>
+                    <h2 className="text-2xl sm:text-3xl font-bold text-[#0E1115] font-display-constra">
+                      Principals & Technical Directors
+                    </h2>
+                  </div>
+
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+                    {TEAM_MEMBERS.map((member, index) => (
+                      <article
+                        key={member.id}
+                        onClick={() => openDetail({ kind: 'team', item: member }, 'team')}
+                        className="group bg-white border border-slate-200 p-5 flex flex-col sm:flex-row items-center sm:items-start text-center sm:text-left gap-4 shadow-xs hover:border-[#135D54] hover:shadow-md transition-all cursor-pointer"
+                      >
+                        <div className="w-20 h-20 sm:w-24 sm:h-24 shrink-0 rounded-full overflow-hidden border-[3px] border-[#135D54] ring-4 ring-[#F4F6F7] bg-slate-200">
+                          <img
+                            src={member.image}
+                            alt={member.name}
+                            referrerPolicy="no-referrer"
+                            className="w-full h-full object-cover object-top group-hover:scale-105 transition-transform duration-500"
+                          />
+                        </div>
+                        <div className="space-y-1 flex-1">
+                          <span className="text-[11px] font-semibold uppercase tracking-wider text-[#135D54] block">
+                            0{index + 1} · {member.role}
+                          </span>
+                          <h3 className="text-lg sm:text-xl font-bold text-[#0E1115] group-hover:text-[#135D54] font-display-constra transition-colors">
+                            {member.name}
+                          </h3>
+                          <p className="text-xs font-medium text-[#15181C] italic">
+                            {member.specialty}
+                          </p>
+                          <p className="text-xs text-[#4B5563] leading-relaxed line-clamp-2 pt-0.5">
+                            {member.bio}
+                          </p>
+                        </div>
+                      </article>
+                    ))}
+                  </div>
+                </section>
+              </div>
+            )}
+
+            {/* ======================================================== */}
+            {/* SUBPAGE: CONTACT */}
+            {/* ======================================================== */}
+            {activeTab === 'contact' && (
+              <div>
+                {renderPageBanner('Global Inquiries', 'Contact')}
+
+                <section className="max-w-[1320px] mx-auto px-4 sm:px-8 py-12 sm:py-16">
+                  <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 items-stretch">
+                    <div className="lg:col-span-6 space-y-5">
+                      <div className="space-y-1.5">
+                        <p className="text-xs sm:text-sm font-semibold uppercase tracking-[0.14em] text-[#135D54]">
+                          Direct Consultation
+                        </p>
+                        <h2 className="text-3xl sm:text-4xl font-bold text-[#0E1115] font-display-constra">
+                          Project Inquiry
+                        </h2>
+                        <p className="text-xs sm:text-sm text-[#4B5563]">
+                          For private estates, museum modernization, and monument preservation worldwide.
                         </p>
                       </div>
+
+                      {formSubmitted ? (
+                        <div className="bg-[#F4F6F7] border-2 border-[#135D54] p-8 text-center space-y-4">
+                          <div className="w-12 h-12 bg-[#15181C] text-[#4DB6A8] mx-auto flex items-center justify-center">
+                            <Check className="w-6 h-6" />
+                          </div>
+                          <h3 className="text-2xl font-bold text-[#0E1115] font-display-constra">
+                            Inquiry Sent
+                          </h3>
+                          <p className="text-sm text-[#4B5563] max-w-md mx-auto">
+                            Your note has been routed to our Toronto office for review within one business day.
+                          </p>
+                          <button
+                            type="button"
+                            onClick={() => setFormSubmitted(false)}
+                            className="px-6 py-2.5 bg-[#15181C] hover:bg-[#135D54] text-white text-xs font-semibold transition-colors cursor-pointer"
+                          >
+                            New Inquiry
+                          </button>
+                        </div>
+                      ) : (
+                        <form onSubmit={handleFormSubmit} className="space-y-4">
+                          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <input
+                              type="text"
+                              required
+                              placeholder="Full Name *"
+                              value={formData.name}
+                              onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                              className="w-full px-4 py-3.5 bg-white border border-[#135D54] text-sm text-[#0E1115] placeholder:text-slate-400 focus:outline-none focus:ring-1 focus:ring-[#15181C]"
+                            />
+                            <input
+                              type="email"
+                              required
+                              placeholder="Email Address *"
+                              value={formData.email}
+                              onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                              className="w-full px-4 py-3.5 bg-white border border-[#135D54] text-sm text-[#0E1115] placeholder:text-slate-400 focus:outline-none focus:ring-1 focus:ring-[#15181C]"
+                            />
+                          </div>
+
+                          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <input
+                              type="tel"
+                              placeholder="Phone Number"
+                              value={formData.phone}
+                              onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+                              className="w-full px-4 py-3.5 bg-white border border-[#135D54] text-sm text-[#0E1115] placeholder:text-slate-400 focus:outline-none focus:ring-1 focus:ring-[#15181C]"
+                            />
+                            <select
+                              value={formData.projectType}
+                              onChange={(e) => setFormData({ ...formData, projectType: e.target.value })}
+                              className="w-full px-4 py-3.5 bg-white border border-[#135D54] text-sm text-[#0E1115] focus:outline-none focus:ring-1 focus:ring-[#15181C]"
+                            >
+                              <option>Clifftop & Island Terraces</option>
+                              <option>Museum Atrium Modernization</option>
+                              <option>Monument Preservation</option>
+                              <option>Sacred & Royal Courtyards</option>
+                              <option>Palace Water Amphitheaters</option>
+                              <option>Stone Sample Box Request</option>
+                            </select>
+                          </div>
+
+                          <input
+                            type="text"
+                            placeholder="Site City & Country"
+                            value={formData.location}
+                            onChange={(e) => setFormData({ ...formData, location: e.target.value })}
+                            className="w-full px-4 py-3.5 bg-white border border-[#135D54] text-sm text-[#0E1115] placeholder:text-slate-400 focus:outline-none focus:ring-1 focus:ring-[#15181C]"
+                          />
+
+                          <textarea
+                            rows={4}
+                            placeholder="Brief outline of site conditions, preferred stone, and timeline..."
+                            value={formData.message}
+                            onChange={(e) => setFormData({ ...formData, message: e.target.value })}
+                            className="w-full px-4 py-3.5 bg-white border border-[#135D54] text-sm text-[#0E1115] placeholder:text-slate-400 focus:outline-none focus:ring-1 focus:ring-[#15181C]"
+                          />
+
+                          <button
+                            type="submit"
+                            className="w-full py-3.5 bg-[#15181C] hover:bg-[#135D54] text-white text-sm font-semibold transition-colors cursor-pointer"
+                          >
+                            Send Inquiry
+                          </button>
+                        </form>
+                      )}
                     </div>
-                  ))}
-                </div>
-              </div>
-            </section>
 
-            {/* 5. CONVERSATION STRIP (INVITING, CALM, UNRUSHED) */}
-            <section className="w-full bg-[#FAF8F5] py-10 sm:py-20">
-              <div className="w-full max-w-[1720px] mx-auto px-4 sm:px-12 lg:px-16 text-center space-y-4 sm:space-y-6 max-w-3xl">
-                <span className="text-[11px] sm:text-xs uppercase tracking-widest text-[#8E795B] font-semibold">
-                  Global Inquiries
-                </span>
-                <h2 className="text-2xl sm:text-5xl font-serif-luxury font-normal text-[#1F1C18]">
-                  Commission an architectural dialogue
-                </h2>
-                <p className="text-xs sm:text-base text-[#5A5247] leading-relaxed">
-                  Whether establishing a new clifftop terrace, revitalizing an imperial parterre, or preserving an archaeological landmark, our principals are available for initial site studies.
-                </p>
-                <div className="pt-2">
-                  <button
-                    type="button"
-                    onClick={() => handleNavigate('contact')}
-                    className="w-full sm:w-auto px-6 sm:px-8 py-3.5 sm:py-4 bg-[#1F1C18] hover:bg-[#38332B] text-[#FAF8F5] text-xs font-medium tracking-wide rounded-sm transition-colors cursor-pointer"
-                  >
-                    Initiate Private Commission Brief
-                  </button>
-                </div>
-              </div>
-            </section>
+                    <div className="lg:col-span-6 flex items-stretch">
+                      <div className="constra-corner-frame w-full flex flex-col">
+                        <div className="bg-white p-6 flex-1 flex flex-col justify-between space-y-5 border border-slate-200">
+                          <div className="space-y-4">
+                            <div>
+                              <span className="text-xs font-semibold uppercase tracking-wider text-[#135D54]">
+                                Headquarters
+                              </span>
+                              <h3 className="text-2xl font-bold text-[#0E1115] font-display-constra mt-1">
+                                Toronto Central Directorate
+                              </h3>
+                            </div>
 
-          </div>
-        )}
+                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs sm:text-sm">
+                              <div className="bg-[#F4F6F7] p-4 space-y-1">
+                                <div className="flex items-center gap-2 font-semibold text-[#0E1115]">
+                                  <MapPin className="w-4 h-4 text-[#135D54]" />
+                                  <span>Office</span>
+                                </div>
+                                <p className="text-[#4B5563]">100 King Street West, Suite 5600</p>
+                                <p className="text-[#4B5563]">Toronto, ON M5X 1C9, Canada</p>
+                              </div>
 
-        {/* ======================================================== */}
-        {/* TAB: PROJECTS / PORTFOLIO */}
-        {/* ======================================================== */}
-        {activeTab === 'projects' && (
-          <div className="w-full max-w-[1720px] mx-auto px-4 sm:px-12 lg:px-16 py-8 sm:py-16 space-y-8 sm:space-y-12">
-            
-            <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 sm:gap-6 border-b border-[#EAE5DB] pb-4 sm:pb-6">
-              <div>
-                <span className="text-[11px] sm:text-xs uppercase tracking-widest text-[#8E795B] font-semibold">Archive</span>
-                <h1 className="text-2xl sm:text-5xl font-serif-luxury text-[#1F1C18] font-normal mt-1">
-                  International Masterworks
-                </h1>
-                <p className="text-xs sm:text-sm text-[#5A5247] mt-1">
-                  Explore completed clifftop terraces, royal courtyards, palace water amphitheatres, and archaeological conservations worldwide.
-                </p>
-              </div>
+                              <div className="bg-[#F4F6F7] p-4 space-y-1">
+                                <div className="flex items-center gap-2 font-semibold text-[#0E1115]">
+                                  <Phone className="w-4 h-4 text-[#135D54]" />
+                                  <span>Direct Line</span>
+                                </div>
+                                <a
+                                  href="tel:+18679881524"
+                                  className="text-[#15181C] font-semibold hover:text-[#135D54] block"
+                                >
+                                  +1 (867) 988 1524
+                                </a>
+                                <a
+                                  href="mailto:aureusmonument@email.com"
+                                  className="text-[#4B5563] hover:text-[#135D54] block truncate"
+                                >
+                                  aureusmonument@email.com
+                                </a>
+                              </div>
+                            </div>
+                          </div>
 
-              {/* Minimal Category Tabs with sleek horizontal scroll on mobile */}
-              <div className="flex items-center gap-2 overflow-x-auto no-scrollbar -mx-4 px-4 sm:mx-0 sm:px-0 whitespace-nowrap text-xs pb-1 sm:pb-0">
-                {[
-                  { id: 'all', label: 'All Works' },
-                  { id: 'terraces', label: 'Clifftop & Terraces' },
-                  { id: 'pools', label: 'Royal Water & Pools' },
-                  { id: 'courtyards', label: 'Courtyards & Palaces' },
-                  { id: 'heritage', label: 'Museum & Heritage' }
-                ].map((cat) => (
-                  <button
-                    key={cat.id}
-                    type="button"
-                    onClick={() => setSelectedCategory(cat.id)}
-                    className={`px-3 py-1.5 rounded-sm transition-all shrink-0 cursor-pointer text-xs ${
-                      selectedCategory === cat.id
-                        ? 'bg-[#1F1C18] text-[#FAF8F5] font-medium'
-                        : 'bg-[#F5F2EC] text-[#5A5247] hover:bg-[#EAE5DB]'
-                    }`}
-                  >
-                    {cat.label}
-                  </button>
-                ))}
-              </div>
-            </div>
-
-            {/* Frameless Projects Grid */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-10">
-              {filteredProjects.map((project) => (
-                <article
-                  key={project.id}
-                  onClick={() => setModalProject(project)}
-                  className="group cursor-pointer space-y-2.5 sm:space-y-3"
-                >
-                  <div className="relative aspect-16/11 overflow-hidden rounded-sm bg-stone-200">
-                    <img 
-                      src={project.image} 
-                      alt={project.title}
-                      className="w-full h-full object-cover group-hover:scale-103 transition-transform duration-700 ease-out"
-                    />
-                    <div className="absolute top-2.5 left-2.5 bg-[#FAF8F5]/95 backdrop-blur-xs px-2 py-0.5 text-[10px] sm:text-[11px] font-mono text-[#1F1C18]">
-                      {project.scope}
-                    </div>
-                  </div>
-
-                  <div className="space-y-1">
-                    <span className="text-[11px] sm:text-xs text-[#8E795B] font-medium">{project.categoryLabel}</span>
-                    <h3 className="text-lg sm:text-xl font-serif-luxury text-[#1F1C18] group-hover:text-[#967241] transition-colors leading-snug">
-                      {project.title}
-                    </h3>
-                    <p className="text-xs sm:text-sm text-[#5A5247] line-clamp-2 leading-relaxed">
-                      {project.description}
-                    </p>
-                    <div className="pt-1.5 text-xs text-[#787168] flex items-center justify-between">
-                      <span>{project.location.split('·')[0].trim()}</span>
-                      <span className="text-[#1F1C18] font-medium group-hover:translate-x-0.5 transition-transform text-xs">View Dossier →</span>
-                    </div>
-                  </div>
-                </article>
-              ))}
-            </div>
-
-          </div>
-        )}
-
-        {/* ======================================================== */}
-        {/* TAB: SERVICES */}
-        {/* ======================================================== */}
-        {activeTab === 'services' && (
-          <div className="w-full max-w-[1720px] mx-auto px-4 sm:px-12 lg:px-16 py-8 sm:py-16 space-y-8 sm:space-y-16">
-            
-            <div className="max-w-3xl space-y-1.5 sm:space-y-2 border-b border-[#EAE5DB] pb-4 sm:pb-6">
-              <span className="text-[11px] sm:text-xs uppercase tracking-widest text-[#8E795B] font-semibold">Disciplines</span>
-              <h1 className="text-2xl sm:text-5xl font-serif-luxury text-[#1F1C18] font-normal">
-                Master Hardscaping, Museum Modernization & Heritage Preservation
-              </h1>
-              <p className="text-xs sm:text-sm text-[#5A5247]">
-                A world-class suite of architectural stone disciplines serving royal trusts, cultural ministries, private family offices, and monumental estates worldwide.
-              </p>
-            </div>
-
-            <div className="divide-y divide-[#EAE5DB]">
-              {servicesList.map((svc) => (
-                <div key={svc.number} className="py-6 sm:py-10 grid grid-cols-1 lg:grid-cols-12 gap-4 sm:gap-8 items-start">
-                  <div className="lg:col-span-3 flex items-baseline gap-3 sm:gap-4">
-                    <span className="font-mono text-base sm:text-xl text-[#8E795B] font-semibold">{svc.number}</span>
-                    <h3 className="text-lg sm:text-2xl font-serif-luxury font-medium text-[#1F1C18] leading-snug">
-                      {svc.title}
-                    </h3>
-                  </div>
-
-                  <div className="lg:col-span-5 space-y-3 sm:space-y-4">
-                    <p className="text-xs sm:text-sm text-[#5A5247] leading-relaxed">
-                      {svc.description}
-                    </p>
-                    <div className="space-y-1 text-xs text-[#787168]">
-                      <span className="font-medium text-[#1F1C18] block text-[11px] sm:text-xs">Primary Materials:</span>
-                      <p className="text-[11px] sm:text-xs">{svc.materials.join(' · ')}</p>
-                    </div>
-                  </div>
-
-                  <div className="lg:col-span-4 aspect-16/10 rounded-sm overflow-hidden bg-stone-200">
-                    <img 
-                      src={svc.image} 
-                      alt={svc.title}
-                      className="w-full h-full object-cover"
-                    />
-                  </div>
-                </div>
-              ))}
-            </div>
-
-          </div>
-        )}
-
-        {/* ======================================================== */}
-        {/* TAB: MATERIALS & ROYAL CRAFT */}
-        {/* ======================================================== */}
-        {activeTab === 'materials' && (
-          <div className="w-full max-w-[1720px] mx-auto px-4 sm:px-12 lg:px-16 py-8 sm:py-16 space-y-8 sm:space-y-14">
-            
-            <div className="max-w-3xl space-y-1.5 sm:space-y-2 border-b border-[#EAE5DB] pb-4 sm:pb-6">
-              <span className="text-[11px] sm:text-xs uppercase tracking-widest text-[#8E795B] font-semibold">Provenance</span>
-              <h1 className="text-2xl sm:text-5xl font-serif-luxury text-[#1F1C18] font-normal">
-                Rare, Luxury & Royal Materials
-              </h1>
-              <p className="text-xs sm:text-sm text-[#5A5247]">
-                Certified quarried natural stones, crystalline marbles, historic travertines, and semiprecious inlays curated for royal palaces, museums, and clifftop estates.
-              </p>
-            </div>
-
-            {/* Filter Tabs with horizontal scroll on mobile */}
-            <div className="flex items-center gap-2 overflow-x-auto no-scrollbar -mx-4 px-4 sm:mx-0 sm:px-0 whitespace-nowrap text-xs border-b border-[#EAE5DB] pb-3 sm:pb-5">
-              {[
-                { id: 'all', label: `All Materials (${luxuryMaterials.length})` },
-                { id: 'marble', label: 'Imperial & Sacred Marbles' },
-                { id: 'travertine', label: 'Royal Travertines & Limestones' },
-                { id: 'inlay', label: 'Precious Inlays & Gold Mosaics' },
-                { id: 'granite', label: 'Volcanic Basalts & Granites' }
-              ].map((c) => (
-                <button
-                  key={c.id}
-                  type="button"
-                  onClick={() => setSelectedMaterialCategory(c.id)}
-                  className={`px-3 py-1.5 rounded-sm transition-all shrink-0 cursor-pointer text-xs ${
-                    selectedMaterialCategory === c.id
-                      ? 'bg-[#1F1C18] text-[#FAF8F5] font-medium'
-                      : 'bg-[#F5F2EC] text-[#5A5247] hover:bg-[#EAE5DB]'
-                  }`}
-                >
-                  {c.label}
-                </button>
-              ))}
-            </div>
-
-            {/* Materials Grid */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 sm:gap-8">
-              {filteredMaterials.map((mat, idx) => (
-                <div key={idx} className="border-t border-[#DFD9CD] pt-4 sm:pt-6 space-y-2 sm:space-y-3">
-                  <span className="text-[10px] sm:text-[11px] font-mono text-[#8E795B] uppercase tracking-wider block">
-                    {mat.provenance}
-                  </span>
-
-                  <h3 className="text-lg sm:text-xl font-serif-luxury font-medium text-[#1F1C18]">
-                    {mat.name}
-                  </h3>
-
-                  <p className="text-xs sm:text-sm text-[#5A5247] leading-relaxed">
-                    {mat.description}
-                  </p>
-
-                  <div className="pt-1.5 text-xs space-y-1">
-                    <span className="text-[10px] sm:text-[11px] font-medium text-[#1F1C18] block">Characteristics:</span>
-                    <p className="text-[#787168] text-xs">{mat.characteristics.join(' · ')}</p>
-                  </div>
-                </div>
-              ))}
-            </div>
-
-            {/* Provenance Banner */}
-            <div className="bg-[#F5F2EC] p-5 sm:p-10 border-l-2 border-[#967241] space-y-2 sm:space-y-3 rounded-xs">
-              <h3 className="text-xl sm:text-2xl font-serif-luxury text-[#1F1C18]">Quarry Provenance Guarantee</h3>
-              <p className="text-xs sm:text-sm text-[#5A5247] max-w-2xl leading-relaxed">
-                Every consignment of Thassos marble, Istrian limestone, Adnet calcarenite, and Roman travertine is personally verified at the quarry source by Corinne W. Smith to ensure geological purity and compressive density.
-              </p>
-            </div>
-
-          </div>
-        )}
-
-        {/* ======================================================== */}
-        {/* TAB: OUR TEAM */}
-        {/* ======================================================== */}
-        {activeTab === 'team' && (
-          <div className="w-full max-w-[1720px] mx-auto px-4 sm:px-12 lg:px-16 py-8 sm:py-16 space-y-8 sm:space-y-14">
-            
-            <div className="max-w-2xl space-y-1.5 sm:space-y-2 border-b border-[#EAE5DB] pb-4 sm:pb-6">
-              <span className="text-[11px] sm:text-xs uppercase tracking-widest text-[#8E795B] font-semibold">Leadership</span>
-              <h1 className="text-2xl sm:text-5xl font-serif-luxury text-[#1F1C18] font-normal">
-                Master Craftsmen & Project Directors
-              </h1>
-              <p className="text-xs sm:text-sm text-[#5A5247]">
-                Uniting licensed structural and geotechnical engineering with multi-generational royal stonemasonry artistry.
-              </p>
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-12">
-              {team.map((member) => (
-                <div key={member.id} className="p-4 sm:p-0 bg-white/70 sm:bg-transparent rounded-sm sm:rounded-none border border-[#EAE5DB] sm:border-0 flex items-start gap-4 sm:gap-6 sm:border-t sm:border-[#DFD9CD] sm:pt-8">
-                  <div className="w-16 h-16 sm:w-24 sm:h-24 rounded-full overflow-hidden shrink-0 ring-2 ring-[#DFD9CD] bg-stone-200 shadow-xs">
-                    <img 
-                      src={member.image} 
-                      alt={member.name}
-                      className="w-full h-full object-cover object-top"
-                    />
-                  </div>
-                  <div className="space-y-1 sm:space-y-1.5 flex-1 min-w-0">
-                    <h3 className="text-lg sm:text-2xl font-serif-luxury font-medium text-[#1F1C18] leading-snug">{member.name}</h3>
-                    <p className="text-[11px] sm:text-xs font-semibold text-[#8E795B]">{member.role}</p>
-                    <p className="text-[11px] sm:text-xs text-[#787168] italic">{member.specialty}</p>
-                    <p className="text-xs sm:text-sm text-[#5A5247] leading-relaxed pt-1 sm:pt-2">
-                      {member.bio}
-                    </p>
-                  </div>
-                </div>
-              ))}
-            </div>
-
-          </div>
-        )}
-
-        {/* ======================================================== */}
-        {/* TAB: CONTACT */}
-        {/* ======================================================== */}
-        {activeTab === 'contact' && (
-          <div className="w-full max-w-[1720px] mx-auto px-4 sm:px-12 lg:px-16 py-8 sm:py-16 space-y-8 sm:space-y-14">
-            
-            <div className="max-w-2xl space-y-1.5 sm:space-y-2 border-b border-[#EAE5DB] pb-4 sm:pb-6">
-              <span className="text-[11px] sm:text-xs uppercase tracking-widest text-[#8E795B] font-semibold">Dialogue</span>
-              <h1 className="text-2xl sm:text-5xl font-serif-luxury text-[#1F1C18] font-normal">
-                Consult With Our Atelier Principals
-              </h1>
-              <p className="text-xs sm:text-sm text-[#5A5247]">
-                Share details regarding your upcoming estate commission, museum project, or heritage site conservation. We review briefs across all continents.
-              </p>
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-12 gap-8 sm:gap-12">
-              
-              {/* Studio Info */}
-              <div className="md:col-span-5 space-y-5 sm:space-y-6">
-                <div>
-                  <h3 className="text-lg sm:text-xl font-serif-luxury text-[#1F1C18]">Global Headquarters</h3>
-                  <p className="text-[11px] sm:text-xs text-[#787168] mt-0.5">Central Atelier & Directorate</p>
-                </div>
-
-                <div className="space-y-3.5 sm:space-y-4 text-xs sm:text-sm text-[#5A5247]">
-                  <div className="flex items-start gap-3">
-                    <MapPin className="w-4 h-4 text-[#8E795B] shrink-0 mt-0.5" />
-                    <div>
-                      <div className="font-medium text-[#1F1C18]">100 King Street West, Suite 5600</div>
-                      <div>Toronto, ON M5X 1C9, Canada</div>
-                    </div>
-                  </div>
-
-                  <div className="flex items-center gap-3">
-                    <Phone className="w-4 h-4 text-[#8E795B] shrink-0" />
-                    <div>
-                      <a href="tel:+18679881524" className="hover:text-[#1F1C18] transition-colors font-mono font-medium">
-                        +1 (867) 988-1524
-                      </a>
-                    </div>
-                  </div>
-
-                  <div className="flex items-center gap-3">
-                    <Mail className="w-4 h-4 text-[#8E795B] shrink-0" />
-                    <div>
-                      <a href="mailto:aureusmonument@email.com" className="hover:text-[#1F1C18] transition-colors">
-                        aureusmonument@email.com
-                      </a>
-                    </div>
-                  </div>
-
-                  <div className="flex items-start gap-3">
-                    <Clock className="w-4 h-4 text-[#8E795B] shrink-0 mt-0.5" />
-                    <div>
-                      <div>Monday – Friday: 8:00 AM – 6:00 PM EST</div>
-                      <div className="text-[#787168]">Private Consultations: By advance appointment</div>
-                    </div>
-                  </div>
-                </div>
-
-                <div className="pt-3.5 border-t border-[#EAE5DB]">
-                  <span className="text-xs font-semibold text-[#1F1C18] block mb-1">Global Commissions:</span>
-                  <p className="text-xs text-[#787168] leading-relaxed">
-                    Commissions executed worldwide across North America, Europe, the Mediterranean, the Arabian Gulf, and East Asia.
-                  </p>
-                </div>
-              </div>
-
-              {/* Seamless Form */}
-              <div className="md:col-span-7 bg-[#F5F2EC] p-4 sm:p-10 rounded-sm">
-                {formSubmitted ? (
-                  <div className="text-center py-8 sm:py-12 space-y-4">
-                    <div className="w-12 h-12 rounded-full bg-[#EAE5DB] text-[#1F1C18] mx-auto flex items-center justify-center">
-                      <Check className="w-6 h-6" />
-                    </div>
-                    <h3 className="text-xl sm:text-2xl font-serif-luxury text-[#1F1C18]">Thank you for reaching out</h3>
-                    <p className="text-xs sm:text-sm text-[#5A5247] max-w-md mx-auto">
-                      Your consultation brief has been transmitted to our principals. A director will review your project requirements and initiate contact within 24 business hours.
-                    </p>
-                    <button
-                      type="button"
-                      onClick={() => setFormSubmitted(false)}
-                      className="px-5 py-2.5 bg-[#1F1C18] text-[#FAF8F5] text-xs font-medium rounded-sm transition-colors cursor-pointer"
-                    >
-                      Submit Another Inquiry
-                    </button>
-                  </div>
-                ) : (
-                  <form onSubmit={handleFormSubmit} className="space-y-3 sm:space-y-4">
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
-                      <div className="space-y-1">
-                        <label className="text-xs font-medium text-[#1F1C18]">Your Full Name *</label>
-                        <input
-                          type="text"
-                          required
-                          value={formData.name}
-                          onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                          placeholder="e.g. Lord Harrington / Dr. Elena Rostova"
-                          className="w-full px-3.5 py-2.5 bg-[#FAF8F5] border border-[#DFD9CD] rounded-sm text-xs sm:text-sm text-[#1F1C18] focus:outline-none focus:border-[#1F1C18]"
-                        />
-                      </div>
-                      <div className="space-y-1">
-                        <label className="text-xs font-medium text-[#1F1C18]">Email Address *</label>
-                        <input
-                          type="email"
-                          required
-                          value={formData.email}
-                          onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                          placeholder="client@fiduciary.com"
-                          className="w-full px-3.5 py-2.5 bg-[#FAF8F5] border border-[#DFD9CD] rounded-sm text-xs sm:text-sm text-[#1F1C18] focus:outline-none focus:border-[#1F1C18]"
-                        />
+                          <div className="w-full h-[250px] sm:h-[280px] bg-slate-200 overflow-hidden border border-slate-200">
+                            <iframe
+                              title="Toronto Global Headquarters Map"
+                              className="w-full h-full border-0"
+                              loading="lazy"
+                              referrerPolicy="no-referrer-when-downgrade"
+                              src="https://www.openstreetmap.org/export/embed.html?bbox=-79.3871%2C43.6458%2C-79.3765%2C43.6512&layer=mapnik&marker=43.6485%2C-79.3818"
+                            />
+                          </div>
+                        </div>
                       </div>
                     </div>
-
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                      <div className="space-y-1">
-                        <label className="text-xs font-medium text-[#1F1C18]">Direct Phone Number</label>
-                        <input
-                          type="tel"
-                          value={formData.phone}
-                          onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-                          placeholder="+1 (867) 988-1524"
-                          className="w-full px-3.5 py-2.5 bg-[#FAF8F5] border border-[#DFD9CD] rounded-sm text-xs sm:text-sm text-[#1F1C18] focus:outline-none focus:border-[#1F1C18]"
-                        />
-                      </div>
-                      <div className="space-y-1">
-                        <label className="text-xs font-medium text-[#1F1C18]">Primary Typology</label>
-                        <select
-                          value={formData.projectType}
-                          onChange={(e) => setFormData({ ...formData, projectType: e.target.value })}
-                          className="w-full px-3.5 py-2.5 bg-[#FAF8F5] border border-[#DFD9CD] rounded-sm text-xs sm:text-sm text-[#1F1C18] focus:outline-none focus:border-[#1F1C18]"
-                        >
-                          <option>Sovereign Estate Terracing & Retaining Bastions</option>
-                          <option>Museum Atrium Modernization & Cultural Hardscaping</option>
-                          <option>Archaeological Monument Conservation & Grouting</option>
-                          <option>Monumental Sacred Architecture & Reflection Basins</option>
-                          <option>Royal Palace Water Cascades & Amphitheaters</option>
-                          <option>Long-Term Heritage Maintenance Charter</option>
-                          <option>Luxury Pool Surround & Thermal Stone Decks</option>
-                        </select>
-                      </div>
-                    </div>
-
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                      <div className="space-y-1">
-                        <label className="text-xs font-medium text-[#1F1C18]">Project Geographic Location</label>
-                        <input
-                          type="text"
-                          value={formData.location}
-                          onChange={(e) => setFormData({ ...formData, location: e.target.value })}
-                          placeholder="e.g. Monaco, Kyoto, London, Aspen, Dubai"
-                          className="w-full px-3.5 py-2.5 bg-[#FAF8F5] border border-[#DFD9CD] rounded-sm text-xs sm:text-sm text-[#1F1C18] focus:outline-none focus:border-[#1F1C18]"
-                        />
-                      </div>
-                      <div className="space-y-1">
-                        <label className="text-xs font-medium text-[#1F1C18]">Anticipated Timeframe</label>
-                        <select
-                          value={formData.timeline}
-                          onChange={(e) => setFormData({ ...formData, timeline: e.target.value })}
-                          className="w-full px-3.5 py-2.5 bg-[#FAF8F5] border border-[#DFD9CD] rounded-sm text-xs sm:text-sm text-[#1F1C18] focus:outline-none focus:border-[#1F1C18]"
-                        >
-                          <option>Immediate / Next Quarter</option>
-                          <option>3 - 6 Months</option>
-                          <option>6 - 12 Months</option>
-                          <option>Multi-Year Master Plan</option>
-                        </select>
-                      </div>
-                    </div>
-
-                    <div className="space-y-1">
-                      <label className="text-xs font-medium text-[#1F1C18]">Commission Scope & Requirements</label>
-                      <textarea
-                        rows={4}
-                        value={formData.message}
-                        onChange={(e) => setFormData({ ...formData, message: e.target.value })}
-                        placeholder="Detail the site geology, historical context, preferred stone varieties (Thassos, travertine, limestone), and scope parameters..."
-                        className="w-full px-3.5 py-2.5 bg-[#FAF8F5] border border-[#DFD9CD] rounded-sm text-xs sm:text-sm text-[#1F1C18] focus:outline-none focus:border-[#1F1C18]"
-                      />
-                    </div>
-
-                    <button
-                      type="submit"
-                      className="w-full py-3.5 bg-[#1F1C18] hover:bg-[#38332B] text-[#FAF8F5] text-xs sm:text-sm font-medium rounded-sm transition-colors cursor-pointer"
-                    >
-                      Transmit Consultation Brief
-                    </button>
-                  </form>
-                )}
+                  </div>
+                </section>
               </div>
-
-            </div>
-
-          </div>
+            )}
+          </>
         )}
-
       </main>
 
-      {/* ======================================================== */}
-      {/* CLEAN PROJECT DETAILS MODAL */}
-      {/* ======================================================== */}
-      {modalProject && (
-        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-center justify-center p-3 sm:p-6 overflow-y-auto">
-          <div className="bg-[#FAF8F5] border border-[#EAE5DB] rounded-sm max-w-3xl w-full overflow-hidden shadow-2xl animate-in zoom-in-95 duration-150 my-4 sm:my-8">
-            
-            <div className="px-4 py-3.5 sm:px-6 sm:py-5 border-b border-[#EAE5DB] flex items-center justify-between">
-              <div>
-                <span className="text-[10px] sm:text-xs font-medium text-[#8E795B] uppercase tracking-wider">{modalProject.categoryLabel}</span>
-                <h3 className="text-lg sm:text-2xl font-serif-luxury font-medium text-[#1F1C18]">
-                  {modalProject.title}
-                </h3>
-              </div>
+      {/* FULL SCALE IMAGE LIGHTBOX (ONLY WHEN EXPANDING A SAMPLE OR PROJECT PHOTO) */}
+      {zoomImage && (
+        <div
+          className="fixed inset-0 z-50 bg-black/90 flex items-center justify-center p-4"
+          onClick={() => setZoomImage(null)}
+        >
+          <div className="relative max-w-6xl w-full flex flex-col items-center space-y-3" onClick={(e) => e.stopPropagation()}>
+            <div className="w-full flex items-center justify-between text-white">
+              <span className="text-sm sm:text-base font-display-constra font-semibold">{zoomImage.title}</span>
               <button
                 type="button"
-                onClick={() => setModalProject(null)}
-                className="p-1.5 text-[#787168] hover:text-[#1F1C18] rounded-sm hover:bg-[#EAE5DB] transition-colors"
-                aria-label="Close dialog"
+                onClick={() => setZoomImage(null)}
+                aria-label="Close expanded plate"
+                className="w-9 h-9 bg-[#135D54] hover:bg-white text-white hover:text-[#15181C] flex items-center justify-center transition-colors cursor-pointer"
               >
                 <X className="w-5 h-5" />
               </button>
             </div>
-
-            <div className="p-4 sm:p-6 space-y-4 sm:space-y-6 max-h-[75vh] overflow-y-auto">
-              <div className="relative aspect-16/10 rounded-sm overflow-hidden bg-stone-200">
-                <img 
-                  src={modalProject.image} 
-                  alt={modalProject.title} 
-                  className="w-full h-full object-cover"
-                />
-              </div>
-
-              <div className="space-y-1.5 sm:space-y-2">
-                <div className="flex items-center gap-1.5 text-xs text-[#8E795B] font-medium">
-                  <MapPin className="w-3.5 h-3.5 shrink-0" />
-                  <span>{modalProject.location}</span>
-                </div>
-                <p className="text-xs sm:text-sm text-[#5A5247] leading-relaxed">
-                  {modalProject.description}
-                </p>
-              </div>
-
-              <div className="bg-[#F5F2EC] rounded-sm p-3.5 sm:p-4 space-y-2">
-                <h5 className="text-[11px] sm:text-xs font-medium text-[#1F1C18]">Quarried Natural Stone & Structural Matrix</h5>
-                <div className="flex flex-wrap gap-1.5 sm:gap-2">
-                  {modalProject.materials.map((mat, i) => (
-                    <span key={i} className="text-[11px] sm:text-xs bg-[#FAF8F5] border border-[#DFD9CD] px-2.5 py-1 rounded-sm text-[#1F1C18]">
-                      {mat}
-                    </span>
-                  ))}
-                </div>
-              </div>
-
-              <div className="grid grid-cols-3 gap-2 sm:gap-3 text-center">
-                <div className="p-2 sm:p-3 bg-[#F5F2EC] rounded-sm">
-                  <span className="text-[10px] sm:text-[11px] text-[#787168] block">Commission Scope</span>
-                  <span className="text-xs sm:text-sm font-medium text-[#1F1C18] truncate block">{modalProject.scope}</span>
-                </div>
-                <div className="p-2 sm:p-3 bg-[#F5F2EC] rounded-sm">
-                  <span className="text-[10px] sm:text-[11px] text-[#787168] block">Execution Window</span>
-                  <span className="text-xs sm:text-sm font-medium text-[#1F1C18] truncate block">{modalProject.timeline}</span>
-                </div>
-                <div className="p-2 sm:p-3 bg-[#F5F2EC] rounded-sm">
-                  <span className="text-[10px] sm:text-[11px] text-[#787168] block">Year Completed</span>
-                  <span className="text-xs sm:text-sm font-medium text-[#1F1C18] truncate block">{modalProject.year}</span>
-                </div>
-              </div>
-
-              <div className="pt-2 flex items-center justify-end gap-2.5 sm:gap-3 border-t border-[#EAE5DB]">
-                <button
-                  type="button"
-                  onClick={() => setModalProject(null)}
-                  className="px-3.5 sm:px-4 py-2 border border-[#DFD9CD] text-[#5A5247] hover:bg-[#F5F2EC] hover:text-[#1F1C18] text-xs font-medium rounded-sm transition-colors cursor-pointer"
-                >
-                  Close
-                </button>
-                <button
-                  type="button"
-                  onClick={() => {
-                    setModalProject(null);
-                    handleNavigate('contact');
-                  }}
-                  className="px-4 sm:px-5 py-2 sm:py-2.5 bg-[#1F1C18] hover:bg-[#38332B] text-[#FAF8F5] text-xs font-medium rounded-sm transition-colors cursor-pointer"
-                >
-                  Inquire on Similar Commission
-                </button>
-              </div>
-
-            </div>
+            <img
+              src={zoomImage.src}
+              alt={zoomImage.title}
+              referrerPolicy="no-referrer"
+              className="w-full max-h-[82vh] object-contain bg-[#0E1115]"
+            />
           </div>
         </div>
       )}
 
-      {/* ======================================================== */}
-      {/* SEAMLESS ARCHITECTURAL FOOTER */}
-      {/* ======================================================== */}
-      <footer className="bg-[#FAF8F5] border-t border-[#EAE5DB] py-10 sm:py-16 w-full">
-        <div className="w-full max-w-[1720px] mx-auto px-4 sm:px-12 lg:px-16">
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-8 sm:gap-10">
-            
-            <div className="space-y-3 md:col-span-1">
+      {/* COMPACT FOOTER */}
+      <footer className="w-full bg-[#15181C] text-white/80 py-7 sm:py-9 border-t border-white/10">
+        <div className="max-w-[1320px] mx-auto px-4 sm:px-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-8">
+            <div className="space-y-3">
               <button
                 type="button"
                 onClick={handleLogoClick}
-                className="flex items-center gap-2.5 sm:gap-3 text-left cursor-pointer group focus:outline-none"
+                className="flex items-center gap-2 text-left cursor-pointer focus:outline-none"
               >
-                <BespokeLogo className="w-7 h-7 sm:w-8 sm:h-8 shrink-0" />
-                <span className="font-serif-luxury text-base sm:text-lg font-medium text-[#1F1C18]">
+                <BespokeLogo className="w-7 h-7 shrink-0" variant="light" />
+                <span className="text-base sm:text-lg font-bold text-white font-display-constra tracking-tight">
                   AUREUS & MONUMENT
                 </span>
               </button>
-              <p className="text-xs text-[#787168] leading-relaxed">
-                Architectural hardscaping, monumental courtyards, palace water amphitheatres, and archaeological heritage preservation worldwide.
+              <p className="text-xs text-white/70 leading-relaxed">
+                Quarry availability bulletins and seasonal architectural notes.
               </p>
+              <form onSubmit={handleNewsletterSubmit} className="relative flex">
+                <input
+                  type="email"
+                  value={newsletterEmail}
+                  onChange={(e) => setNewsletterEmail(e.target.value)}
+                  placeholder="Email address"
+                  className="w-full py-2 pl-3 pr-20 bg-white text-xs text-[#0E1115] focus:outline-none"
+                />
+                <button
+                  type="submit"
+                  className="absolute right-1 top-1 bottom-1 px-3 bg-[#135D54] hover:bg-[#15181C] text-white text-[11px] font-semibold transition-colors cursor-pointer"
+                >
+                  Join
+                </button>
+              </form>
             </div>
 
             <div className="space-y-2">
-              <h4 className="text-xs font-semibold text-[#1F1C18] uppercase tracking-wider">Explore</h4>
-              <ul className="space-y-1.5 text-xs text-[#5A5247]">
-                <li><button type="button" onClick={() => handleNavigate('home')} className="hover:text-[#1F1C18] transition-colors cursor-pointer">Home</button></li>
-                <li><button type="button" onClick={() => handleNavigate('projects')} className="hover:text-[#1F1C18] transition-colors cursor-pointer">International Projects</button></li>
-                <li><button type="button" onClick={() => handleNavigate('services')} className="hover:text-[#1F1C18] transition-colors cursor-pointer">Services & Heritage</button></li>
-                <li><button type="button" onClick={() => handleNavigate('materials')} className="hover:text-[#1F1C18] transition-colors cursor-pointer">Royal Materials & Craft</button></li>
-                <li><button type="button" onClick={() => handleNavigate('team')} className="hover:text-[#1F1C18] transition-colors cursor-pointer">Our Team</button></li>
+              <h4 className="text-sm font-bold text-white font-display-constra">Explore</h4>
+              <ul className="space-y-1.5 text-xs">
+                {[
+                  { id: 'home', label: 'Home' },
+                  { id: 'about', label: 'About' },
+                  { id: 'projects', label: 'Projects' },
+                  { id: 'materials', label: 'Materials & Plans' },
+                  { id: 'team', label: 'Our Team' }
+                ].map((item) => (
+                  <li key={item.id}>
+                    <button
+                      type="button"
+                      onClick={() => handleNavigate(item.id as TabType)}
+                      className="flex items-center gap-1.5 text-white/75 hover:text-[#4DB6A8] transition-colors cursor-pointer"
+                    >
+                      <ChevronRight className="w-3 h-3 text-[#4DB6A8]" />
+                      <span>{item.label}</span>
+                    </button>
+                  </li>
+                ))}
               </ul>
             </div>
 
             <div className="space-y-2">
-              <h4 className="text-xs font-semibold text-[#1F1C18] uppercase tracking-wider">Disciplines</h4>
-              <ul className="space-y-1.5 text-xs text-[#5A5247]">
-                <li>Museum Atrium Modernization</li>
-                <li>Archaeological Site Conservation</li>
-                <li>Monumental Sacred Courtyards</li>
-                <li>Clifftop & Estate Bastions</li>
-                <li>Palace Water Amphitheaters</li>
+              <h4 className="text-sm font-bold text-white font-display-constra">Disciplines</h4>
+              <ul className="space-y-1.5 text-xs">
+                {SERVICES_LIST.slice(0, 4).map((svc) => (
+                  <li key={svc.number}>
+                    <button
+                      type="button"
+                      onClick={() => openDetail({ kind: 'service', item: svc }, 'services')}
+                      className="flex items-center gap-1.5 text-white/75 hover:text-[#4DB6A8] transition-colors text-left cursor-pointer"
+                    >
+                      <ChevronRight className="w-3 h-3 text-[#4DB6A8] shrink-0" />
+                      <span className="truncate">{svc.title}</span>
+                    </button>
+                  </li>
+                ))}
               </ul>
             </div>
 
-            <div className="space-y-2">
-              <h4 className="text-xs font-semibold text-[#1F1C18] uppercase tracking-wider">Global Headquarters</h4>
-              <div className="text-xs text-[#5A5247] space-y-1.5">
-                <div className="text-[#1F1C18] font-medium">100 King Street West, Suite 5600</div>
-                <div>Toronto, ON M5X 1C9, Canada</div>
-                <div className="pt-1">
-                  <a href="tel:+18679881524" className="text-[#1F1C18] hover:underline font-mono font-medium">
-                    +1 (867) 988-1524
-                  </a>
-                </div>
-                <div>
-                  <a href="mailto:aureusmonument@email.com" className="hover:text-[#1F1C18] transition-colors">
-                    aureusmonument@email.com
-                  </a>
-                </div>
+            <div className="space-y-2 text-xs text-white/75">
+              <h4 className="text-sm font-bold text-white font-display-constra">Toronto Office</h4>
+              <div className="flex items-start gap-2">
+                <MapPin className="w-3.5 h-3.5 text-[#4DB6A8] shrink-0 mt-0.5" />
+                <span>100 King Street West, Suite 5600, Toronto, ON M5X 1C9</span>
               </div>
-            </div>
-
-          </div>
-
-          <div className="pt-6 sm:pt-8 mt-8 sm:mt-12 border-t border-[#EAE5DB] flex flex-col sm:flex-row items-center justify-between text-xs text-[#787168] gap-3 sm:gap-4">
-            <div>
-              © 2026 Aureus & Monument Atelier. All rights reserved.
-            </div>
-            <div className="flex items-center gap-3 sm:gap-4 text-[#787168]">
-              <button type="button" onClick={() => handleNavigate('contact')} className="hover:text-[#1F1C18]">Global Charter</button>
-              <span>·</span>
-              <button type="button" onClick={() => handleNavigate('contact')} className="hover:text-[#1F1C18]">Privacy Policy</button>
-              <span>·</span>
-              <button type="button" onClick={() => handleNavigate('contact')} className="hover:text-[#1F1C18]">Terms of Engagement</button>
+              <a
+                href="mailto:aureusmonument@email.com"
+                className="flex items-center gap-2 hover:text-[#4DB6A8] transition-colors"
+              >
+                <Mail className="w-3.5 h-3.5 text-[#4DB6A8] shrink-0" />
+                <span>aureusmonument@email.com</span>
+              </a>
+              <a
+                href="tel:+18679881524"
+                className="flex items-center gap-2 hover:text-[#4DB6A8] transition-colors"
+              >
+                <Phone className="w-3.5 h-3.5 text-[#4DB6A8] shrink-0" />
+                <span>+1 (867) 988 1524</span>
+              </a>
             </div>
           </div>
         </div>
       </footer>
 
+      {/* SLIM COPYRIGHT BAR */}
+      <div className="w-full bg-[#0E1115] border-t border-white/10 py-3 text-[11px] text-white/70">
+        <div className="max-w-[1320px] mx-auto px-4 sm:px-8 flex flex-col sm:flex-row items-center justify-between gap-2 text-center sm:text-left">
+          <div>
+            © 2026 <strong className="text-white">Aureus & Monument Atelier</strong>.
+          </div>
+          <div className="flex items-center gap-3">
+            <button
+              type="button"
+              onClick={() => handleNavigate('materials')}
+              className="hover:text-[#4DB6A8] transition-colors cursor-pointer"
+            >
+              Quarry Provenance
+            </button>
+            <span>·</span>
+            <button
+              type="button"
+              onClick={() => handleNavigate('contact')}
+              className="hover:text-[#4DB6A8] transition-colors cursor-pointer"
+            >
+              Consultation Desk
+            </button>
+          </div>
+        </div>
+      </div>
+
+      {/* BACK TO TOP */}
+      {showBackToTop && (
+        <button
+          type="button"
+          onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+          aria-label="Back to top"
+          className="fixed bottom-6 right-6 z-40 w-10 h-10 bg-[#135D54] hover:bg-[#15181C] text-white flex items-center justify-center shadow-lg transition-colors cursor-pointer"
+        >
+          <ArrowUp className="w-4 h-4" />
+        </button>
+      )}
     </div>
   );
 }
