@@ -25,8 +25,8 @@ import {
   Building2,
   Hammer,
   Star,
-  Gem,
-  Maximize2
+  Maximize2,
+  Link2
 } from 'lucide-react';
 import { BespokeLogo } from './components/BespokeLogo';
 import {
@@ -76,9 +76,91 @@ function renderServiceIcon(iconKey: ServiceItem['iconKey'], className = 'w-7 h-7
   }
 }
 
+function routeToPath(tab: TabType, detail: DetailViewState): string {
+  if (detail) {
+    switch (detail.kind) {
+      case 'project':
+        return `/projects/${detail.item.id}`;
+      case 'service':
+        return `/services/${detail.item.number}`;
+      case 'material':
+        return `/materials/${detail.item.id}`;
+      case 'process':
+        return `/samples/${detail.item.id}`;
+      case 'team':
+        return `/team/${detail.item.id}`;
+    }
+  }
+  return tab === 'home' ? '/' : `/${tab}`;
+}
+
+function parsePathToRoute(pathname: string): { tab: TabType; detail: DetailViewState } {
+  const clean = pathname.replace(/\/+$/, '') || '/';
+  const parts = clean.slice(1).split('/').filter(Boolean);
+
+  if (parts.length === 0) {
+    return { tab: 'home', detail: null };
+  }
+
+  const [section, slug] = parts;
+
+  if (section === 'projects') {
+    if (slug) {
+      const found = PROJECTS.find((p) => String(p.id) === slug);
+      if (found) return { tab: 'projects', detail: { kind: 'project', item: found } };
+    }
+    return { tab: 'projects', detail: null };
+  }
+
+  if (section === 'services') {
+    if (slug) {
+      const found = SERVICES_LIST.find((s) => s.number === slug);
+      if (found) return { tab: 'services', detail: { kind: 'service', item: found } };
+    }
+    return { tab: 'services', detail: null };
+  }
+
+  if (section === 'materials') {
+    if (slug) {
+      const found = LUXURY_MATERIALS.find((m) => m.id === slug);
+      if (found) return { tab: 'materials', detail: { kind: 'material', item: found } };
+    }
+    return { tab: 'materials', detail: null };
+  }
+
+  if (section === 'samples') {
+    if (slug) {
+      const found = PROCESS_GALLERY.find((p) => p.id === slug);
+      if (found) return { tab: 'materials', detail: { kind: 'process', item: found } };
+    }
+    return { tab: 'materials', detail: null };
+  }
+
+  if (section === 'team') {
+    if (slug) {
+      const found = TEAM_MEMBERS.find((t) => t.id === slug);
+      if (found) return { tab: 'team', detail: { kind: 'team', item: found } };
+    }
+    return { tab: 'team', detail: null };
+  }
+
+  if (section === 'about' || section === 'contact') {
+    return { tab: section, detail: null };
+  }
+
+  return { tab: 'home', detail: null };
+}
+
 export default function App() {
-  const [activeTab, setActiveTab] = useState<TabType>('home');
-  const [detailView, setDetailView] = useState<DetailViewState>(null);
+  const initialRoute = useMemo(() => {
+    if (typeof window !== 'undefined') {
+      return parsePathToRoute(window.location.pathname);
+    }
+    return { tab: 'home' as TabType, detail: null as DetailViewState };
+  }, []);
+
+  const [activeTab, setActiveTab] = useState<TabType>(initialRoute.tab);
+  const [detailView, setDetailView] = useState<DetailViewState>(initialRoute.detail);
   const [zoomImage, setZoomImage] = useState<{ src: string; title: string } | null>(null);
 
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
@@ -94,6 +176,11 @@ export default function App() {
   const [reviewOffset, setReviewOffset] = useState<number>(0);
   const [showBackToTop, setShowBackToTop] = useState<boolean>(false);
   const [newsletterEmail, setNewsletterEmail] = useState<string>('');
+  const [teamContextMenu, setTeamContextMenu] = useState<{
+    x: number;
+    y: number;
+    member?: TeamMember;
+  } | null>(null);
 
   // Form State
   const [formSubmitted, setFormSubmitted] = useState<boolean>(false);
@@ -130,24 +217,131 @@ export default function App() {
     return () => window.removeEventListener('scroll', onScroll);
   }, []);
 
+  useEffect(() => {
+    const handlePopState = () => {
+      const parsed = parsePathToRoute(window.location.pathname);
+      setActiveTab(parsed.tab);
+      setDetailView(parsed.detail);
+      setMobileMenuOpen(false);
+    };
+    window.addEventListener('popstate', handlePopState);
+    return () => window.removeEventListener('popstate', handlePopState);
+  }, []);
+
+  useEffect(() => {
+    const tabTitles: Record<TabType, string> = {
+      home: 'Aureus & Monument – Hardscaping & Heritage Conservation',
+      about: 'About Our Practice | Aureus & Monument',
+      services: 'Architectural & Heritage Services | Aureus & Monument',
+      projects: 'International Projects | Aureus & Monument',
+      materials: 'Materials, Stone Samples & Plans | Aureus & Monument',
+      team: 'Leadership & Master Craftsmen | Aureus & Monument',
+      contact: 'Global Inquiries & Toronto Office | Aureus & Monument'
+    };
+
+    let pageTitle = tabTitles[activeTab];
+    if (detailView) {
+      if (detailView.kind === 'project') pageTitle = `${detailView.item.title} | Aureus & Monument`;
+      else if (detailView.kind === 'service') pageTitle = `${detailView.item.title} | Aureus & Monument`;
+      else if (detailView.kind === 'material') pageTitle = `${detailView.item.name} | Aureus & Monument`;
+      else if (detailView.kind === 'process') pageTitle = `${detailView.item.title} | Aureus & Monument`;
+      else if (detailView.kind === 'team') pageTitle = `${detailView.item.name} | Aureus & Monument`;
+    }
+
+    document.title = pageTitle;
+
+    const canonicalUrl = `${window.location.origin}${window.location.pathname}`;
+    let canonicalLink = document.querySelector<HTMLLinkElement>('link[rel="canonical"]');
+    if (!canonicalLink) {
+      canonicalLink = document.createElement('link');
+      canonicalLink.rel = 'canonical';
+      document.head.appendChild(canonicalLink);
+    }
+    canonicalLink.href = canonicalUrl;
+
+    let ogUrlMeta = document.querySelector<HTMLMetaElement>('meta[property="og:url"]');
+    if (!ogUrlMeta) {
+      ogUrlMeta = document.createElement('meta');
+      ogUrlMeta.setAttribute('property', 'og:url');
+      document.head.appendChild(ogUrlMeta);
+    }
+    ogUrlMeta.content = canonicalUrl;
+  }, [activeTab, detailView]);
+
+  useEffect(() => {
+    if (!teamContextMenu) return;
+    const closeMenu = () => setTeamContextMenu(null);
+    const onKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') setTeamContextMenu(null);
+    };
+    window.addEventListener('pointerdown', closeMenu);
+    window.addEventListener('scroll', closeMenu, { passive: true });
+    window.addEventListener('keydown', onKeyDown);
+    return () => {
+      window.removeEventListener('pointerdown', closeMenu);
+      window.removeEventListener('scroll', closeMenu);
+      window.removeEventListener('keydown', onKeyDown);
+    };
+  }, [teamContextMenu]);
+
   const showToast = (msg: string) => {
     setToastMessage(msg);
     setTimeout(() => setToastMessage(null), 4000);
+  };
+
+  const copyShareLink = async (path: string, label: string) => {
+    const fullUrl = `${window.location.origin}${path}`;
+    try {
+      if (navigator.clipboard && window.isSecureContext) {
+        await navigator.clipboard.writeText(fullUrl);
+      } else {
+        const textArea = document.createElement('textarea');
+        textArea.value = fullUrl;
+        textArea.style.position = 'fixed';
+        textArea.style.left = '-9999px';
+        document.body.appendChild(textArea);
+        textArea.select();
+        document.execCommand('copy');
+        document.body.removeChild(textArea);
+      }
+      showToast(`${label} link copied: ${fullUrl}`);
+    } catch {
+      showToast(`Link: ${fullUrl}`);
+    }
+  };
+
+  const openTeamContextMenu = (e: React.MouseEvent, member?: TeamMember) => {
+    e.preventDefault();
+    e.stopPropagation();
+    const menuWidth = 250;
+    const menuHeight = member ? 148 : 64;
+    const x = Math.min(e.clientX, window.innerWidth - menuWidth - 12);
+    const y = Math.min(e.clientY, window.innerHeight - menuHeight - 12);
+    setTeamContextMenu({ x: Math.max(12, x), y: Math.max(12, y), member });
   };
 
   const handleNavigate = (tab: TabType) => {
     setActiveTab(tab);
     setDetailView(null);
     setMobileMenuOpen(false);
+    const targetPath = routeToPath(tab, null);
+    if (window.location.pathname !== targetPath) {
+      window.history.pushState(null, '', targetPath);
+    }
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   const openDetail = (nextDetail: Exclude<DetailViewState, null>, parentTab?: TabType) => {
+    const resolvedTab = parentTab || activeTab;
     if (parentTab) {
       setActiveTab(parentTab);
     }
     setDetailView(nextDetail);
     setMobileMenuOpen(false);
+    const targetPath = routeToPath(resolvedTab, nextDetail);
+    if (window.location.pathname !== targetPath) {
+      window.history.pushState(null, '', targetPath);
+    }
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
@@ -166,6 +360,9 @@ export default function App() {
     setDetailView(null);
     setSelectedCategory('all');
     setMobileMenuOpen(false);
+    if (window.location.pathname !== '/') {
+      window.history.pushState(null, '', '/');
+    }
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
@@ -297,7 +494,7 @@ export default function App() {
                 <ArrowLeft className="w-4 h-4" />
                 <span>Back to Portfolio</span>
               </button>
-              <span className="text-xs font-semibold uppercase tracking-wider text-[#135D54]">
+              <span className="text-xs font-semibold tracking-wide text-[#135D54]">
                 {project.categoryLabel} · {project.year}
               </span>
             </div>
@@ -337,7 +534,7 @@ export default function App() {
                 </div>
 
                 <div className="bg-[#F4F6F7] p-4 sm:p-5 space-y-2 border border-slate-200">
-                  <h3 className="text-xs font-bold uppercase tracking-wider text-[#0E1115]">
+                  <h3 className="text-xs font-bold tracking-wide text-[#0E1115]">
                     Site Engineering Notes
                   </h3>
                   <p className="text-xs sm:text-sm text-[#4B5563] leading-relaxed">
@@ -361,7 +558,7 @@ export default function App() {
                 </div>
 
                 <div className="space-y-2">
-                  <h4 className="text-xs font-bold uppercase tracking-wider text-[#0E1115]">
+                  <h4 className="text-xs font-bold tracking-wide text-[#0E1115]">
                     Stone & Structural Matrix
                   </h4>
                   <p className="text-xs sm:text-sm text-[#4B5563]">
@@ -452,7 +649,7 @@ export default function App() {
                 <ArrowLeft className="w-4 h-4" />
                 <span>Back to Services</span>
               </button>
-              <span className="text-xs font-semibold uppercase tracking-wider text-[#135D54]">
+              <span className="text-xs font-semibold tracking-wide text-[#135D54]">
                 Discipline {svc.number} · {svc.categoryLabel}
               </span>
             </div>
@@ -479,7 +676,7 @@ export default function App() {
 
               <div className="lg:col-span-5 space-y-6">
                 <div className="space-y-2">
-                  <span className="text-xs font-semibold uppercase tracking-wider text-[#135D54] block">
+                  <span className="text-xs font-semibold tracking-wide text-[#135D54] block">
                     {svc.subtitle}
                   </span>
                   <h2 className="text-2xl sm:text-3xl font-bold text-[#0E1115] font-display-constra">
@@ -491,7 +688,7 @@ export default function App() {
                 </div>
 
                 <div className="bg-[#F4F6F7] p-5 border border-slate-200 space-y-3">
-                  <h3 className="text-xs font-bold uppercase tracking-wider text-[#0E1115]">
+                  <h3 className="text-xs font-bold tracking-wide text-[#0E1115]">
                     Scope Deliverables
                   </h3>
                   <ul className="space-y-2">
@@ -597,7 +794,7 @@ export default function App() {
                 <ArrowLeft className="w-4 h-4" />
                 <span>Back to Samples & Materials</span>
               </button>
-              <span className="text-xs font-semibold uppercase tracking-wider text-[#135D54]">
+              <span className="text-xs font-semibold tracking-wide text-[#135D54]">
                 {item.stage} · {item.categoryLabel}
               </span>
             </div>
@@ -622,7 +819,7 @@ export default function App() {
 
               <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
                 <div className="lg:col-span-7 space-y-4">
-                  <span className="text-xs font-semibold uppercase tracking-wider text-[#135D54] block">
+                  <span className="text-xs font-semibold tracking-wide text-[#135D54] block">
                     {item.subtitle}
                   </span>
                   <h2 className="text-2xl sm:text-4xl font-bold text-[#0E1115] font-display-constra">
@@ -637,7 +834,7 @@ export default function App() {
                 </div>
 
                 <div className="lg:col-span-5 space-y-4 bg-[#F4F6F7] p-6 border border-slate-200">
-                  <h3 className="text-xs font-bold uppercase tracking-wider text-[#0E1115]">
+                  <h3 className="text-xs font-bold tracking-wide text-[#0E1115]">
                     Specification Summary
                   </h3>
                   <div className="space-y-2.5">
@@ -711,7 +908,7 @@ export default function App() {
                 <ArrowLeft className="w-4 h-4" />
                 <span>Back to Material Catalog</span>
               </button>
-              <span className="text-xs font-semibold uppercase tracking-wider text-[#135D54]">
+              <span className="text-xs font-semibold tracking-wide text-[#135D54]">
                 {mat.provenance}
               </span>
             </div>
@@ -738,7 +935,7 @@ export default function App() {
 
               <div className="lg:col-span-5 space-y-6">
                 <div className="space-y-2">
-                  <span className="text-xs font-semibold uppercase tracking-wider text-[#135D54] block">
+                  <span className="text-xs font-semibold tracking-wide text-[#135D54] block">
                     Quarry Provenance: {mat.provenance}
                   </span>
                   <h2 className="text-2xl sm:text-3xl font-bold text-[#0E1115] font-display-constra">
@@ -750,7 +947,7 @@ export default function App() {
                 </div>
 
                 <div className="bg-[#F4F6F7] p-5 border border-slate-200 space-y-3">
-                  <h3 className="text-xs font-bold uppercase tracking-wider text-[#0E1115]">
+                  <h3 className="text-xs font-bold tracking-wide text-[#0E1115]">
                     Physical Characteristics
                   </h3>
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
@@ -764,7 +961,7 @@ export default function App() {
                 </div>
 
                 <div className="space-y-1.5">
-                  <h4 className="text-xs font-bold uppercase tracking-wider text-[#0E1115]">
+                  <h4 className="text-xs font-bold tracking-wide text-[#0E1115]">
                     Primary Applications
                   </h4>
                   <p className="text-sm text-[#4B5563]">{mat.applications}</p>
@@ -823,7 +1020,7 @@ export default function App() {
     const overseenProjects = PROJECTS.filter((p) => p.leadDirectorId === member.id);
 
     return (
-      <div>
+      <div onContextMenu={(e) => openTeamContextMenu(e, member)}>
         {renderPageBanner(member.name, member.name, 'Team', () => handleNavigate('team'))}
 
         <section className="max-w-[1140px] mx-auto px-4 sm:px-8 py-10 sm:py-14 space-y-10">
@@ -836,13 +1033,13 @@ export default function App() {
               <ArrowLeft className="w-4 h-4" />
               <span>Back to Leadership</span>
             </button>
-            <span className="text-xs font-semibold uppercase tracking-wider text-[#135D54]">
+            <span className="text-xs font-semibold tracking-wide text-[#135D54]">
               0{memberIndex + 1} · {member.role}
             </span>
           </div>
 
           <div className="bg-[#F4F6F7] border border-slate-200 p-6 sm:p-8 flex flex-col md:flex-row items-center md:items-start gap-8">
-            <div className="w-36 h-36 sm:w-44 sm:h-44 rounded-full overflow-hidden border-4 border-[#135D54] ring-4 ring-white shrink-0 bg-slate-200 shadow-md">
+            <div className="w-28 h-28 sm:w-32 sm:h-32 rounded-full overflow-hidden border-[3px] border-[#135D54] ring-2 ring-white shrink-0 bg-slate-200 shadow-md">
               <img
                 src={member.image}
                 alt={member.name}
@@ -853,7 +1050,7 @@ export default function App() {
 
             <div className="space-y-4 flex-1 text-center md:text-left">
               <div>
-                <span className="text-xs font-semibold uppercase tracking-wider text-[#135D54] block">
+                <span className="text-xs font-semibold tracking-wide text-[#135D54] block">
                   {member.role}
                 </span>
                 <h2 className="text-2xl sm:text-4xl font-bold text-[#0E1115] font-display-constra mt-1">
@@ -1136,7 +1333,7 @@ export default function App() {
 
                       <div className="absolute inset-0 flex items-center justify-center px-6 sm:px-16">
                         <div className="max-w-3xl mx-auto text-center space-y-4">
-                          <p className="text-xs sm:text-sm font-semibold uppercase tracking-[0.16em] text-[#4DB6A8]">
+                          <p className="text-xs sm:text-sm font-semibold tracking-wide text-[#4DB6A8]">
                             {slide.kicker}
                           </p>
                           <h1 className="text-3xl sm:text-5xl lg:text-6xl font-bold text-white font-display-constra leading-[1.12] text-balance">
@@ -1234,7 +1431,7 @@ export default function App() {
 
                       <div className="lg:col-span-6 space-y-5">
                         <div>
-                          <p className="text-xs sm:text-sm font-semibold uppercase tracking-[0.14em] text-[#135D54]">
+                          <p className="text-xs sm:text-sm font-semibold tracking-wide text-[#135D54]">
                             Global Stone Craft
                           </p>
                           <h2 className="text-3xl sm:text-4xl font-bold text-[#0E1115] font-display-constra leading-tight mt-1">
@@ -1315,7 +1512,7 @@ export default function App() {
                 <section className="w-full bg-[#F4F6F7] py-12 sm:py-16">
                   <div className="max-w-[1320px] mx-auto px-4 sm:px-8 space-y-8">
                     <div className="text-center max-w-xl mx-auto space-y-1.5">
-                      <p className="text-xs sm:text-sm font-semibold uppercase tracking-[0.14em] text-[#135D54]">
+                      <p className="text-xs sm:text-sm font-semibold tracking-wide text-[#135D54]">
                         Standards
                       </p>
                       <h2 className="text-3xl sm:text-4xl font-bold text-[#0E1115] font-display-constra">
@@ -1364,7 +1561,7 @@ export default function App() {
                 <section className="w-full bg-white py-12 sm:py-16">
                   <div className="max-w-[1320px] mx-auto px-4 sm:px-8 space-y-8">
                     <div className="text-center max-w-2xl mx-auto space-y-1.5">
-                      <p className="text-xs sm:text-sm font-semibold uppercase tracking-[0.14em] text-[#135D54]">
+                      <p className="text-xs sm:text-sm font-semibold tracking-wide text-[#135D54]">
                         Disciplines
                       </p>
                       <h2 className="text-3xl sm:text-4xl font-bold text-[#0E1115] font-display-constra">
@@ -1451,7 +1648,7 @@ export default function App() {
                 </section>
 
                 {/* 5. FACTS BAND */}
-                <section className="w-full bg-[#15181C] py-10 sm:py-14">
+                <section className="w-full bg-[#2a412a] py-10 sm:py-14">
                   <div className="max-w-[1320px] mx-auto px-4 sm:px-8">
                     <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
                       {[
@@ -1482,7 +1679,7 @@ export default function App() {
                 <section className="w-full bg-white py-12 sm:py-16">
                   <div className="max-w-[1320px] mx-auto px-4 sm:px-8 space-y-8">
                     <div className="text-center max-w-2xl mx-auto space-y-1.5">
-                      <p className="text-xs sm:text-sm font-semibold uppercase tracking-[0.14em] text-[#135D54]">
+                      <p className="text-xs sm:text-sm font-semibold tracking-wide text-[#135D54]">
                         Portfolio
                       </p>
                       <h2 className="text-3xl sm:text-4xl font-bold text-[#0E1115] font-display-constra">
@@ -1507,7 +1704,7 @@ export default function App() {
                           </div>
                           <div className="sm:col-span-7 p-5 flex flex-col justify-between space-y-3">
                             <div className="space-y-1.5">
-                              <span className="text-[11px] font-semibold uppercase tracking-wider text-[#135D54] block">
+                              <span className="text-[11px] font-semibold tracking-wide text-[#135D54] block">
                                 {project.categoryLabel} · {project.year}
                               </span>
                               <h3 className="text-lg sm:text-xl font-bold text-[#0E1115] group-hover:text-[#135D54] transition-colors font-display-constra">
@@ -1542,7 +1739,7 @@ export default function App() {
                 <section className="w-full bg-[#F4F6F7] py-12 sm:py-16">
                   <div className="max-w-[1320px] mx-auto px-4 sm:px-8 space-y-8">
                     <div className="text-center max-w-2xl mx-auto space-y-1.5">
-                      <p className="text-xs sm:text-sm font-semibold uppercase tracking-[0.14em] text-[#135D54]">
+                      <p className="text-xs sm:text-sm font-semibold tracking-wide text-[#135D54]">
                         Stone Library & Plans
                       </p>
                       <h2 className="text-3xl sm:text-4xl font-bold text-[#0E1115] font-display-constra">
@@ -1595,7 +1792,7 @@ export default function App() {
                             <div className="space-y-1.5">
                               <div className="flex items-center justify-between text-[11px] font-semibold">
                                 <span className="text-[#135D54]">{item.stage}</span>
-                                <span className="uppercase text-[#15181C]">{item.categoryLabel}</span>
+                                <span className="text-[#15181C]">{item.categoryLabel}</span>
                               </div>
                               <h3 className="text-lg sm:text-xl font-bold text-[#0E1115] group-hover:text-[#135D54] transition-colors font-display-constra">
                                 {item.title}
@@ -1626,10 +1823,13 @@ export default function App() {
                 </section>
 
                 {/* 8. OUR TEAM (COMPACT + ROUND PORTRAITS + STRICT HIERARCHY ORDER) */}
-                <section className="w-full bg-white py-8 sm:py-11">
+                <section
+                  onContextMenu={(e) => openTeamContextMenu(e)}
+                  className="w-full bg-white py-8 sm:py-11"
+                >
                   <div className="max-w-[1140px] mx-auto px-4 sm:px-8 space-y-6">
                     <div className="text-center max-w-xl mx-auto space-y-1">
-                      <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[#135D54]">
+                      <p className="text-xs font-semibold tracking-wide text-[#135D54]">
                         Leadership
                       </p>
                       <h2 className="text-2xl sm:text-3xl font-bold text-[#0E1115] font-display-constra">
@@ -1639,12 +1839,19 @@ export default function App() {
 
                     <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-5">
                       {TEAM_MEMBERS.map((member) => (
-                        <div
+                        <a
                           key={member.id}
-                          onClick={() => openDetail({ kind: 'team', item: member }, 'team')}
+                          href={`/team/${member.id}`}
+                          onClick={(e) => {
+                            if (!e.metaKey && !e.ctrlKey && !e.shiftKey && !e.altKey) {
+                              e.preventDefault();
+                              openDetail({ kind: 'team', item: member }, 'team');
+                            }
+                          }}
+                          onContextMenu={(e) => openTeamContextMenu(e, member)}
                           className="group bg-[#F4F6F7] border border-slate-200 hover:border-[#135D54] hover:bg-white transition-all cursor-pointer p-4 text-center shadow-xs hover:shadow-md flex flex-col items-center"
                         >
-                          <div className="w-20 h-20 sm:w-24 sm:h-24 rounded-full overflow-hidden border-[3px] border-[#135D54] ring-4 ring-white bg-slate-200 shrink-0 shadow-xs">
+                          <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-full overflow-hidden border-2 border-[#135D54] ring-2 ring-white bg-slate-200 shrink-0 shadow-xs">
                             <img
                               src={member.image}
                               alt={member.name}
@@ -1660,7 +1867,7 @@ export default function App() {
                               {member.role}
                             </p>
                           </div>
-                        </div>
+                        </a>
                       ))}
                     </div>
                   </div>
@@ -1671,7 +1878,7 @@ export default function App() {
                   <div className="max-w-[1320px] mx-auto px-4 sm:px-8 space-y-5">
                     <div className="flex items-end justify-between gap-4">
                       <div>
-                        <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-[#135D54]">
+                        <p className="text-[11px] font-semibold tracking-wide text-[#135D54]">
                           Client Endorsements
                         </p>
                         <h2 className="text-2xl sm:text-3xl font-bold text-[#0E1115] font-display-constra">
@@ -1784,7 +1991,7 @@ export default function App() {
                     </div>
 
                     <div className="lg:col-span-6 space-y-5">
-                      <p className="text-xs sm:text-sm font-semibold uppercase tracking-[0.14em] text-[#135D54]">
+                      <p className="text-xs sm:text-sm font-semibold tracking-wide text-[#135D54]">
                         Heritage & Engineering
                       </p>
                       <h2 className="text-3xl sm:text-4xl font-bold text-[#0E1115] font-display-constra leading-tight">
@@ -1821,7 +2028,7 @@ export default function App() {
                 <section className="max-w-[1320px] mx-auto px-4 sm:px-8 py-12 sm:py-14 space-y-8">
                   <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 border-b border-slate-200 pb-5">
                     <div className="max-w-2xl space-y-1">
-                      <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[#135D54]">
+                      <p className="text-xs font-semibold tracking-wide text-[#135D54]">
                         8 Core Disciplines
                       </p>
                       <h2 className="text-2xl sm:text-4xl font-bold text-[#0E1115] font-display-constra">
@@ -1873,7 +2080,7 @@ export default function App() {
 
                         <div className="sm:col-span-7 p-5 flex flex-col justify-between space-y-3">
                           <div className="space-y-1.5">
-                            <div className="flex items-center justify-between text-[11px] font-semibold uppercase tracking-wider">
+                            <div className="flex items-center justify-between text-[11px] font-semibold tracking-wide">
                               <span className="text-[#135D54]">{svc.categoryLabel}</span>
                               <span className="text-[#15181C] tabular-nums">{svc.number}</span>
                             </div>
@@ -1909,7 +2116,7 @@ export default function App() {
                 <section className="max-w-[1320px] mx-auto px-4 sm:px-8 py-12 sm:py-14 space-y-8">
                   <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 border-b border-slate-200 pb-5">
                     <div>
-                      <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[#135D54]">
+                      <p className="text-xs font-semibold tracking-wide text-[#135D54]">
                         Portfolio
                       </p>
                       <h2 className="text-2xl sm:text-4xl font-bold text-[#0E1115] font-display-constra">
@@ -1962,7 +2169,7 @@ export default function App() {
 
                         <div className="p-5 flex-1 flex flex-col justify-between space-y-3">
                           <div className="space-y-1.5">
-                            <span className="text-[11px] font-semibold uppercase tracking-wider text-[#135D54] block">
+                            <span className="text-[11px] font-semibold tracking-wide text-[#135D54] block">
                               {project.categoryLabel}
                             </span>
                             <h3 className="text-xl font-bold text-[#0E1115] group-hover:text-[#135D54] transition-colors font-display-constra">
@@ -1996,7 +2203,7 @@ export default function App() {
                   <div className="max-w-[1320px] mx-auto px-4 sm:px-8 space-y-8">
                     <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 border-b border-slate-300/70 pb-5">
                       <div className="max-w-2xl space-y-1">
-                        <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[#135D54]">
+                        <p className="text-xs font-semibold tracking-wide text-[#135D54]">
                           Sample Plates & Drawings
                         </p>
                         <h2 className="text-2xl sm:text-4xl font-bold text-[#0E1115] font-display-constra">
@@ -2048,7 +2255,7 @@ export default function App() {
                           </div>
                           <div className="p-5 flex-1 flex flex-col justify-between space-y-3">
                             <div className="space-y-1.5">
-                              <span className="text-[11px] font-semibold uppercase tracking-wider text-[#135D54] block">
+                              <span className="text-[11px] font-semibold tracking-wide text-[#135D54] block">
                                 {item.subtitle}
                               </span>
                               <h3 className="text-xl font-bold text-[#0E1115] group-hover:text-[#135D54] transition-colors font-display-constra">
@@ -2074,7 +2281,7 @@ export default function App() {
                 <section className="max-w-[1320px] mx-auto px-4 sm:px-8 py-12 sm:py-14 space-y-8">
                   <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 border-b border-slate-200 pb-5">
                     <div className="max-w-2xl space-y-1">
-                      <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[#135D54]">
+                      <p className="text-xs font-semibold tracking-wide text-[#135D54]">
                         Certified Quarries
                       </p>
                       <h2 className="text-2xl sm:text-4xl font-bold text-[#0E1115] font-display-constra">
@@ -2124,8 +2331,8 @@ export default function App() {
                         <div className="p-5 space-y-2.5 flex-1 flex flex-col justify-between">
                           <div className="space-y-1.5">
                             <div className="flex items-center justify-between text-[11px] font-semibold">
-                              <span className="text-[#135D54] uppercase tracking-wider">{mat.provenance}</span>
-                              <span className="text-[#15181C] uppercase">{mat.category}</span>
+                              <span className="text-[#135D54] tracking-wide">{mat.provenance}</span>
+                              <span className="text-[#15181C] capitalize">{mat.category}</span>
                             </div>
                             <h3 className="text-xl font-bold text-[#0E1115] group-hover:text-[#135D54] font-display-constra transition-colors">
                               {mat.name}
@@ -2149,12 +2356,12 @@ export default function App() {
             {/* SUBPAGE: TEAM */}
             {/* ======================================================== */}
             {activeTab === 'team' && (
-              <div>
+              <div onContextMenu={(e) => openTeamContextMenu(e)}>
                 {renderPageBanner('Directorate & Master Craftsmen', 'Our Team')}
 
                 <section className="max-w-[1140px] mx-auto px-4 sm:px-8 py-10 sm:py-14 space-y-6">
                   <div className="max-w-2xl space-y-1 border-b border-slate-200 pb-4">
-                    <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[#135D54]">
+                    <p className="text-xs font-semibold tracking-wide text-[#135D54]">
                       Executive Leadership
                     </p>
                     <h2 className="text-2xl sm:text-3xl font-bold text-[#0E1115] font-display-constra">
@@ -2164,12 +2371,19 @@ export default function App() {
 
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
                     {TEAM_MEMBERS.map((member, index) => (
-                      <article
+                      <a
                         key={member.id}
-                        onClick={() => openDetail({ kind: 'team', item: member }, 'team')}
+                        href={`/team/${member.id}`}
+                        onClick={(e) => {
+                          if (!e.metaKey && !e.ctrlKey && !e.shiftKey && !e.altKey) {
+                            e.preventDefault();
+                            openDetail({ kind: 'team', item: member }, 'team');
+                          }
+                        }}
+                        onContextMenu={(e) => openTeamContextMenu(e, member)}
                         className="group bg-white border border-slate-200 p-5 flex flex-col sm:flex-row items-center sm:items-start text-center sm:text-left gap-4 shadow-xs hover:border-[#135D54] hover:shadow-md transition-all cursor-pointer"
                       >
-                        <div className="w-20 h-20 sm:w-24 sm:h-24 shrink-0 rounded-full overflow-hidden border-[3px] border-[#135D54] ring-4 ring-[#F4F6F7] bg-slate-200">
+                        <div className="w-16 h-16 sm:w-20 sm:h-20 shrink-0 rounded-full overflow-hidden border-2 border-[#135D54] ring-2 ring-[#F4F6F7] bg-slate-200">
                           <img
                             src={member.image}
                             alt={member.name}
@@ -2178,7 +2392,7 @@ export default function App() {
                           />
                         </div>
                         <div className="space-y-1 flex-1">
-                          <span className="text-[11px] font-semibold uppercase tracking-wider text-[#135D54] block">
+                          <span className="text-[11px] font-semibold tracking-wide text-[#135D54] block">
                             0{index + 1} · {member.role}
                           </span>
                           <h3 className="text-lg sm:text-xl font-bold text-[#0E1115] group-hover:text-[#135D54] font-display-constra transition-colors">
@@ -2191,7 +2405,7 @@ export default function App() {
                             {member.bio}
                           </p>
                         </div>
-                      </article>
+                      </a>
                     ))}
                   </div>
                 </section>
@@ -2209,7 +2423,7 @@ export default function App() {
                   <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 items-stretch">
                     <div className="lg:col-span-6 space-y-5">
                       <div className="space-y-1.5">
-                        <p className="text-xs sm:text-sm font-semibold uppercase tracking-[0.14em] text-[#135D54]">
+                        <p className="text-xs sm:text-sm font-semibold tracking-wide text-[#135D54]">
                           Direct Consultation
                         </p>
                         <h2 className="text-3xl sm:text-4xl font-bold text-[#0E1115] font-display-constra">
@@ -2313,7 +2527,7 @@ export default function App() {
                         <div className="bg-white p-6 flex-1 flex flex-col justify-between space-y-5 border border-slate-200">
                           <div className="space-y-4">
                             <div>
-                              <span className="text-xs font-semibold uppercase tracking-wider text-[#135D54]">
+                              <span className="text-xs font-semibold tracking-wide text-[#135D54]">
                                 Headquarters
                               </span>
                               <h3 className="text-2xl font-bold text-[#0E1115] font-display-constra mt-1">
@@ -2527,6 +2741,58 @@ export default function App() {
           </div>
         </div>
       </div>
+
+      {/* RIGHT-CLICK CONTEXT MENU FOR TEAM PAGE & MEMBER LINKS */}
+      {teamContextMenu && (
+        <div
+          role="menu"
+          style={{ top: teamContextMenu.y, left: teamContextMenu.x }}
+          onPointerDown={(e) => e.stopPropagation()}
+          className="fixed z-50 min-w-[235px] bg-[#15181C] text-white border border-[#135D54] shadow-2xl py-1.5 text-xs"
+        >
+          {teamContextMenu.member && (
+            <>
+              <button
+                type="button"
+                role="menuitem"
+                onClick={() => {
+                  const m = teamContextMenu.member!;
+                  setTeamContextMenu(null);
+                  copyShareLink(`/team/${m.id}`, `${m.name}'s profile`);
+                }}
+                className="w-full px-3.5 py-2.5 flex items-center gap-2.5 text-left hover:bg-[#135D54] transition-colors cursor-pointer"
+              >
+                <Link2 className="w-3.5 h-3.5 text-[#4DB6A8] shrink-0" />
+                <span>Copy {teamContextMenu.member.name.split(' ')[0]}'s profile link</span>
+              </button>
+              <a
+                role="menuitem"
+                href={`/team/${teamContextMenu.member.id}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                onClick={() => setTeamContextMenu(null)}
+                className="w-full px-3.5 py-2.5 flex items-center gap-2.5 text-left hover:bg-[#135D54] transition-colors cursor-pointer"
+              >
+                <Users className="w-3.5 h-3.5 text-[#4DB6A8] shrink-0" />
+                <span>Open profile in new tab</span>
+              </a>
+              <div className="my-1 border-t border-white/10" />
+            </>
+          )}
+          <button
+            type="button"
+            role="menuitem"
+            onClick={() => {
+              setTeamContextMenu(null);
+              copyShareLink('/team', 'Teams page');
+            }}
+            className="w-full px-3.5 py-2.5 flex items-center gap-2.5 text-left hover:bg-[#135D54] transition-colors cursor-pointer"
+          >
+            <Link2 className="w-3.5 h-3.5 text-[#4DB6A8] shrink-0" />
+            <span>Copy Teams page link</span>
+          </button>
+        </div>
+      )}
 
       {/* BACK TO TOP */}
       {showBackToTop && (
